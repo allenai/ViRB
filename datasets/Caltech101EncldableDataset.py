@@ -36,9 +36,10 @@ class CalTech101EncodableDataset(EncodableDataset):
 
     def encode(self, model):
         model.to(self.device)
+        model.eval()
         for img in tqdm.tqdm(self.data):
             x = Image.open(img).convert('RGB')
             x = self.preprocessor(x).to(self.device)
-            x = model(x.unsqueeze(0)).squeeze()
+            x = model(x.unsqueeze(0)).squeeze().detach()
             self.encoded_data.append(x)
         self.encoded_data = torch.stack(self.encoded_data, 0).to(self.device)
