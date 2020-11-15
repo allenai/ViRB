@@ -48,5 +48,8 @@ class CalTech101EncodableDataset(EncodableDataset):
                 out = model(batch).detach()
                 self.encoded_data.append(out)
                 batch = []
-        self.encoded_data = torch.cat(self.encoded_data, dim=0).to(self.device)
+        batch = torch.stack(batch, dim=0).to(self.device)
+        out = model(batch).detach()
+        self.encoded_data.append(out)
+        self.encoded_data = torch.cat(self.encoded_data, dim=0).squeeze().to(self.device)
         print("Encoded data shape:", self.encoded_data.shape)
