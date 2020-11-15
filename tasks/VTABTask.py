@@ -42,7 +42,6 @@ class VTABTask:
         self.model.to(self.device)
 
     def train(self, epochs):
-        self.dataset.encode(self.encoder)
         print("Training %s" % self.task_name)
         for _ in tqdm.tqdm(range(epochs)):
             self.train_epoch()
