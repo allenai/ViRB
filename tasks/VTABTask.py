@@ -63,7 +63,7 @@ class VTABTask:
             train_losses.append(train_loss.item())
             self.optimizer.step()
             train_error = self.error(out, label)
-            train_errors.append(train_error[0])
+            train_errors.append(train_error)
         return np.sum(train_losses), np.sum(train_errors)
 
     def test(self):
