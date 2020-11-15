@@ -59,13 +59,11 @@ class VTABTask:
             self.model.zero_grad()
             out = self.model(x)
             train_loss = self.loss(out, label)
-            print(out.shape, label.shape)
-            print("train loss", train_loss, "train loss shape", train_loss.shape)
-            train_losses.append(train_loss.item())
             train_loss.backward()
+            train_losses.append(train_loss[0])
             self.optimizer.step()
             train_error = self.error(out, label)
-            train_errors.append(train_error.item())
+            train_errors.append(train_error[0])
         return np.sum(train_losses), np.sum(train_errors)
 
     def test(self):
