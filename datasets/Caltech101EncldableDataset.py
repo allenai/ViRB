@@ -17,8 +17,8 @@ class CalTech101EncodableDataset(EncodableDataset):
         super().__init__()
         path = 'data/caltech-101/train/*/*.jpg' if train else 'data/caltech-101/test/*/*.jpg'
         self.data = list(glob.glob(path))
-        cats = list(set([path.split("/")[2] for path in self.data]))
-        self.labels = torch.LongTensor([cats.index(path.split("/")[2]) for path in self.data])
+        cats = list(set([path.split("/")[3] for path in self.data]))
+        self.labels = torch.LongTensor([cats.index(path.split("/")[3]) for path in self.data])
         self.preprocessor = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
