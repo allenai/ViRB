@@ -38,6 +38,7 @@ class VTABTask:
                                                            num_workers=num_workers)
         self.model = head
         self.optimizer = optimizer
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device)
 
     def train(self, epochs):

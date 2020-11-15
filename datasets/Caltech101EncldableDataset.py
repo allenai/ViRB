@@ -37,9 +37,16 @@ class CalTech101EncodableDataset(EncodableDataset):
     def encode(self, model):
         model.to(self.device)
         model.eval()
+        batch = []
         for img in tqdm.tqdm(self.data):
-            x = Image.open(img).convert('RGB')
-            x = self.preprocessor(x).to(self.device)
-            x = model(x.unsqueeze(0)).squeeze().detach()
-            self.encoded_data.append(x)
-        self.encoded_data = torch.stack(self.encoded_data, 0).to(self.device)
+            if len(batch) < 100:
+                x = Image.open(img).convert('RGB')
+                x = self.preprocessor(x)
+                batch.append(x)
+            else:
+                batch = torch.stack(batch, dim=0).to(self.device)
+                out = model(batch).detach()
+                self.encoded_data.append(out)
+                batch = []
+        self.encoded_data = torch.cat(self.encoded_data, dim=0).to(self.device)
+        print("Encoded data shape:", self.encoded_data.shape)
