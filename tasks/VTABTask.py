@@ -60,7 +60,7 @@ class VTABTask:
             out = self.model(x)
             train_loss = self.loss(out, label)
             train_loss.backward()
-            train_losses.append(train_loss[0])
+            train_losses.append(train_loss.item())
             self.optimizer.step()
             train_error = self.error(out, label)
             train_errors.append(train_error[0])
