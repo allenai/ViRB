@@ -59,6 +59,7 @@ class VTABTask:
             self.model.zero_grad()
             out = self.model(x)
             train_loss = self.loss(out, label)
+            print("train loss", train_loss)
             train_losses.append(train_loss.item())
             train_loss.backward()
             self.optimizer.step()
