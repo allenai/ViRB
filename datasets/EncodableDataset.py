@@ -21,4 +21,4 @@ class EncodableDataset(Dataset):
         raise NotImplementedError
 
     def num_classes(self):
-        return max(self.labels) + 1
+        return int(max(self.labels) + 1)
