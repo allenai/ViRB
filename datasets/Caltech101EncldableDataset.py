@@ -18,7 +18,7 @@ class CalTech101EncodableDataset(EncodableDataset):
         path = 'data/caltech-101/train/*/*.jpg' if train else 'data/caltech-101/test/*/*.jpg'
         self.data = list(glob.glob(path))
         cats = list(set([path.split("/")[2] for path in self.data]))
-        self.labels = [cats.index(path.split("/")[2]) for path in self.data]
+        self.labels = torch.Tensor([cats.index(path.split("/")[2]) for path in self.data], dtype=torch.long)
         self.preprocessor = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
@@ -52,4 +52,4 @@ class CalTech101EncodableDataset(EncodableDataset):
         out = model(batch).detach()
         self.encoded_data.append(out)
         self.encoded_data = torch.cat(self.encoded_data, dim=0).squeeze().to("cpu")
-        print("Encoded data shape:", self.encoded_data.shape)
+        print("Encoded data shape:", self.encoded_data.shape, "label shape:", self.labels.shape)
