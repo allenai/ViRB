@@ -55,6 +55,7 @@ class VTABTask:
         train_losses = []
         train_errors = []
         for x, label in self.train_dataloader:
+            x, label = x.to(self.device), label.to(self.device)
             self.model.zero_grad()
             out = self.model(x)
             train_loss = self.loss(out, label)
