@@ -16,7 +16,7 @@ def run():
     test_set = CalTech101EncodableDataset(train=False)
     head = ClassificationHead(2048, train_set.num_classes())
     head.train()
-    optim = torch.optim.Adam(head.parameters(), lr=0.01)
+    optim = torch.optim.Adam(head.parameters())
     # optim = torch.optim.SGD(head.parameters(), lr=0.01)
     caltech100 = VTABTask(name="CalTech-101",
                         encoder=encoder,
@@ -27,7 +27,7 @@ def run():
                         error=classification_error,
                         optimizer=optim,
                         out_dir="out/SWAV_800/CalTech-100",
-                        batch_size=256,
+                        batch_size=512,
                         num_workers=12)
     caltech100.train(100)
 
