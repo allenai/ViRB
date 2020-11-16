@@ -25,13 +25,13 @@ class VTABTask:
         self.batch_size = batch_size
         self.out_dir = out_dir
         print("---------------- %s ----------------" % self.task_name)
-        # print("Encoding data")
-        # train_set.encode(encoder)
+        print("Encoding data")
+        train_set.encode(encoder)
         self.train_dataloader = torch.utils.data.DataLoader(train_set,
                                                             batch_size=batch_size,
                                                             shuffle=True,
                                                             num_workers=num_workers)
-        # test_set.encode(encoder)
+        test_set.encode(encoder)
         self.test_dataloader = torch.utils.data.DataLoader(test_set,
                                                            batch_size=batch_size,
                                                            shuffle=False,
