@@ -64,7 +64,7 @@ class VTABTask:
             train_losses.append(train_loss.item())
             self.optimizer.step()
             train_error = self.error(out, label)
-            train_errors.append(train_error)
+            train_errors.append(train_error.item())
         return np.mean(train_losses), np.mean(train_errors)
 
     def test(self):
@@ -77,5 +77,5 @@ class VTABTask:
             test_loss = self.loss(out, label)
             test_losses.append(test_loss)
             test_error = self.error(out, label)
-            test_errors.append(test_error)
+            test_errors.append(test_error.item())
         return np.mean(test_losses), np.mean(test_errors)
