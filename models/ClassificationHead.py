@@ -14,7 +14,7 @@ class ClassificationHead(nn.Module):
         self.encoder = nn.Sequential(*list(resnet.children())[:-1])
         self.encoder.eval()
         self.head = nn.Sequential(
-            nn.Linear(embedding_size, 512),
+            nn.Linear(embedding_size, 256),
             nn.ReLU(inplace=True),
             nn.Linear(256, 256),
             nn.ReLU(inplace=True),
@@ -23,5 +23,5 @@ class ClassificationHead(nn.Module):
 
     def forward(self, x):
         with torch.no_grad():
-            x = self.encoder(x).view(-1, 2048)
+            x = self.encoder(x).view(-1, embedding_size)
         return self.head(x)
