@@ -25,7 +25,7 @@ caltech100 = VTABTask(name="CalTech-101",
                     error=classification_error,
                     optimizer=optim,
                     out_dir="out/SWAV_800/CalTech-100",
-                    batch_size=64,
+                    batch_size=512,
                     num_workers=12)
 caltech100.train(1000)
 
