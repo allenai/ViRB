@@ -17,7 +17,7 @@ class dtdEncodableDataset(EncodableDataset):
 
     def __init__(self, train=True):
         super().__init__()
-        path = 'data/dtd/train' if train else 'data/dtd/test'
+        path = 'data/dtd/train/*/*.jpg' if train else 'data/dtd/test/*/*.jpg'
         self.data = list(glob.glob(path))
         random.shuffle(self.data)
         cats = list(set([path.split("/")[3] for path in self.data]))

@@ -17,7 +17,7 @@ class EurosatEncodableDataset(EncodableDataset):
 
     def __init__(self, train=True):
         super().__init__()
-        path = 'data/eurosat/train' if train else 'data/eurosat/test'
+        path = 'data/eurosat/train/*/*.jpg' if train else 'data/eurosat/test/*/*.jpg'
         self.data = list(glob.glob(path))
         random.shuffle(self.data)
         cats = list(set([path.split("/")[3] for path in self.data]))
