@@ -15,7 +15,7 @@ train_set = CalTech101EncodableDataset(train=True)
 test_set = CalTech101EncodableDataset(train=False)
 head = ClassificationHead(2048, train_set.num_classes())
 head.train()
-optim = torch.optim.Adam(head.parameters())
+optim = torch.optim.Adam(head.parameters(), lr=0.01)
 # optim = torch.optim.SGD(head.parameters(), lr=0.01)
 caltech100 = VTABTask(name="CalTech-101",
                     encoder=encoder,
