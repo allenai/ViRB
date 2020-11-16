@@ -105,7 +105,7 @@ def run():
     #                     batch_size=512,
     #                     num_workers=12)
     # dtd.train(1)
-    #
+
     train_set = CLEVERNumObjectsEncodableDataset(train=True)
     test_set = CLEVERNumObjectsEncodableDataset(train=False)
     head = ClassificationHead(2048, train_set.num_classes(), sys.argv[1])
@@ -140,7 +140,7 @@ def run():
                         out_dir="out/"+sys.argv[2]+"/CLEVERDist",
                         batch_size=512,
                         num_workers=12)
-    CLEVERDist.train(10 )
+    CLEVERDist.train(10)
 
 
 if __name__ == '__main__':
