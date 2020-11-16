@@ -15,7 +15,7 @@ class CLEVERNumObjectsEncodableDataset(EncodableDataset):
 
     def __init__(self, train=True):
         super().__init__()
-        path = 'data/CLEVR/images/train/*.jpg' if train else 'data/CLEVR/images/val/*.jpg'
+        path = 'data/CLEVR/images/train/*.png' if train else 'data/CLEVR/images/val/*.png'
         self.data = glob.glob(path)
         labels_path = 'data/CLEVR/scenes/CLEVR_train_scenes.json' if train else \
             'data/CLEVR/scenes/CLEVR_val_scenes.json'

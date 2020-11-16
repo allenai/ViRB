@@ -69,43 +69,43 @@ def run():
     #                     batch_size=512,
     #                     num_workers=12)
     # pets.train(1)
-
-    train_set = EurosatEncodableDataset(train=True)
-    test_set = EurosatEncodableDataset(train=False)
-    head = ClassificationHead(2048, train_set.num_classes(), sys.argv[1])
-    head.train()
-    optim = torch.optim.Adam(head.parameters())
-    eurosat = VTABTask(name="Eurosat",
-                        encoder=None,
-                        head=head,
-                        train_set=train_set,
-                        test_set=test_set,
-                        loss=torch.nn.functional.cross_entropy,
-                        error=classification_error,
-                        optimizer=optim,
-                        out_dir="out/"+sys.argv[2]+"/eurosat",
-                        batch_size=512,
-                        num_workers=12)
-    eurosat.train(1)
-
-    train_set = dtdEncodableDataset(train=True)
-    test_set = dtdEncodableDataset(train=False)
-    head = ClassificationHead(2048, train_set.num_classes(), sys.argv[1])
-    head.train()
-    optim = torch.optim.Adam(head.parameters())
-    dtd = VTABTask(name="dtd",
-                        encoder=None,
-                        head=head,
-                        train_set=train_set,
-                        test_set=test_set,
-                        loss=torch.nn.functional.cross_entropy,
-                        error=classification_error,
-                        optimizer=optim,
-                        out_dir="out/"+sys.argv[2]+"/dtd",
-                        batch_size=512,
-                        num_workers=12)
-    dtd.train(1)
-
+    #
+    # train_set = EurosatEncodableDataset(train=True)
+    # test_set = EurosatEncodableDataset(train=False)
+    # head = ClassificationHead(2048, train_set.num_classes(), sys.argv[1])
+    # head.train()
+    # optim = torch.optim.Adam(head.parameters())
+    # eurosat = VTABTask(name="Eurosat",
+    #                     encoder=None,
+    #                     head=head,
+    #                     train_set=train_set,
+    #                     test_set=test_set,
+    #                     loss=torch.nn.functional.cross_entropy,
+    #                     error=classification_error,
+    #                     optimizer=optim,
+    #                     out_dir="out/"+sys.argv[2]+"/eurosat",
+    #                     batch_size=512,
+    #                     num_workers=12)
+    # eurosat.train(1)
+    #
+    # train_set = dtdEncodableDataset(train=True)
+    # test_set = dtdEncodableDataset(train=False)
+    # head = ClassificationHead(2048, train_set.num_classes(), sys.argv[1])
+    # head.train()
+    # optim = torch.optim.Adam(head.parameters())
+    # dtd = VTABTask(name="dtd",
+    #                     encoder=None,
+    #                     head=head,
+    #                     train_set=train_set,
+    #                     test_set=test_set,
+    #                     loss=torch.nn.functional.cross_entropy,
+    #                     error=classification_error,
+    #                     optimizer=optim,
+    #                     out_dir="out/"+sys.argv[2]+"/dtd",
+    #                     batch_size=512,
+    #                     num_workers=12)
+    # dtd.train(1)
+    #
     train_set = CLEVERNumObjectsEncodableDataset(train=True)
     test_set = CLEVERNumObjectsEncodableDataset(train=False)
     head = ClassificationHead(2048, train_set.num_classes(), sys.argv[1])
@@ -122,7 +122,7 @@ def run():
                         out_dir="out/"+sys.argv[2]+"/CLEVERNumObjects",
                         batch_size=512,
                         num_workers=12)
-    CLEVERNumObjects.train(1)
+    CLEVERNumObjects.train(10)
 
     train_set = CLEVERDistEncodableDataset(train=True)
     test_set = CLEVERDistEncodableDataset(train=False)
@@ -140,7 +140,7 @@ def run():
                         out_dir="out/"+sys.argv[2]+"/CLEVERDist",
                         batch_size=512,
                         num_workers=12)
-    CLEVERDist.train(1)
+    CLEVERDist.train(10)
 
 
 if __name__ == '__main__':
