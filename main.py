@@ -15,7 +15,7 @@ train_set = CalTech101EncodableDataset(train=True)
 test_set = CalTech101EncodableDataset(train=False)
 head = ClassificationHead(2048, train_set.num_classes())
 head.train()
-optim = torch.optim.Adam(head.parameters())
+optim = torch.optim.Adam(head.parameters(), lr=3e-4)
 caltech100 = VTABTask(name="CalTech-101",
                     encoder=encoder,
                     head=head,
@@ -27,7 +27,7 @@ caltech100 = VTABTask(name="CalTech-101",
                     out_dir="out/SWAV_800/CalTech-100",
                     batch_size=2048,
                     num_workers=12)
-caltech100.train(1000)
+caltech100.train(100)
 
 
 # train_set = CIFAR100EncodableDataset(train=True)
