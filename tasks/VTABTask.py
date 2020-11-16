@@ -47,8 +47,8 @@ class VTABTask:
         print("Training %s" % self.task_name)
         for _ in tqdm.tqdm(range(epochs)):
             train_loss, train_accuracy = self.train_epoch()
-            # test_loss, test_error = self.test()
-            # print(train_loss, test_error)
+            test_loss, test_error = self.test()
+            print(train_loss, test_error)
         test_loss, test_accuracy = self.test()
         print("Test Result: %.4f" % test_accuracy)
         os.makedirs(self.out_dir, exist_ok=True)
