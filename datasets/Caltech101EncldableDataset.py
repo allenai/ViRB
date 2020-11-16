@@ -39,7 +39,7 @@ class CalTech101EncodableDataset(EncodableDataset):
         model.eval()
         batch = []
         for img in tqdm.tqdm(self.data):
-            if len(batch) < 512:
+            if len(batch) < 100:
                 x = Image.open(img).convert('RGB')
                 x = self.preprocessor(x)
                 batch.append(x)

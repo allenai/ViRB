@@ -27,7 +27,7 @@ caltech100 = VTABTask(name="CalTech-101",
                     out_dir="out/SWAV_800/CalTech-100",
                     batch_size=2048,
                     num_workers=12)
-caltech100.train(100)
+caltech100.train(1000)
 
 
 # train_set = CIFAR100EncodableDataset(train=True)
