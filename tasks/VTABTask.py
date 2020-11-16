@@ -77,7 +77,7 @@ class VTABTask:
             with torch.no_grad():
                 out = self.model(x)
                 test_loss = self.loss(out, label)
-                test_losses.append(test_loss)
+                test_losses.append(test_loss.item())
                 test_error = self.error(out, label)
                 test_errors.append(test_error.item())
         return np.mean(test_losses), np.mean(test_errors)
