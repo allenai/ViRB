@@ -21,6 +21,7 @@ class PetsEncodableDataset(EncodableDataset):
         self.data = list(glob.glob(path))
         random.shuffle(self.data)
         cats = list(set([path.split("/")[3] for path in self.data]))
+        print("\nCATS:", cats)
         self.labels = torch.LongTensor([cats.index(path.split("/")[3]) for path in self.data])
         self.preprocessor = transforms.Compose([
             transforms.Resize((224, 224)),
