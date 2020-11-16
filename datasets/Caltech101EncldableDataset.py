@@ -42,7 +42,7 @@ class CalTech101EncodableDataset(EncodableDataset):
         model.eval()
         batch = []
         for img in tqdm.tqdm(self.data):
-            if len(batch) == 600:
+            if len(batch) == 500:
                 batch = torch.stack(batch, dim=0).to(self.device)
                 with torch.no_grad():
                     out = model(batch).detach()
