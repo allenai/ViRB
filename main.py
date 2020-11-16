@@ -32,7 +32,7 @@ def run():
                           out_dir="out/"+sys.argv[2]+"/caltech101",
                           batch_size=512,
                           num_workers=12)
-    caltech101.train(1)
+    caltech101.train(100)
 
     train_set = CIFAR100EncodableDataset(train=True)
     test_set = CIFAR100EncodableDataset(train=False)
@@ -50,7 +50,7 @@ def run():
                         out_dir="out/"+sys.argv[2]+"/cifar100",
                         batch_size=512,
                         num_workers=12)
-    cifar100.train(1)
+    cifar100.train(25)
 
     train_set = PetsEncodableDataset(train=True)
     test_set = PetsEncodableDataset(train=False)
@@ -68,7 +68,7 @@ def run():
                         out_dir="out/"+sys.argv[2]+"/pets",
                         batch_size=512,
                         num_workers=12)
-    pets.train(1)
+    pets.train(100)
 
     train_set = EurosatEncodableDataset(train=True)
     test_set = EurosatEncodableDataset(train=False)
@@ -86,7 +86,7 @@ def run():
                         out_dir="out/"+sys.argv[2]+"/eurosat",
                         batch_size=512,
                         num_workers=12)
-    eurosat.train(1)
+    eurosat.train(50)
 
     train_set = dtdEncodableDataset(train=True)
     test_set = dtdEncodableDataset(train=False)
@@ -104,7 +104,7 @@ def run():
                         out_dir="out/"+sys.argv[2]+"/dtd",
                         batch_size=512,
                         num_workers=12)
-    dtd.train(1)
+    dtd.train(100)
 
     train_set = CLEVERNumObjectsEncodableDataset(train=True)
     test_set = CLEVERNumObjectsEncodableDataset(train=False)
@@ -122,7 +122,7 @@ def run():
                         out_dir="out/"+sys.argv[2]+"/CLEVERNumObjects",
                         batch_size=512,
                         num_workers=12)
-    CLEVERNumObjects.train(1)
+    CLEVERNumObjects.train(20)
 
     train_set = CLEVERDistEncodableDataset(train=True)
     test_set = CLEVERDistEncodableDataset(train=False)
@@ -140,7 +140,7 @@ def run():
                         out_dir="out/"+sys.argv[2]+"/CLEVERDist",
                         batch_size=512,
                         num_workers=12)
-    CLEVERDist.train(1)
+    CLEVERDist.train(20)
 
 
 if __name__ == '__main__':
