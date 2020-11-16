@@ -45,11 +45,12 @@ class CalTech101EncodableDataset(EncodableDataset):
                 batch.append(x)
             else:
                 batch = torch.stack(batch, dim=0).to(self.device)
-                out = model(batch).detach()
+                with torch.no_grad():
+                    out = model(batch).detach()
                 self.encoded_data.append(out)
                 batch = []
         batch = torch.stack(batch, dim=0).to(self.device)
-        out = model(batch).detach()
+        with torch.no_grad():
+            out = model(batch).detach()
         self.encoded_data.append(out)
         self.encoded_data = torch.cat(self.encoded_data, dim=0).squeeze().to("cpu")
-        print("Encoded data shape:", self.encoded_data.shape, "label shape:", self.labels.shape)
