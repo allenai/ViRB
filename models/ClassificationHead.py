@@ -19,5 +19,5 @@ class ClassificationHead(nn.Module):
 
     def forward(self, x):
         with torch.no_grad():
-            x = self.encoder(x).flatten()
+            x = self.encoder(x).view(-1, 2048)
         return self.head(x)
