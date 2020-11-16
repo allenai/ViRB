@@ -27,11 +27,11 @@ def run():
                         out_dir="out/SWAV_800/caltech101",
                         batch_size=512,
                         num_workers=12)
-    caltech101.train(50)
+    caltech101.train(100)
 
     train_set = CIFAR100EncodableDataset(train=True)
     test_set = CIFAR100EncodableDataset(train=False)
-    head = ClassificationHead(2048, train_set.num_classes())
+    head = ClassificationHead(2048, train_set.num_classes(), "pretrained_weights/SWAV_800.pt")
     head.train()
     optim = torch.optim.Adam(head.parameters())
     cifar100 = VTABTask(name="CIFAR-100",
@@ -49,7 +49,7 @@ def run():
 
     train_set = PetsEncodableDataset(train=True)
     test_set = PetsEncodableDataset(train=False)
-    head = ClassificationHead(2048, train_set.num_classes())
+    head = ClassificationHead(2048, train_set.num_classes(), "pretrained_weights/SWAV_800.pt")
     head.train()
     optim = torch.optim.Adam(head.parameters())
     cifar100 = VTABTask(name="Pets",
