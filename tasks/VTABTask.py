@@ -1,6 +1,8 @@
 import tqdm
 import numpy as np
 import torch
+import os
+import json
 
 
 class VTABTask:
@@ -49,7 +51,16 @@ class VTABTask:
             print(train_loss, test_error)
         test_loss, test_accuracy = self.test()
         print("Test Result: %.4f" % test_accuracy)
-        torch.save(self.model, self.out_dir)
+        os.makedirs(self.out_dir, exist_ok=True)
+        torch.save(self.model, self.out_dir+"/model.pt")
+        data = {
+            "train_loss": train_loss,
+            "train_error": train_error,
+            "test_loss": test_loss,
+            "test_error": test_error
+        }
+        with open(self.out_dir+"/results.json", "w") as f:
+            json.dump(data, f)
         print("Saved model to %s\n\n\n" % self.out_dir)
 
     def train_epoch(self):

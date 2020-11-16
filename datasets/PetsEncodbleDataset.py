@@ -7,12 +7,12 @@ import torchvision.transforms as transforms
 from datasets.EncodableDataset import EncodableDataset
 
 
-class CIFAR100EncodableDataset(EncodableDataset):
+class PetsEncodableDataset(EncodableDataset):
     """CIFAR-100 encodable dataset class"""
 
     def __init__(self, train=True):
         super().__init__()
-        path = 'data/cifar-100/train' if train else 'data/cifar-100/test'
+        path = 'data/pets/train' if train else 'data/pets/test'
         with open(path, 'rb') as fo:
             dict = pickle.load(fo, encoding='bytes')
         self.data = dict[list(dict.keys())[4]]
