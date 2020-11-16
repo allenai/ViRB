@@ -41,17 +41,17 @@ class CalTech101EncodableDataset(EncodableDataset):
         model.to(self.device)
         model.eval()
         batch = []
+        print(self.cats)
         for img in tqdm.tqdm(self.data):
-            if len(batch) < 512:
-                x = Image.open(img).convert('RGB')
-                x = self.preprocessor(x)
-                batch.append(x)
-            else:
+            if len(batch) == 500:
                 batch = torch.stack(batch, dim=0).to(self.device)
                 with torch.no_grad():
                     out = model(batch).detach()
                 self.encoded_data.append(out)
                 batch = []
+            x = Image.open(img).convert('RGB')
+            x = self.preprocessor(x)
+            batch.append(x)
         batch = torch.stack(batch, dim=0).to(self.device)
         with torch.no_grad():
             out = model(batch).detach()
