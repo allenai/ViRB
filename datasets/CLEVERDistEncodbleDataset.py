@@ -23,7 +23,7 @@ class CLEVERDistEncodableDataset(EncodableDataset):
         with open(labels_path) as f:
             scene_data = json.load(f)
         self.labels = torch.LongTensor([
-            min([np.sqrt(np.sum(np.square(o['3d_coords']))) for o in ob['objects']]) for ob in scene_data['scenes']
+            2*min([np.sqrt(np.sum(np.square(o['3d_coords']))) for o in ob['objects']]) for ob in scene_data['scenes']
         ])
         self.preprocessor = transforms.Compose([
             transforms.Resize((224, 224)),
