@@ -41,7 +41,6 @@ class CalTech101EncodableDataset(EncodableDataset):
         model.to(self.device)
         model.eval()
         batch = []
-        print(self.cats)
         for img in tqdm.tqdm(self.data):
             if len(batch) == 500:
                 batch = torch.stack(batch, dim=0).to(self.device)
