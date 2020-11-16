@@ -17,8 +17,8 @@ class PetsEncodableDataset(EncodableDataset):
 
     def __init__(self, train=True):
         super().__init__()
-        path = 'data/pets/train' if train else 'data/pets/test'
-        self.data = list(glob.glob(path))
+        path = 'data/pets/train/*' if train else 'data/pets/test/*'
+        self.data = list(glob.glob(path+'/*.jpg'))
         random.shuffle(self.data)
         cats = list(set([path.split("/")[3] for path in self.data]))
         self.labels = torch.LongTensor([cats.index(path.split("/")[3]) for path in self.data])
