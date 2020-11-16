@@ -44,7 +44,8 @@ class VTABTask:
     def train(self, epochs):
         print("Training %s" % self.task_name)
         for _ in tqdm.tqdm(range(epochs)):
-            self.train_epoch()
+            train_loss, train_error = self.train_epoch()
+            print(train_loss)
         test_loss, test_accuracy = self.test()
         print("Test Result: %.4f" % test_accuracy)
         torch.save(self.model, self.out_dir)
