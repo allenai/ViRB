@@ -27,7 +27,7 @@ def run():
                         error=classification_error,
                         optimizer=optim,
                         out_dir="out/SWAV_800/CalTech-100",
-                        batch_size=2048,
+                        batch_size=256,
                         num_workers=12)
     caltech100.train(100)
 
