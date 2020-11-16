@@ -22,6 +22,7 @@ class CalTech101EncodableDataset(EncodableDataset):
         random.shuffle(self.data)
         cats = list(set([path.split("/")[3] for path in self.data]))
         self.labels = torch.LongTensor([cats.index(path.split("/")[3]) for path in self.data])
+        print(self.labels)
         self.preprocessor = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
