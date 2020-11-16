@@ -105,24 +105,24 @@ def run():
     #                     batch_size=512,
     #                     num_workers=12)
     # dtd.train(1)
-
-    train_set = CLEVERNumObjectsEncodableDataset(train=True)
-    test_set = CLEVERNumObjectsEncodableDataset(train=False)
-    head = ClassificationHead(2048, train_set.num_classes(), sys.argv[1])
-    head.train()
-    optim = torch.optim.Adam(head.parameters())
-    CLEVERNumObjects = VTABTask(name="CLEVERNumObjects",
-                        encoder=None,
-                        head=head,
-                        train_set=train_set,
-                        test_set=test_set,
-                        loss=torch.nn.functional.cross_entropy,
-                        error=classification_error,
-                        optimizer=optim,
-                        out_dir="out/"+sys.argv[2]+"/CLEVERNumObjects",
-                        batch_size=512,
-                        num_workers=12)
-    CLEVERNumObjects.train(10)
+    #
+    # train_set = CLEVERNumObjectsEncodableDataset(train=True)
+    # test_set = CLEVERNumObjectsEncodableDataset(train=False)
+    # head = ClassificationHead(2048, train_set.num_classes(), sys.argv[1])
+    # head.train()
+    # optim = torch.optim.Adam(head.parameters())
+    # CLEVERNumObjects = VTABTask(name="CLEVERNumObjects",
+    #                     encoder=None,
+    #                     head=head,
+    #                     train_set=train_set,
+    #                     test_set=test_set,
+    #                     loss=torch.nn.functional.cross_entropy,
+    #                     error=classification_error,
+    #                     optimizer=optim,
+    #                     out_dir="out/"+sys.argv[2]+"/CLEVERNumObjects",
+    #                     batch_size=512,
+    #                     num_workers=12)
+    # CLEVERNumObjects.train(10)
 
     train_set = CLEVERDistEncodableDataset(train=True)
     test_set = CLEVERDistEncodableDataset(train=False)
