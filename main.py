@@ -140,7 +140,7 @@ def run():
                         out_dir="out/"+sys.argv[2]+"/CLEVERDist",
                         batch_size=512,
                         num_workers=12)
-    CLEVERDist.train(10)
+    CLEVERDist.train(10 )
 
 
 if __name__ == '__main__':

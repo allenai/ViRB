@@ -30,6 +30,7 @@ class CLEVERNumObjectsEncodableDataset(EncodableDataset):
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     def __getitem__(self, idx):
+        print(len(self.data), len(self.labels))
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
