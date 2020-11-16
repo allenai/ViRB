@@ -30,7 +30,10 @@ class CIFAR100EncodableDataset(EncodableDataset):
             idx = idx.tolist()
 
         if len(self.encoded_data) == 0:
-            return self.preprocessor(self.data[idx]), self.labels[idx]
+            x = self.data[idx].reshape((3, 32, 32))
+            x = np.moveaxis(x, 0, 2)
+            x = self.preprocessor(x)
+            return x, self.labels[idx]
         return self.encoded_data[idx], self.labels[idx]
 
     def encode(self, model):
@@ -38,7 +41,7 @@ class CIFAR100EncodableDataset(EncodableDataset):
         for i in tqdm.tqdm(range(len(self.data))):
             x = self.data[i].reshape((3, 32, 32))
             x = np.moveaxis(x, 0, 2)
-            x = self.preprocessor(x).to(self.device)
+            x = self.preprocessor(x)
             x = model(x.unsqueeze(0))
             self.encoded_data.append(x)
-        self.encoded_data = torch.stack(self.encoded_data, 0).to(self.device)
+        self.encoded_data = torch.stack(self.encoded_data, 0)

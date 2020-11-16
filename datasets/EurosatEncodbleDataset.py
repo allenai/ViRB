@@ -12,12 +12,12 @@ import random
 from datasets.EncodableDataset import EncodableDataset
 
 
-class PetsEncodableDataset(EncodableDataset):
-    """Pets encodable dataset class"""
+class EurosatEncodableDataset(EncodableDataset):
+    """Eurosat encodable dataset class"""
 
     def __init__(self, train=True):
         super().__init__()
-        path = 'data/pets/train' if train else 'data/pets/test'
+        path = 'data/eurosat/train' if train else 'data/eurosat/test'
         self.data = list(glob.glob(path))
         random.shuffle(self.data)
         cats = list(set([path.split("/")[3] for path in self.data]))
