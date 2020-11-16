@@ -12,7 +12,7 @@ class EncodableDataset(Dataset):
         self.encoded_data = []
 
     def __len__(self):
-        return len(self.encoded_data)
+        return len(self.labels)
 
     def __getitem__(self, idx):
         raise NotImplementedError

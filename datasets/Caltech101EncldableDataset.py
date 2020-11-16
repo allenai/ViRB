@@ -34,7 +34,7 @@ class CalTech101EncodableDataset(EncodableDataset):
             idx = idx.tolist()
 
         if len(self.encoded_data) == 0:
-            return self.data[idx], self.labels[idx]
+            return self.preprocessor(Image.open(self.data[idx]).convert('RGB')), self.labels[idx]
         return self.encoded_data[idx], self.labels[idx]
 
     def encode(self, model):
