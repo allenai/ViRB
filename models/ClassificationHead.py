@@ -17,8 +17,8 @@ class ClassificationHead(nn.Module):
         self.head = nn.Sequential(
             nn.Linear(embedding_size, 256),
             nn.ReLU(inplace=True),
-            nn.Linear(256, 256),
-            nn.ReLU(inplace=True),
+            # nn.Linear(256, 256),
+            # nn.ReLU(inplace=True),
             nn.Linear(256, output_size)
         )
 
