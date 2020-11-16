@@ -71,6 +71,7 @@ class VTABTask:
         test_losses = []
         test_errors = []
         for x, label in self.test_dataloader:
+            x, label = x.to(self.device), label.to(self.device)
             out = self.model(x)
             test_loss = self.loss(out, label)
             test_losses.append(test_loss)
