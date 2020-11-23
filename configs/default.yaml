@@ -1,20 +1,20 @@
-Caltech101-1:
+Caltech101-0.1:
   task: "CalTech-101"
-  optimizer: "adam"
-  lr: 0.0001
+  optimizer: "sgd"
+  lr: 0.1
   num_epochs: 100
-Caltech101-2:
+Caltech101-0.01:
   task: "CalTech-101"
-  optimizer: "adam"
-  lr: 0.0001
+  optimizer: "sgd"
+  lr: 0.01
   num_epochs: 100
-Caltech101-3:
+Caltech101-0.001:
   task: "CalTech-101"
   optimizer: "sgd"
   lr: 0.001
   num_epochs: 100
-Caltech101-4:
+Caltech101-0.0001:
   task: "CalTech-101"
   optimizer: "sgd"
-  lr: 0.001
+  lr: 0.0001
   num_epochs: 100
