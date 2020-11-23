@@ -1,12 +1,12 @@
 Caltech101-1:
   task: "CalTech-101"
-  optimizer: "sgd"
-  lr: 0.001
+  optimizer: "adam"
+  lr: 0.0001
   num_epochs: 100
 Caltech101-2:
   task: "CalTech-101"
-  optimizer: "sgd"
-  lr: 0.001
+  optimizer: "adam"
+  lr: 0.0001
   num_epochs: 100
 Caltech101-3:
   task: "CalTech-101"
