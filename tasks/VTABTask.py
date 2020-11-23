@@ -10,8 +10,7 @@ class VTABTask:
     def __init__(
             self,
             name,
-            encoder,
-            head,
+            model,
             train_set,
             test_set,
             loss,
@@ -26,24 +25,21 @@ class VTABTask:
         self.error = error
         self.batch_size = batch_size
         self.out_dir = out_dir
-        print("---------------- %s ----------------" % self.task_name)
-        # print("Encoding data")
-        # train_set.encode(encoder)
         self.train_dataloader = torch.utils.data.DataLoader(train_set,
                                                             batch_size=batch_size,
                                                             shuffle=True,
                                                             num_workers=num_workers)
-        # test_set.encode(encoder)
         self.test_dataloader = torch.utils.data.DataLoader(test_set,
                                                            batch_size=batch_size,
                                                            shuffle=False,
                                                            num_workers=num_workers)
-        self.model = head
+        self.model = model
         self.optimizer = optimizer
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device)
 
-    def train(self, epochs):
+    def run(self, epochs):
+        print("---------------- %s ----------------" % self.task_name)
         print("Training %s" % self.task_name)
         for _ in tqdm.tqdm(range(epochs)):
             train_loss, train_accuracy = self.train_epoch()

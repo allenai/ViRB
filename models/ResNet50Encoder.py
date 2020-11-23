@@ -5,10 +5,31 @@ import torch.nn as nn
 
 class ResNet50Encoder(nn.Module):
 
-    def __init__(self):
+    def __init__(self, weights=None):
         super().__init__()
-        resnet = torchvision.models.resnet50(pretrained=True)
-        self.encoder = nn.Sequential(*list(resnet.children())[:-1])
+        if weights:
+            self.model = torchvision.models.resnet50(pretrained=False)
+            self.load_state_dict(torch.load(weights, map_location="cpu"), strict=False)
+        else:
+            self.model = torchvision.models.resnet50(pretrained=True)
 
     def forward(self, x):
-        return self.encoder(x)
+        res = {}
+        x = self.model.conv1(x)
+        x = self.model.bn1(x)
+        x = self.model.relu(x)
+        x = self.model.maxpool(x)
+
+        x = self.model.layer1(x)
+        res["layer1"] = x
+        x = self.model.layer2(x)
+        res["layer2"] = x
+        x = self.model.layer3(x)
+        res["layer3"] = x
+        x = self.model.layer4(x)
+        res["layer4"] = x
+
+        x = self.model.avgpool(x)
+        x = torch.flatten(x, 1)
+        res["embedding"] = x
+        return res
