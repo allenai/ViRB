@@ -1,6 +1,7 @@
 import torch
-import sys
+import os
 import yaml
+import json
 import copy
 import multiprocessing as mp
 
@@ -146,11 +147,15 @@ class VTABRunner:
             mp.freeze_support()
             mp.set_start_method('spawn')
             manager = mp.Manager()
-            return_dict = manager.dict()
+            results = manager.dict()
             procs = [
-                mp.Process(target=run_VTAB_queue, args=(experiments_per_device[i], return_dict))
+                mp.Process(target=run_VTAB_queue, args=(experiments_per_device[i], results))
                 for i in range(self.num_threads)
             ]
             [proc.start() for proc in procs]
-            results = [proc.join() for proc in procs]
-            print(return_dict)
+            [proc.join() for proc in procs]
+        if os.exists("out/results.json"):
+            with open("out/results.json", "rw") as f:
+                current_results = json.load(f)
+                new_results = current_results + results
+                json.dump(new_results)
