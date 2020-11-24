@@ -81,7 +81,7 @@ def run_VTAB_task(config):
     trainset = dataset_class(train=True)
     testset = dataset_class(train=False)
     print("222222")
-    encoder = copy.deepcopy(config["encoder"])
+    encoder = config["encoder"]
     print("333333")
     task_head = get_task_head(config, trainset)
     print("444444")
@@ -132,7 +132,7 @@ class VTABRunner:
         for i, (name, experiment) in enumerate(experiments.items()):
             experiment["name"] = name
             experiment["run_name"] = run_name
-            experiment["encoder"] = encoder
+            experiment["encoder"] = copy.deepcopy(encoder)
             experiment["train_encoder"] = train_encoder
             experiment["output_shape"] = output_shape
             experiment["device"] = "cuda:%d" % (i % num_gpus) if num_gpus > 0 else "cpu"
