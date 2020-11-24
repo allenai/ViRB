@@ -97,12 +97,16 @@ def run_VTAB_task(config):
         num_workers=config["num_workers"],
         device=config["device"]
     )
-    task.run(config["num_epochs"])
+    results = task.run(config["num_epochs"])
+    return results
 
 
 def run_VTAB_queue(queue):
-    for experiment in queue:
-        run_VTAB_task(experiment)
+    results = {
+        experiment["name"]: run_VTAB_task(experiment)
+        for experiment in queue
+    }
+    return results
 
 
 class VTABRunner:
@@ -133,10 +137,10 @@ class VTABRunner:
 
     def run(self):
         if self.num_threads == 1:
-            run_VTAB_queue(self.experiment_queue)
+            results = run_VTAB_queue(self.experiment_queue)
         else:
             experiments_per_device = [[] for _ in range(self.num_threads)]
-            for i, experiment in enumerate(self.experiment_queue):
+            for experiment in self.experiment_queue:
                 idx = int(experiment["device"][-1])
                 experiments_per_device[idx].append(experiment)
             mp.freeze_support()
@@ -146,4 +150,5 @@ class VTABRunner:
                 for i in range(self.num_threads)
             ]
             [proc.start() for proc in procs]
-            [proc.join() for proc in procs]
+            results = [proc.join() for proc in procs]
+            print(results)

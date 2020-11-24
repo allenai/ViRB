@@ -42,6 +42,7 @@ class VTABTask:
         self.model.to(self.device)
 
     def run(self, epochs):
+        os.makedirs(self.out_dir, exist_ok=True)
         writer = SummaryWriter(log_dir=self.out_dir)
         for e in range(epochs):
             train_loss, train_accuracy = self.train_epoch()
@@ -49,16 +50,16 @@ class VTABTask:
             writer.add_scalar("TrainLoss/"+self.task, train_loss, e)
             writer.add_scalar("TestAccuracy/"+self.task, test_accuracy, e)
         test_loss, test_accuracy = self.test()
-        os.makedirs(self.out_dir, exist_ok=True)
-        torch.save(self.model, self.out_dir+"/model.pt")
         data = {
             "train_loss": train_loss,
             "train_accuracy": train_accuracy,
             "test_loss": test_loss,
             "test_accuracy": test_accuracy
         }
-        with open(self.out_dir+"/results.json", "w") as f:
-            json.dump(data, f)
+        return data
+        # with open(self.out_dir+"/results.json", "w") as f:
+        #     json.dump(data, f)
+        # torch.save(self.model, self.out_dir+"/model.pt")
 
     def train_epoch(self):
         self.model.train()
