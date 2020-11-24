@@ -1,4 +1,3 @@
-import tqdm
 import numpy as np
 import torch
 from torch.utils.tensorboard import SummaryWriter
@@ -22,7 +21,6 @@ class VTABTask:
             num_workers=12,
             device="cpu"
     ):
-        print("BBBBB")
         self.task_name = name
         self.loss = loss
         self.error = error
@@ -42,9 +40,8 @@ class VTABTask:
         self.model.to(self.device)
 
     def run(self, epochs):
-        print("Num epochs")
         writer = SummaryWriter(log_dir=self.out_dir)
-        for e in tqdm.tqdm(range(epochs)):
+        for e in range(epochs):
             train_loss, train_accuracy = self.train_epoch()
             test_loss, test_accuracy = self.test()
             writer.add_scalar("TrainLoss/"+self.task_name, train_loss, e)

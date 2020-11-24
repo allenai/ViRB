@@ -131,12 +131,13 @@ class VTABRunner:
             self.experiment_queue.append(experiment)
 
     def run(self):
+        self.num_threads = 2
         if self.num_threads == 1:
             run_VTAB_queue(self.experiment_queue)
         else:
             experiments_per_device = [[] for _ in range(self.num_threads)]
-            for experiment in self.experiment_queue:
-                idx = int(experiment["device"][-1])
+            for i, experiment in enumerate(self.experiment_queue):
+                idx = i%2#int(experiment["device"][-1])
                 experiments_per_device[idx].append(experiment)
             mp.freeze_support()
             mp.set_start_method('spawn')
