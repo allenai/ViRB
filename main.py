@@ -5,7 +5,7 @@ from VTABRunner import VTABRunner
 def main():
     runner = VTABRunner(
         run_name="SWAV_800",
-        encoder=ResNet50Encoder,
+        encoder_class=ResNet50Encoder,
         encoder_args={"weights": "pretrained_weights/SWAV_800.pt"},
         train_encoder=False,
     )
