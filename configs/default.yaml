@@ -28,4 +28,13 @@ Caltech101-0.1-2:
   optimizer: "sgd"
   lr: 0.1
   num_epochs: 100
-
+Caltech101-0.01-1:
+  task: "CalTech-101"
+  optimizer: "sgd"
+  lr: 0.01
+  num_epochs: 100
+Caltech101-0.01-2:
+  task: "CalTech-101"
+  optimizer: "sgd"
+  lr: 0.01
+  num_epochs: 100
