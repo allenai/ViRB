@@ -4,9 +4,8 @@ from VTABRunner import VTABRunner
 
 def main():
     runner = VTABRunner(
+        encoder=ResNet50Encoder(weights="pretrained_weights/SWAV_800.pt"),
         run_name="SWAV_800",
-        encoder_class=ResNet50Encoder,
-        encoder_args={"weights": "pretrained_weights/SWAV_800.pt"},
         train_encoder=False,
     )
     runner.run()
