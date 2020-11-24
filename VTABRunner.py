@@ -86,6 +86,7 @@ def run_VTAB_task(config):
     optimizer = get_optimizer(config, model)
     task = VTABTask(
         name=config["name"],
+        task=config["task"],
         model=model,
         train_set=trainset,
         test_set=testset,
