@@ -75,6 +75,7 @@ def get_error_function(config):
 
 
 def run_VTAB_task(config):
+    print("!!!!!!!")
     dataset_class = get_dataset_class(config)
     trainset = dataset_class(train=True)
     testset = dataset_class(train=False)
@@ -84,6 +85,7 @@ def run_VTAB_task(config):
     loss_function = get_loss_function(config)
     error_function = get_error_function(config)
     optimizer = get_optimizer(config, model)
+    print("AAAAA")
     task = VTABTask(
         name=config["name"],
         model=model,

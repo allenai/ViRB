@@ -22,6 +22,7 @@ class VTABTask:
             num_workers=12,
             device="cpu"
     ):
+        print("BBBBB")
         self.task_name = name
         self.loss = loss
         self.error = error
