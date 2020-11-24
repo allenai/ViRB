@@ -18,6 +18,7 @@ class VTABTask:
             error,
             optimizer,
             out_dir,
+            scheduler,
             batch_size=256,
             num_workers=12,
             device="cpu"
@@ -38,6 +39,7 @@ class VTABTask:
                                                            num_workers=num_workers)
         self.model = model
         self.optimizer = optimizer
+        self.scheduler = scheduler
         self.device = device
         self.model.to(self.device)
 
@@ -49,6 +51,8 @@ class VTABTask:
             test_loss, test_accuracy = self.test()
             writer.add_scalar("TrainLoss/"+self.task, train_loss, e)
             writer.add_scalar("TestAccuracy/"+self.task, test_accuracy, e)
+            if self.scheduler:
+                self.scheduler.step()
         test_loss, test_accuracy = self.test()
         data = {
             "train_loss": train_loss,

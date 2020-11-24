@@ -1,50 +1,48 @@
-#Caltech101-0.1-1:
-#  task: "CalTech-101"
-#  optimizer: "sgd"
-#  lr: 0.1
-#  num_epochs: 200
-#Caltech101-0.1-2:
-#  task: "CalTech-101"
-#  optimizer: "sgd"
-#  lr: 0.1
-#  num_epochs: 200
-#Caltech101-0.1-3:
-#  task: "CalTech-101"
-#  optimizer: "sgd"
-#  lr: 0.1
-#  num_epochs: 200
-#Caltech101-0.1-4:
-#  task: "CalTech-101"
-#  optimizer: "sgd"
-#  lr: 0.1
-#  num_epochs: 200
-#Caltech101-0.1-5:
-#  task: "CalTech-101"
-#  optimizer: "sgd"
-#  lr: 0.1
-#  num_epochs: 200
-#Caltech101-0.1-6:
-#  task: "CalTech-101"
-#  optimizer: "sgd"
-#  lr: 0.1
-#  num_epochs: 200
-#Caltech101-0.1-7:
-#  task: "CalTech-101"
-#  optimizer: "sgd"
-#  lr: 0.1
-#  num_epochs: 200
-#Caltech101-0.1-8:
-#  task: "CalTech-101"
-#  optimizer: "sgd"
-#  lr: 0.1
-#  num_epochs: 200
-PetsTest-1:
-  task: "Pets"
+Caltech101-0.1-1:
+  task: "CalTech-101"
   optimizer: "sgd"
   lr: 0.1
-  num_epochs: 1
-PetsTest-2:
-  task: "Pets"
+  num_epochs: 200
+  lr_decay_step_size: 50
+Caltech101-0.1-2:
+  task: "CalTech-101"
   optimizer: "sgd"
   lr: 0.1
-  num_epochs: 1
+  num_epochs: 200
+  lr_decay_step_size: 50
+Caltech101-0.1-3:
+  task: "CalTech-101"
+  optimizer: "sgd"
+  lr: 0.1
+  num_epochs: 200
+  lr_decay_step_size: 50
+Caltech101-0.1-4:
+  task: "CalTech-101"
+  optimizer: "sgd"
+  lr: 0.1
+  num_epochs: 200
+  lr_decay_step_size: 50
+Caltech101-0.1-5:
+  task: "CalTech-101"
+  optimizer: "sgd"
+  lr: 0.1
+  num_epochs: 200
+  lr_decay_step_size: 50
+Caltech101-0.1-6:
+  task: "CalTech-101"
+  optimizer: "sgd"
+  lr: 0.1
+  num_epochs: 200
+  lr_decay_step_size: 50
+Caltech101-0.1-7:
+  task: "CalTech-101"
+  optimizer: "sgd"
+  lr: 0.1
+  num_epochs: 200
+  lr_decay_step_size: 50
+Caltech101-0.1-8:
+  task: "CalTech-101"
+  optimizer: "sgd"
+  lr: 0.1
+  num_epochs: 200
+  lr_decay_step_size: 50
