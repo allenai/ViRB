@@ -1,6 +1,7 @@
 import tqdm
 import numpy as np
 import torch
+from torch.utils.tensorboard import SummaryWriter
 import os
 import json
 
@@ -18,7 +19,8 @@ class VTABTask:
             optimizer,
             out_dir,
             batch_size=256,
-            num_workers=12
+            num_workers=12,
+            device="cpu"
     ):
         self.task_name = name
         self.loss = loss
@@ -35,18 +37,17 @@ class VTABTask:
                                                            num_workers=num_workers)
         self.model = model
         self.optimizer = optimizer
-        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self.device = device
         self.model.to(self.device)
 
     def run(self, epochs):
-        print("---------------- %s ----------------" % self.task_name)
-        print("Training %s" % self.task_name)
-        for _ in tqdm.tqdm(range(epochs)):
+        writer = SummaryWriter(log_dir=self.out_dir)
+        for e in tqdm.tqdm(range(epochs)):
             train_loss, train_accuracy = self.train_epoch()
-            test_loss, test_error = self.test()
-            print(train_loss, test_error)
+            test_loss, test_accuracy = self.test()
+            writer.add_scalar("TrainLoss/"+self.task_name, train_loss, e)
+            writer.add_scalar("TestAccuracy/"+self.task_name, test_accuracy, e)
         test_loss, test_accuracy = self.test()
-        print("Test Result: %.4f" % test_accuracy)
         os.makedirs(self.out_dir, exist_ok=True)
         torch.save(self.model, self.out_dir+"/model.pt")
         data = {
@@ -57,7 +58,6 @@ class VTABTask:
         }
         with open(self.out_dir+"/results.json", "w") as f:
             json.dump(data, f)
-        print("Saved model to %s\n\n\n" % self.out_dir)
 
     def train_epoch(self):
         self.model.train()

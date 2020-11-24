@@ -7,7 +7,6 @@ def main():
         encoder=ResNet50Encoder(weights="pretrained_weights/SWAV_800.pt"),
         run_name="SWAV_800",
         train_encoder=False,
-        num_gpus=1
     )
     runner.run()
 

@@ -2,6 +2,7 @@ import torch
 import sys
 import yaml
 import copy
+import multiprocessing as mp
 
 from models.ResNet50Encoder import ResNet50Encoder
 from models.VTABModel import VTABModel
@@ -91,9 +92,16 @@ def run_VTAB_task(config):
         loss=loss_function,
         error=error_function,
         optimizer=optimizer,
-        out_dir="out/"+config["run_name"]+"/"+config["name"]
+        out_dir="out/"+config["run_name"]+"/"+config["name"],
+        num_workers=config["num_workers"],
+        device=config["device"]
     )
     task.run(config["num_epochs"])
+
+
+def run_VTAB_queue(queue):
+    for experiment in queue:
+        run_VTAB_task(experiment)
 
 
 class VTABRunner:
@@ -105,20 +113,34 @@ class VTABRunner:
             output_shape={"embedding": torch.Size([2048])},
             train_encoder=False,
             experiment_config_path="configs/default.yaml",
-            num_gpus=0
+            num_gpus=torch.cuda.device_count(),
+            total_num_workers=12
     ):
-        self.num_workers = num_gpus if num_gpus > 0 else 1
+        self.num_threads = num_gpus if num_gpus > 0 else 1
         with open(experiment_config_path) as file:
             experiments = yaml.load(file, Loader=yaml.FullLoader)
         self.experiment_queue = []
-        for name, experiment in experiments.items():
+        for i, (name, experiment) in enumerate(experiments.items()):
             experiment["name"] = name
             experiment["run_name"] = run_name
             experiment["encoder"] = encoder
             experiment["train_encoder"] = train_encoder
             experiment["output_shape"] = output_shape
+            experiment["device"] = "cuda:%d" % (i % num_gpus) if num_gpus > 0 else "cpu"
+            experiment["num_workers"] = total_num_workers // self.num_threads
             self.experiment_queue.append(experiment)
 
     def run(self):
-        for experiment in self.experiment_queue:
-            run_VTAB_task(experiment)
+        if self.num_threads == 1:
+            run_VTAB_queue(self.experiment_queue)
+        else:
+            experiments_per_device = [[] for _ in range(self.num_threads)]
+            for experiment in self.experiment_queue:
+                idx = int(experiment["device"][-1])
+                experiments_per_device[idx].append(experiment)
+            procs = [
+                mp.Process(target=run_VTAB_queue, args=(experiments_per_device[i],))
+                for i in range(self.num_threads)
+            ]
+            [proc.start() for proc in procs]
+            [proc.join() for proc in procs]
