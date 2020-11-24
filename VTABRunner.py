@@ -78,7 +78,7 @@ def run_VTAB_task(config):
     dataset_class = get_dataset_class(config)
     trainset = dataset_class(train=True)
     testset = dataset_class(train=False)
-    encoder = config["encoder_class"](config["encoder_args"])
+    encoder = config["encoder_class"](**config["encoder_args"])
     task_head = get_task_head(config, trainset)
     model = VTABModel(encoder, task_head, train_encoder=config["train_encoder"])
     loss_function = get_loss_function(config)
