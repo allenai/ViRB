@@ -123,7 +123,7 @@ class VTABRunner:
         for i, (name, experiment) in enumerate(experiments.items()):
             experiment["name"] = name
             experiment["run_name"] = run_name
-            experiment["encoder"] = copy.deepcopy(encoder)
+            experiment["encoder"] = encoder
             experiment["train_encoder"] = train_encoder
             experiment["output_shape"] = output_shape
             experiment["device"] = "cuda:%d" % (i % num_gpus) if num_gpus > 0 else "cpu"
