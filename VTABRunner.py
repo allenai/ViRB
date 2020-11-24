@@ -78,7 +78,7 @@ def run_VTAB_task(config):
     dataset_class = get_dataset_class(config)
     trainset = dataset_class(train=True)
     testset = dataset_class(train=False)
-    encoder = config["encoder"]
+    encoder = copy.deepcopy(config["encoder"])
     task_head = get_task_head(config, trainset)
     model = VTABModel(encoder, task_head, train_encoder=config["train_encoder"])
     loss_function = get_loss_function(config)
@@ -125,19 +125,18 @@ class VTABRunner:
             experiment["run_name"] = run_name
             experiment["encoder"] = copy.deepcopy(encoder)
             experiment["train_encoder"] = train_encoder
-            experiment["output_shape"] = copy.deepcopy(output_shape)
+            experiment["output_shape"] = output_shape
             experiment["device"] = "cuda:%d" % (i % num_gpus) if num_gpus > 0 else "cpu"
             experiment["num_workers"] = total_num_workers // self.num_threads
             self.experiment_queue.append(experiment)
 
     def run(self):
-        self.num_threads = 2
         if self.num_threads == 1:
             run_VTAB_queue(self.experiment_queue)
         else:
             experiments_per_device = [[] for _ in range(self.num_threads)]
             for i, experiment in enumerate(self.experiment_queue):
-                idx = i%2#int(experiment["device"][-1])
+                idx = int(experiment["device"][-1])
                 experiments_per_device[idx].append(experiment)
             mp.freeze_support()
             mp.set_start_method('spawn')
