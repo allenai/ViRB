@@ -154,7 +154,7 @@ class VTABRunner:
             ]
             [proc.start() for proc in procs]
             [proc.join() for proc in procs]
-        with open("out/results.json", "rw") as f:
+        with open("out/results.json", "r+") as f:
             if os.exists("out/results.json"):
                 current_results = json.load(f)
             else:
