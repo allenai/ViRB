@@ -160,4 +160,4 @@ class VTABRunner:
             except:
                 current_results = {}
             new_results = current_results + results
-            json.dump(new_results)
+            json.dump(new_results, f)
