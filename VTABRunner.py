@@ -78,7 +78,7 @@ def run_VTAB_task(config):
     dataset_class = get_dataset_class(config)
     trainset = dataset_class(train=True)
     testset = dataset_class(train=False)
-    encoder = config["encoder"]
+    encoder = config["encoder_class"](config["encoder_args"])
     task_head = get_task_head(config, trainset)
     model = VTABModel(encoder, task_head, train_encoder=config["train_encoder"])
     loss_function = get_loss_function(config)
@@ -108,8 +108,9 @@ class VTABRunner:
 
     def __init__(
             self,
-            encoder,
             run_name,
+            encoder_class,
+            encoder_args={},
             output_shape={"embedding": torch.Size([2048])},
             train_encoder=False,
             experiment_config_path="configs/default.yaml",
@@ -123,7 +124,8 @@ class VTABRunner:
         for i, (name, experiment) in enumerate(experiments.items()):
             experiment["name"] = name
             experiment["run_name"] = run_name
-            experiment["encoder"] = encoder
+            experiment["encoder_class"] = encoder_class
+            experiment["encoder_args"] = encoder_args
             experiment["train_encoder"] = train_encoder
             experiment["output_shape"] = output_shape
             experiment["device"] = "cuda:%d" % (i % num_gpus) if num_gpus > 0 else "cpu"
