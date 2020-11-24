@@ -161,5 +161,5 @@ class VTABRunner:
                 current_results = json.load(f)
             except:
                 current_results = {}
-            current_results.updte(dict(results))
+            current_results.update(dict(results))
             json.dump(current_results, f)
