@@ -147,6 +147,8 @@ class VTABRunner:
             for experiment in self.experiment_queue:
                 idx = int(experiment["device"][-1])
                 experiments_per_device[idx].append(experiment)
+            mp.freeze_support()
+            mp.set_start_method('spawn')
             procs = [
                 mp.Process(target=run_VTAB_queue, args=(experiments_per_device[i],))
                 for i in range(self.num_threads)
