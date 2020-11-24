@@ -101,12 +101,12 @@ def run_VTAB_task(config):
     return results
 
 
-def run_VTAB_queue(queue):
-    results = {
-        experiment["name"]: run_VTAB_task(experiment)
-        for experiment in queue
-    }
-    return results
+def run_VTAB_queue(queue, return_dict=None):
+    if return_dict is None:
+        return_dict = {}
+    for experiment in queue:
+        return_dict[experiment["name"]] = run_VTAB_task(experiment)
+    return return_dict
 
 
 class VTABRunner:
@@ -145,10 +145,12 @@ class VTABRunner:
                 experiments_per_device[idx].append(experiment)
             mp.freeze_support()
             mp.set_start_method('spawn')
+            manager = mp.Manager()
+            return_dict = manager.dict()
             procs = [
-                mp.Process(target=run_VTAB_queue, args=(experiments_per_device[i],))
+                mp.Process(target=run_VTAB_queue, args=(experiments_per_device[i], return_dict))
                 for i in range(self.num_threads)
             ]
             [proc.start() for proc in procs]
             results = [proc.join() for proc in procs]
-            print(results)
+            print(return_dict)
