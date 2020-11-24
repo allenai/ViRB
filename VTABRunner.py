@@ -100,6 +100,7 @@ def run_VTAB_task(config):
 
 
 def run_VTAB_queue(queue):
+    print("QUEUE:", queue)
     for experiment in queue:
         run_VTAB_task(experiment)
 
@@ -138,8 +139,6 @@ class VTABRunner:
             for experiment in self.experiment_queue:
                 idx = int(experiment["device"][-1])
                 experiments_per_device[idx].append(experiment)
-            print(torch.cuda.device_count())
-            print(experiments_per_device)
             procs = [
                 mp.Process(target=run_VTAB_queue, args=(experiments_per_device[i],))
                 for i in range(self.num_threads)
