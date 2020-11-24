@@ -75,24 +75,15 @@ def get_error_function(config):
 
 
 def run_VTAB_task(config):
-    print("!!!!!!!")
     dataset_class = get_dataset_class(config)
-    print("111111")
     trainset = dataset_class(train=True)
     testset = dataset_class(train=False)
-    print("222222")
     encoder = config["encoder"]
-    print("333333")
     task_head = get_task_head(config, trainset)
-    print("444444")
     model = VTABModel(encoder, task_head, train_encoder=config["train_encoder"])
-    print("5555555")
     loss_function = get_loss_function(config)
-    print("6666666")
     error_function = get_error_function(config)
-    print("7777777")
     optimizer = get_optimizer(config, model)
-    print("AAAAA")
     task = VTABTask(
         name=config["name"],
         model=model,
@@ -134,7 +125,7 @@ class VTABRunner:
             experiment["run_name"] = run_name
             experiment["encoder"] = copy.deepcopy(encoder)
             experiment["train_encoder"] = train_encoder
-            experiment["output_shape"] = output_shape
+            experiment["output_shape"] = copy.deepcopy(output_shape)
             experiment["device"] = "cuda:%d" % (i % num_gpus) if num_gpus > 0 else "cpu"
             experiment["num_workers"] = total_num_workers // self.num_threads
             self.experiment_queue.append(experiment)
