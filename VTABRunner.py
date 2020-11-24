@@ -100,7 +100,6 @@ def run_VTAB_task(config):
 
 
 def run_VTAB_queue(queue):
-    print("QUEUE:", queue)
     for experiment in queue:
         run_VTAB_task(experiment)
 

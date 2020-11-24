@@ -41,6 +41,7 @@ class VTABTask:
         self.model.to(self.device)
 
     def run(self, epochs):
+        print("Num epochs")
         writer = SummaryWriter(log_dir=self.out_dir)
         for e in tqdm.tqdm(range(epochs)):
             train_loss, train_accuracy = self.train_epoch()
