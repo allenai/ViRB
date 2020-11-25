@@ -44,6 +44,9 @@ def get_dataset_class(config):
     if config["task"] == "CLEVERDist":
         from datasets.CLEVERDistEncodbleDataset import CLEVERDistEncodableDataset
         return CLEVERDistEncodableDataset
+    if config["task"] == "SUN397":
+        from datasets.SUN397EncodbleDataset import SUN397EncodableDataset
+        return SUN397EncodableDataset
 
 
 def get_task_head(config, dataset):
