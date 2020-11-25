@@ -18,7 +18,8 @@ CLASSIFICATION_TASKS = [
     "Eurosat",
     "dtd",
     "CLEVERNumObjects",
-    "CLEVERDist"
+    "CLEVERDist",
+    "SUN397"
 ]
 
 
@@ -142,7 +143,7 @@ class VTABRunner:
             self.experiment_queue.append(experiment)
 
     def run(self):
-        if self.num_threads == 1:
+        if self.num_threads == 1 or len(self.experiment_queue) == 1:
             results = run_VTAB_queue(self.experiment_queue)
         else:
             experiments_per_device = [[] for _ in range(self.num_threads)]
