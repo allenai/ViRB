@@ -49,14 +49,21 @@ class VTABTask:
         for e in range(epochs):
             train_loss, train_accuracy = self.train_epoch()
             test_loss, test_accuracy = self.test()
-            _, test_accuracy1 = self.test()
-            _, test_accuracy2 = self.test()
-            print(test_accuracy, test_accuracy1, test_accuracy2)
             writer.add_scalar("TrainLoss/"+self.task, train_loss, e)
             writer.add_scalar("TestAccuracy/"+self.task, test_accuracy, e)
             if self.scheduler:
                 self.scheduler.step()
         test_loss, test_accuracy = self.test()
+
+        for x, label in self.test_dataloader:
+            x, label = x.to(self.device), label.to(self.device)
+            with torch.no_grad():
+                for _ in range(10):
+                    out = self.model(x)
+                    test_loss = self.loss(out, label)
+                    print(out[:10], test_loss)
+            exit()
+
         data = {
             "train_loss": train_loss,
             "train_accuracy": train_accuracy,
