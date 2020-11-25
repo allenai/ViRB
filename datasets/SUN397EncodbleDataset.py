@@ -19,7 +19,7 @@ class SUN397EncodableDataset(EncodableDataset):
         super().__init__()
         path = 'data/SUN397/train/*/*.jpg' if train else 'data/SUN397/test/*/*.jpg'
         self.data = list(glob.glob(path))
-        random.shuffle(self.data)
+        # random.shuffle(self.data)
         cats = list(set([path.split("/")[3] for path in self.data]))
         self.labels = torch.LongTensor([cats.index(path.split("/")[3]) for path in self.data])
         self.preprocessor = transforms.Compose([
