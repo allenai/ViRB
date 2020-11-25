@@ -18,8 +18,8 @@ class CalTech101EncodableDataset(EncodableDataset):
     def __init__(self, train=True):
         super().__init__()
         path = 'data/caltech-101/train/*/*.jpg' if train else 'data/caltech-101/test/*/*.jpg'
-        # self.data = list(glob.glob(path))
-        random.shuffle(self.data)
+        self.data = list(glob.glob(path))
+        # random.shuffle(self.data)
         cats = list(set([path.split("/")[3] for path in self.data]))
         self.labels = torch.LongTensor([cats.index(path.split("/")[3]) for path in self.data])
         self.preprocessor = transforms.Compose([
