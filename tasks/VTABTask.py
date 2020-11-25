@@ -54,16 +54,6 @@ class VTABTask:
             if self.scheduler:
                 self.scheduler.step()
         test_loss, test_accuracy = self.test()
-
-        for x, label in self.test_dataloader:
-            x, label = x.to(self.device), label.to(self.device)
-            with torch.no_grad():
-                for _ in range(10):
-                    out = self.model(x)
-                    test_loss = self.loss(out, label)
-                    print(out[:10], test_loss)
-            exit()
-
         data = {
             "train_loss": train_loss,
             "train_accuracy": train_accuracy,
