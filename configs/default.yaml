@@ -46,7 +46,49 @@
 #  lr: 0.1
 #  num_epochs: 200
 #  lr_decay_step_size: 50
-SUN397:
+SUN397-1:
+  task: "SUN397"
+  optimizer: "sgd"
+  lr: 0.1
+  num_epochs: 100
+  lr_decay_step_size: 50
+SUN397-2:
+  task: "SUN397"
+  optimizer: "sgd"
+  lr: 0.1
+  num_epochs: 100
+  lr_decay_step_size: 50
+SUN397-3:
+  task: "SUN397"
+  optimizer: "sgd"
+  lr: 0.1
+  num_epochs: 100
+  lr_decay_step_size: 50
+SUN397-4:
+  task: "SUN397"
+  optimizer: "sgd"
+  lr: 0.1
+  num_epochs: 100
+  lr_decay_step_size: 50
+SUN397-5:
+  task: "SUN397"
+  optimizer: "sgd"
+  lr: 0.1
+  num_epochs: 100
+  lr_decay_step_size: 50
+SUN397-6:
+  task: "SUN397"
+  optimizer: "sgd"
+  lr: 0.1
+  num_epochs: 100
+  lr_decay_step_size: 50
+SUN397-7:
+  task: "SUN397"
+  optimizer: "sgd"
+  lr: 0.1
+  num_epochs: 100
+  lr_decay_step_size: 50
+SUN397-8:
   task: "SUN397"
   optimizer: "sgd"
   lr: 0.1
