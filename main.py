@@ -6,7 +6,7 @@ def main():
     runner = VTABRunner(
         encoder=ResNet50Encoder(weights="pretrained_weights/SWAV_800.pt"),
         run_name="SWAV_800",
-        train_encoder=True,
+        train_encoder=False,
     )
     runner.run()
 

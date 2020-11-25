@@ -19,7 +19,7 @@ class VTABTask:
             optimizer,
             out_dir,
             scheduler,
-            batch_size=32,
+            batch_size=512,
             num_workers=12,
             device="cpu"
     ):
