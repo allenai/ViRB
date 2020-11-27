@@ -99,4 +99,4 @@ class VTABTask:
                 test_losses.append(test_loss.item() * num_samples_in_batch)
                 test_error = self.error(out, label)
                 test_errors.append(test_error.item() * num_samples_in_batch)
-        return np.mean(test_losses) / num_samples, np.mean(test_errors) / num_samples
+        return np.sum(test_losses) / num_samples, np.sum(test_errors) / num_samples
