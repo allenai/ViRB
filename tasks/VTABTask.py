@@ -34,7 +34,7 @@ class VTABTask:
                                                             shuffle=True,
                                                             num_workers=num_workers)
         self.test_dataloader = torch.utils.data.DataLoader(test_set,
-                                                           batch_size=32,
+                                                           batch_size=batch_size,
                                                            shuffle=False,
                                                            num_workers=1)
         self.model = model
@@ -69,28 +69,34 @@ class VTABTask:
         self.model.train()
         train_losses = []
         train_errors = []
+        num_samples = 0
         for x, label in self.train_dataloader:
+            num_samples_in_batch = x.size(0)
+            num_samples += num_samples_in_batch
             x, label = x.to(self.device), label.to(self.device)
             self.model.zero_grad()
             out = self.model(x)
             train_loss = self.loss(out, label)
             train_loss.backward()
-            train_losses.append(train_loss.item())
+            train_losses.append(train_loss.item() * num_samples_in_batch)
             self.optimizer.step()
             train_error = self.error(out, label)
-            train_errors.append(train_error.item())
-        return np.mean(train_losses), np.mean(train_errors)
+            train_errors.append(train_error.item() * num_samples_in_batch)
+        return np.sum(train_losses) / num_samples, np.sum(train_errors) / num_samples
 
     def test(self):
         self.model.eval()
         test_losses = []
         test_errors = []
+        num_samples = 0
         for x, label in self.test_dataloader:
+            num_samples_in_batch = x.size(0)
+            num_samples += num_samples_in_batch
             x, label = x.to(self.device), label.to(self.device)
             with torch.no_grad():
                 out = self.model(x)
                 test_loss = self.loss(out, label)
-                test_losses.append(test_loss.item())
+                test_losses.append(test_loss.item() * num_samples_in_batch)
                 test_error = self.error(out, label)
-                test_errors.append(test_error.item())
-        return np.mean(test_losses), np.mean(test_errors)
+                test_errors.append(test_error.item() * num_samples_in_batch)
+        return np.mean(test_losses) / num_samples, np.mean(test_errors) / num_samples
