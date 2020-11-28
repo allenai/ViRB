@@ -2,6 +2,7 @@ import numpy as np
 import torch
 from torch.utils.tensorboard import SummaryWriter
 import os
+import tqdm
 import json
 
 from datasets.EncodableDataloader import EncodableDataloader
@@ -59,9 +60,11 @@ class VTABTask:
                                                         device=device)
 
     def run(self, epochs):
+        print("Training %s on %s" % (self.name, self.task))
         os.makedirs(self.out_dir, exist_ok=True)
         writer = SummaryWriter(log_dir=self.out_dir)
-        for e in range(epochs):
+        print("Training")
+        for e in tqdm.tqdm(range(epochs)):
             train_loss, train_accuracy = self.train_epoch()
             test_loss, test_accuracy = self.test()
             writer.add_scalar("TrainLoss/"+self.task, train_loss, e)

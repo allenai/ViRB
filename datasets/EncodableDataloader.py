@@ -7,7 +7,8 @@ class EncodableDataloader:
         model = model.to(device)
         data_stacks = {name: []  for name in model.required_encoding()}
         label_stack = []
-        for d, l in dataloader:
+        print("Encoding Data")
+        for d, l in tqdm.tqdm(dataloader):
             d = d.to(device)
             with torch.no_grad():
                 o = model.encoder_forward(d)
