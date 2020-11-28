@@ -13,7 +13,7 @@ class EncodableDataloader:
             with torch.no_grad():
                 o = model.encoder_forward(d)
                 for name, data_stack in data_stacks.items():
-                    data_stack.append(o[name])
+                    data_stack.append(o[name].detach())
             label_stack.append(l)
         self.data = {name: torch.cat(data_stacks[name], dim=0).to(device) for name in data_stacks}
         self.labels = torch.cat(label_stack, dim=0).to(device)
@@ -27,7 +27,7 @@ class EncodableDataloader:
         else:
             idxs = torch.randperm(self.__len__()).to(self.device)
         batch_idxs = [idxs[i:min(i+self.batch_size, self.__len__())] for i in range(self.__len__() // self.batch_size)]
-        return [({name: self.data[bi].detach() for name in self.data}, self.labels[bi]) for bi in batch_idxs]
+        return [({name: self.data[bi] for name in self.data}, self.labels[bi]) for bi in batch_idxs]
 
     def __len__(self):
         return self.data.size(0)
