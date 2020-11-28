@@ -17,3 +17,6 @@ class ClassificationHead(nn.Module):
 
     def forward(self, x):
         return self.head(x["embedding"])
+
+    def required_encoding(self):
+        return ["embedding"]

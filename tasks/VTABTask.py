@@ -4,6 +4,8 @@ from torch.utils.tensorboard import SummaryWriter
 import os
 import json
 
+from datasets.EncodableDataloader import EncodableDataloader
+
 
 class VTABTask:
 
@@ -29,6 +31,13 @@ class VTABTask:
         self.error = error
         self.batch_size = batch_size
         self.out_dir = out_dir
+
+        self.model = model
+        self.optimizer = optimizer
+        self.scheduler = scheduler
+        self.device = device
+        self.model.to(self.device)
+
         self.train_dataloader = torch.utils.data.DataLoader(train_set,
                                                             batch_size=batch_size,
                                                             shuffle=True,
@@ -37,11 +46,15 @@ class VTABTask:
                                                            batch_size=batch_size,
                                                            shuffle=False,
                                                            num_workers=1)
-        self.model = model
-        self.optimizer = optimizer
-        self.scheduler = scheduler
-        self.device = device
-        self.model.to(self.device)
+        if not self.model.train_encoder:
+            self.train_dataloader = EncodableDataloader(self.train_dataloader,
+                                                        self.model,
+                                                        batch_size=batch_size,
+                                                        shuffle=False)
+            self.test_dataloader = EncodableDataloader(self.test_dataloader,
+                                                        self.model,
+                                                        batch_size=batch_size,
+                                                        shuffle=False)
 
     def run(self, epochs):
         os.makedirs(self.out_dir, exist_ok=True)
@@ -70,12 +83,25 @@ class VTABTask:
         train_losses = []
         train_errors = []
         num_samples = 0
+        if self.model.train_encoder:
+            for x, label in self.train_dataloader:
+                num_samples_in_batch = x.size(0)
+                num_samples += num_samples_in_batch
+                x, label = x.to(self.device), label.to(self.device)
+                self.model.zero_grad()
+                out = self.model(x)
+                train_loss = self.loss(out, label)
+                train_loss.backward()
+                train_losses.append(train_loss.item() * num_samples_in_batch)
+                self.optimizer.step()
+                train_error = self.error(out, label)
+                train_errors.append(train_error.item() * num_samples_in_batch)
+            return np.sum(train_losses) / num_samples, np.sum(train_errors) / num_samples
         for x, label in self.train_dataloader:
             num_samples_in_batch = x.size(0)
             num_samples += num_samples_in_batch
-            x, label = x.to(self.device), label.to(self.device)
             self.model.zero_grad()
-            out = self.model(x)
+            out = self.model.head_forward(x)
             train_loss = self.loss(out, label)
             train_loss.backward()
             train_losses.append(train_loss.item() * num_samples_in_batch)
@@ -89,12 +115,23 @@ class VTABTask:
         test_losses = []
         test_errors = []
         num_samples = 0
+        if self.model.train_encoder:
+            for x, label in self.test_dataloader:
+                num_samples_in_batch = x.size(0)
+                num_samples += num_samples_in_batch
+                x, label = x.to(self.device), label.to(self.device)
+                with torch.no_grad():
+                    out = self.model(x)
+                    test_loss = self.loss(out, label)
+                    test_losses.append(test_loss.item() * num_samples_in_batch)
+                    test_error = self.error(out, label)
+                    test_errors.append(test_error.item() * num_samples_in_batch)
+            return np.sum(test_losses) / num_samples, np.sum(test_errors) / num_samples
         for x, label in self.test_dataloader:
             num_samples_in_batch = x.size(0)
             num_samples += num_samples_in_batch
-            x, label = x.to(self.device), label.to(self.device)
             with torch.no_grad():
-                out = self.model(x)
+                out = self.model.head_forward(x)
                 test_loss = self.loss(out, label)
                 test_losses.append(test_loss.item() * num_samples_in_batch)
                 test_error = self.error(out, label)

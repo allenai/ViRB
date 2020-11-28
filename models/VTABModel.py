@@ -13,9 +13,18 @@ class VTABModel(nn.Module):
         self.train_encoder = train_encoder
 
     def forward(self, x):
+        x = self.encoder_forward(x)
+        x = self.head_forward(x)
+        return x
+
+    def encoder_forward(self, x):
         if self.train_encoder:
-            return self.task_head(self.encoder(x))
-        else:
-            with torch.no_grad():
-                x = self.encoder(x)
-            return self.task_head(x)
+            return self.encoder(x)
+        with torch.no_grad():
+            return self.encoder(x)
+
+    def head_forward(self, x):
+        return self.task_head(x)
+
+    def required_encoding(self):
+        return self.task_head.required_encoding()
