@@ -50,11 +50,13 @@ class VTABTask:
             self.train_dataloader = EncodableDataloader(self.train_dataloader,
                                                         self.model,
                                                         batch_size=batch_size,
-                                                        shuffle=False)
+                                                        shuffle=False,
+                                                        device=device)
             self.test_dataloader = EncodableDataloader(self.test_dataloader,
                                                         self.model,
                                                         batch_size=batch_size,
-                                                        shuffle=False)
+                                                        shuffle=False,
+                                                        device=device)
 
     def run(self, epochs):
         os.makedirs(self.out_dir, exist_ok=True)
