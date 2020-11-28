@@ -9,7 +9,7 @@ class EncodableDataloader:
         label_stack = []
         for d, l in dataloader:
             d = d.to(device)
-            with torch.no_grad:
+            with torch.no_grad():
                 o = model.encoder_forward(d)
                 for name, data_stack in data_stacks.items():
                     data_stack.append(o[name])
