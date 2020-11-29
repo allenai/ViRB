@@ -10,12 +10,19 @@ class EncodableDataloader:
         data_stacks = {name: []  for name in model.required_encoding()}
         label_stack = []
         print("Encoding Data")
+        import time
+        print("A")
+        time.sleep(10)
         for d, l in tqdm.tqdm(dataloader):
             d = d.to(device)
             with torch.no_grad():
+                print("B")
+                time.sleep(10)
                 o = model.encoder_forward(d)
                 for name, data_stack in data_stacks.items():
                     data_stack.append(o[name].detach())
+                print("C")
+                time.sleep(10)
             label_stack.append(l)
         self.data = {name: torch.cat(data_stacks[name], dim=0).to(device) for name in data_stacks}
         self.labels = torch.cat(label_stack, dim=0).to(device)
