@@ -89,6 +89,10 @@ class VTABTask:
         train_errors = []
         num_samples = 0
         if self.model.train_encoder:
+            import time
+            print("Starting Sleep")
+            time.sleep(10)
+            print("Done Sleep")
             for x, label in self.train_dataloader:
                 num_samples_in_batch = x.size(0)
                 num_samples += num_samples_in_batch
