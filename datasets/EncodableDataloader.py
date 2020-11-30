@@ -32,9 +32,9 @@ class EncodableDataloader:
 
     def __iter__(self):
         if self.shuffle:
-            idxs = torch.arange(self.__len__()).to(self.device)
-        else:
             idxs = torch.randperm(self.__len__()).to(self.device)
+        else:
+            idxs = torch.arange(self.__len__()).to(self.device)
         batch_idxs = [idxs[i:min(i+self.batch_size, self.__len__())] for i in range(self.__len__() // self.batch_size)]
         return iter([({name: self.data[name][bi] for name in self.data}, self.labels[bi]) for bi in batch_idxs])
 
