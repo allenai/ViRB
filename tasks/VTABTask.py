@@ -51,7 +51,7 @@ class VTABTask:
             self.train_dataloader = EncodableDataloader(self.train_dataloader,
                                                         self.model,
                                                         batch_size=batch_size,
-                                                        shuffle=False,
+                                                        shuffle=True,
                                                         device=device)
             self.test_dataloader = EncodableDataloader(self.test_dataloader,
                                                        self.model,
