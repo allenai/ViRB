@@ -104,6 +104,7 @@ class VTABTask:
             return np.sum(train_losses) / num_samples, np.sum(train_errors) / num_samples
         for x, label in self.train_dataloader:
             num_samples_in_batch = x[list(x.keys())[0]].size(0)
+            print(num_samples_in_batch)
             num_samples += num_samples_in_batch
             self.model.zero_grad()
             out = self.model.head_forward(x)
