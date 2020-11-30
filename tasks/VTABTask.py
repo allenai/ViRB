@@ -21,7 +21,7 @@ class VTABTask:
             error,
             optimizer,
             out_dir,
-            scheduler,
+            scheduler=None,
             batch_size=32,
             num_workers=12,
             device="cpu"
