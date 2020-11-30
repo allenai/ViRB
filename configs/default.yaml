@@ -1,43 +1,43 @@
-Caltech101-0.1-11:
+Caltech101-0.1-sgd-1:
   task: "CalTech-101"
   optimizer: "sgd"
   lr: 0.1
-  num_epochs: 100
-Caltech101-0.1-12:
+  num_epochs: 200
+Caltech101-0.1-sgd-2:
   task: "CalTech-101"
   optimizer: "sgd"
   lr: 0.1
-  num_epochs: 100
-Caltech101-0.1-13:
+  num_epochs: 200
+Caltech101-0.1-sgd-3:
   task: "CalTech-101"
   optimizer: "sgd"
   lr: 0.1
-  num_epochs: 100
-Caltech101-0.1-14:
+  num_epochs: 200
+Caltech101-0.1-sgd-4:
   task: "CalTech-101"
   optimizer: "sgd"
   lr: 0.1
-  num_epochs: 100
-Caltech101-0.1-15:
+  num_epochs: 200
+Caltech101-0.001-adam-1:
   task: "CalTech-101"
-  optimizer: "sgd"
+  optimizer: "adam"
   lr: 0.1
-  num_epochs: 100
-Caltech101-0.1-16:
+  num_epochs: 200
+Caltech101-0.001-adam-2:
   task: "CalTech-101"
-  optimizer: "sgd"
+  optimizer: "adam"
   lr: 0.1
-  num_epochs: 100
-Caltech101-0.1-17:
+  num_epochs: 200
+Caltech101-0.001-adam-3:
   task: "CalTech-101"
-  optimizer: "sgd"
+  optimizer: "adam"
   lr: 0.1
-  num_epochs: 100
-Caltech101-0.1-18:
+  num_epochs: 200
+Caltech101-0.001-adam-4:
   task: "CalTech-101"
-  optimizer: "sgd"
+  optimizer: "adam"
   lr: 0.1
-  num_epochs: 100
+  num_epochs: 200
 #SUN397-1:
 #  task: "SUN397"
 #  optimizer: "sgd"
