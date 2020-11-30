@@ -89,7 +89,7 @@ def run_VTAB_task(config):
     loss_function = get_loss_function(config)
     error_function = get_error_function(config)
     optimizer = get_optimizer(config, model)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, config["lr_decay_step_size"])
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, config["lr_decay_step_size"], gamma=0.5)
     task = VTABTask(
         name=config["name"],
         task=config["task"],
