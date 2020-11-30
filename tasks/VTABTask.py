@@ -103,7 +103,7 @@ class VTABTask:
                 train_errors.append(train_error.item() * num_samples_in_batch)
             return np.sum(train_losses) / num_samples, np.sum(train_errors) / num_samples
         for x, label in self.train_dataloader:
-            num_samples_in_batch = x.size(0)
+            num_samples_in_batch = x[list(x.keys())[0]].size(0)
             num_samples += num_samples_in_batch
             self.model.zero_grad()
             out = self.model.head_forward(x)
@@ -133,7 +133,7 @@ class VTABTask:
                     test_errors.append(test_error.item() * num_samples_in_batch)
             return np.sum(test_losses) / num_samples, np.sum(test_errors) / num_samples
         for x, label in self.test_dataloader:
-            num_samples_in_batch = x.size(0)
+            num_samples_in_batch = x[list(x.keys())[0]].size(0)
             num_samples += num_samples_in_batch
             with torch.no_grad():
                 out = self.model.head_forward(x)
