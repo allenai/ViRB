@@ -41,12 +41,12 @@ class VTABTask:
 
         self.train_dataloader = torch.utils.data.DataLoader(train_set,
                                                             batch_size=batch_size,
-                                                            shuffle=False,
+                                                            shuffle=True,
                                                             num_workers=num_workers)
         self.test_dataloader = torch.utils.data.DataLoader(test_set,
                                                            batch_size=batch_size,
                                                            shuffle=False,
-                                                           num_workers=1)
+                                                           num_workers=num_workers)
         if not self.model.train_encoder:
             self.train_dataloader = EncodableDataloader(self.train_dataloader,
                                                         self.model,
