@@ -36,7 +36,7 @@ class EncodableDataloader:
         else:
             idxs = torch.randperm(self.__len__()).to(self.device)
         batch_idxs = [idxs[i:min(i+self.batch_size, self.__len__())] for i in range(self.__len__() // self.batch_size)]
-        iter([({name: self.data[bi] for name in self.data}, self.labels[bi]) for bi in batch_idxs])
+        iter([({name: self.data[name][bi] for name in self.data}, self.labels[bi]) for bi in batch_idxs])
 
     def __len__(self):
         return self.data[list(self.data.keys())[0]].size(0)
