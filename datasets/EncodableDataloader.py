@@ -39,4 +39,4 @@ class EncodableDataloader:
         iter([({name: self.data[bi] for name in self.data}, self.labels[bi]) for bi in batch_idxs])
 
     def __len__(self):
-        return self.data.size(0)
+        return self.data[list(self.data.keys())[0]].size(0)
