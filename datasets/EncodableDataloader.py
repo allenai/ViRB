@@ -16,6 +16,7 @@ class EncodableDataloader:
                 o = model.encoder_forward(d)
                 for name, data_stack in data_stacks.items():
                     data_stack.append(o[name].detach())
+                import sys
                 print("Size of stack", sys.getsizeof(data_stacks))
             label_stack.append(l)
         self.data = {name: torch.cat(data_stacks[name], dim=0).to(device) for name in data_stacks}
