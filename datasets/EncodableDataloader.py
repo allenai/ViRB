@@ -4,7 +4,7 @@ import tqdm
 
 class EncodableDataloader:
 
-    def __init__(self, dataloader, model, batch_size=512, shuffle=True, device="cpu"):
+    def __init__(self, dataloader, model, batch_size=256, shuffle=True, device="cpu"):
         model = model.to(device)
         model.eval()
         data_stacks = {name: [] for name in model.required_encoding()}
