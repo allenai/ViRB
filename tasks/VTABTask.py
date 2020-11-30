@@ -68,6 +68,7 @@ class VTABTask:
             train_loss, train_accuracy = self.train_epoch()
             test_loss, test_accuracy = self.test()
             writer.add_scalar("TrainLoss/"+self.task, train_loss, e)
+            writer.add_scalar("TrainAccuracy/" + self.task, train_accuracy, e)
             writer.add_scalar("TestAccuracy/"+self.task, test_accuracy, e)
             if self.scheduler:
                 self.scheduler.step()
@@ -113,7 +114,6 @@ class VTABTask:
             self.optimizer.step()
             train_error = self.error(out, label)
             train_errors.append(train_error.item() * num_samples_in_batch)
-        print("Num Samples:", num_samples)
         return np.sum(train_losses) / num_samples, np.sum(train_errors) / num_samples
 
     def test(self):
