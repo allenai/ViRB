@@ -56,7 +56,7 @@ class VTABTask:
             self.test_dataloader = EncodableDataloader(self.test_dataloader,
                                                        self.model,
                                                        batch_size=batch_size,
-                                                       shuffle=False,
+                                                       shuffle=True,
                                                        device=device)
 
     def run(self, epochs):
