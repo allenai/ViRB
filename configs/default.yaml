@@ -38,36 +38,47 @@
 #  optimizer: "adam"
 #  lr: 0.001
 #  num_epochs: 500
-SUN397-adam-0.01:
-  task: "SUN397"
-  optimizer: "adam"
-  lr: 0.01
-  num_epochs: 500
-SUN397-adam-0.0001:
-  task: "SUN397"
+#SUN397-adam-0.01:
+#  task: "SUN397"
+#  optimizer: "adam"
+#  lr: 0.01
+#  num_epochs: 500
+
+Caltech101-adam-0.0001:
+  task: "CalTech-101"
   optimizer: "adam"
   lr: 0.0001
   num_epochs: 500
-SUN397-adam-0.001:
-  task: "SUN397"
-  optimizer: "adam"
-  lr: 0.001
-  num_epochs: 500
-SUN397-sgd-0.1:
-  task: "SUN397"
-  optimizer: "sgd"
-  lr: 0.1
-  num_epochs: 500
-SUN397-sgd-0.01:
-  task: "SUN397"
-  optimizer: "sgd"
-  lr: 0.01
-  num_epochs: 500
-SUN397-sgd-0.001:
-  task: "SUN397"
-  optimizer: "sgd"
-  lr: 0.001
-  num_epochs: 500
+
+#### FINAL CONFIG
+#SUN397-adam-0.0001:
+#  task: "SUN397"
+#  optimizer: "adam"
+#  lr: 0.0001
+#  num_epochs: 500
+
+
+
+#SUN397-adam-0.001:
+#  task: "SUN397"
+#  optimizer: "adam"
+#  lr: 0.001
+#  num_epochs: 500
+#SUN397-sgd-0.1:
+#  task: "SUN397"
+#  optimizer: "sgd"
+#  lr: 0.1
+#  num_epochs: 500
+#SUN397-sgd-0.01:
+#  task: "SUN397"
+#  optimizer: "sgd"
+#  lr: 0.01
+#  num_epochs: 500
+#SUN397-sgd-0.001:
+#  task: "SUN397"
+#  optimizer: "sgd"
+#  lr: 0.001
+#  num_epochs: 500
 #SUN397-7:
 #  task: "SUN397"
 #  optimizer: "adam"
