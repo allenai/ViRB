@@ -9,24 +9,29 @@
 #  optimizer: "adam"
 #  lr: 0.0001
 #  num_epochs: 500
+#CLEVERNumObjects:
+#  task: "CLEVERNumObjects"
+#  optimizer: "adam"
+#  lr: 0.001
+#  num_epochs: 500
 
-CLEVERNumObjects-adam-0.0001:
-  task: "CLEVERNumObjects"
+CLEVERDist-adam-0.0001:
+  task: "CLEVERDist"
   optimizer: "adam"
   lr: 0.0001
   num_epochs: 500
-CLEVERNumObjects-adam-0.001:
-  task: "CLEVERNumObjects"
+CLEVERDist-adam-0.001:
+  task: "CLEVERDist"
   optimizer: "adam"
   lr: 0.001
   num_epochs: 500
-CLEVERNumObjects-sgd-0.001:
-  task: "CLEVERNumObjects"
+CLEVERDist-sgd-0.001:
+  task: "CLEVERDist"
   optimizer: "sgd"
   lr: 0.001
   num_epochs: 500
-CLEVERNumObjects-sgd-0.01:
-  task: "CLEVERNumObjects"
+CLEVERDist-sgd-0.01:
+  task: "CLEVERDist"
   optimizer: "sgd"
   lr: 0.01
   num_epochs: 500
