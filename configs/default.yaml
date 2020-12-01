@@ -1,101 +1,33 @@
-#Caltech101-0.1-sgd-1:
-#  task: "CalTech-101"
-#  optimizer: "sgd"
-#  lr: 0.1
-#  num_epochs: 500
-#Caltech101-0.1-sgd-2:
-#  task: "CalTech-101"
-#  optimizer: "sgd"
-#  lr: 0.1
-#  num_epochs: 500
-#Caltech101-0.1-sgd-3:
-#  task: "CalTech-101"
-#  optimizer: "sgd"
-#  lr: 0.1
-#  num_epochs: 500
-#Caltech101-0.1-sgd-4:
-#  task: "CalTech-101"
-#  optimizer: "sgd"
-#  lr: 0.1
-#  num_epochs: 500
-#Caltech101-0.001-adam-1:
-#  task: "CalTech-101"
-#  optimizer: "adam"
-#  lr: 0.001
-#  num_epochs: 500
-#Caltech101-0.001-adam-2:
-#  task: "CalTech-101"
-#  optimizer: "adam"
-#  lr: 0.001
-#  num_epochs: 500
-#Caltech101-0.001-adam-3:
-#  task: "CalTech-101"
-#  optimizer: "adam"
-#  lr: 0.001
-#  num_epochs: 500
-#Caltech101-0.001-adam-4:
-#  task: "CalTech-101"
-#  optimizer: "adam"
-#  lr: 0.001
-#  num_epochs: 500
-#SUN397-adam-0.01:
-#  task: "SUN397"
-#  optimizer: "adam"
-#  lr: 0.01
-#  num_epochs: 500
-
-Caltech101-sgd-0.01:
-  task: "CalTech-101"
-  optimizer: "sgd"
-  lr: 0.01
-  num_epochs: 500
-Caltech101-adam-0.01:
-  task: "CalTech-101"
-  optimizer: "adam"
-  lr: 0.01
-  num_epochs: 500
-Caltech101-adam-0.0001:
-  task: "CalTech-101"
-  optimizer: "adam"
-  lr: 0.0001
-  num_epochs: 500
-
 #### FINAL CONFIG
-#SUN397-adam-0.0001:
+#SUN397:
 #  task: "SUN397"
 #  optimizer: "adam"
 #  lr: 0.0001
 #  num_epochs: 500
-
-
-
-#SUN397-adam-0.001:
-#  task: "SUN397"
+#Caltech101:
+#  task: "CalTech-101"
 #  optimizer: "adam"
-#  lr: 0.001
+#  lr: 0.0001
 #  num_epochs: 500
-#SUN397-sgd-0.1:
-#  task: "SUN397"
-#  optimizer: "sgd"
-#  lr: 0.1
-#  num_epochs: 500
-#SUN397-sgd-0.01:
-#  task: "SUN397"
-#  optimizer: "sgd"
-#  lr: 0.01
-#  num_epochs: 500
-#SUN397-sgd-0.001:
-#  task: "SUN397"
-#  optimizer: "sgd"
-#  lr: 0.001
-#  num_epochs: 500
-#SUN397-7:
-#  task: "SUN397"
-#  optimizer: "adam"
-#  lr: 0.001
-#  num_epochs: 100
-#SUN397-8:
-#  task: "SUN397"
-#  optimizer: "adam"
-#  lr: 0.001
-#  num_epochs: 100
+
+CLEVERNumObjects-adam-0.0001:
+  task: "CLEVERNumObjects"
+  optimizer: "adam"
+  lr: 0.0001
+  num_epochs: 500
+CLEVERNumObjects-adam-0.001:
+  task: "CLEVERNumObjects"
+  optimizer: "adam"
+  lr: 0.001
+  num_epochs: 500
+CLEVERNumObjects-sgd-0.001:
+  task: "CLEVERNumObjects"
+  optimizer: "sgd"
+  lr: 0.001
+  num_epochs: 500
+CLEVERNumObjects-sgd-0.01:
+  task: "CLEVERNumObjects"
+  optimizer: "sgd"
+  lr: 0.01
+  num_epochs: 500
+
