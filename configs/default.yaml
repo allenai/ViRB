@@ -46,8 +46,18 @@
 
 Caltech101-sgd-0.01:
   task: "CalTech-101"
+  optimizer: "sgd"
+  lr: 0.01
+  num_epochs: 500
+Caltech101-adam-0.01:
+  task: "CalTech-101"
   optimizer: "adam"
   lr: 0.01
+  num_epochs: 500
+Caltech101-adam-0.0001:
+  task: "CalTech-101"
+  optimizer: "adam"
+  lr: 0.0001
   num_epochs: 500
 
 #### FINAL CONFIG
