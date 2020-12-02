@@ -22,6 +22,8 @@ class PixelWisePredictionHead(nn.Module):
         d2 = self.up4(d3_)
         d2_ = _upsample_add(d2, x["layer1"])
         out = self.up5(d2_)
+        print("OUT SHAPE:", out.shape)
+        exit()
         out = out.permute(0, 2, 3, 1).flatten()
         return out
 
