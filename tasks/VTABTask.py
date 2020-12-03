@@ -108,9 +108,6 @@ class VTABTask:
             num_samples += num_samples_in_batch
             self.model.zero_grad()
             out = self.model.head_forward(x)
-            print("OUT SHAPE", out.shape)
-            print("LABEL SHAPE", label.shape)
-            exit()
             train_loss = self.loss(out, label)
             train_loss.backward()
             train_losses.append(train_loss.item() * num_samples_in_batch)

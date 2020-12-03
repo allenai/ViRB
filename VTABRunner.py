@@ -15,15 +15,15 @@ CLASSIFICATION_TASKS = [
     "CalTech-101",
     "CIFAR-100",
     "Pets",
-    "Pets-Detection",
     "Eurosat",
     "dtd",
     "CLEVERNumObjects",
     "CLEVERDist",
     "SUN397"
 ]
-PIXEL_WISE_CLASSIFICATION = [
-    "Flowers-Detection"
+BINARY_PIXEL_WISE_CLASSIFICATION = [
+    "Flowers-Detection",
+    "Pets-Detection"
 ]
 
 
@@ -58,9 +58,9 @@ def get_dataset_class(config):
 
 
 def get_task_head(config, dataset):
-    if config["task"] == "Pets-Detection":
+    if config["task"] in BINARY_PIXEL_WISE_CLASSIFICATION:
         from models.PixelWisePredictionHead import PixelWisePredictionHead
-        return PixelWisePredictionHead(2)
+        return PixelWisePredictionHead(1)
     if config["task"] in CLASSIFICATION_TASKS:
         if "embedding" not in config["output_shape"]:
             raise Exception("A model needs to have an embedding output in order to be tested on classification tasks!")
@@ -81,14 +81,17 @@ def get_optimizer(config, model):
 def get_loss_function(config):
     if config["task"] in CLASSIFICATION_TASKS:
         return torch.nn.CrossEntropyLoss()
-    if config["task"] in PIXEL_WISE_CLASSIFICATION:
-        return torch.nn.CrossEntropyLoss
+    if config["task"] in BINARY_PIXEL_WISE_CLASSIFICATION:
+        return torch.nn.BCELoss()
 
 
 def get_error_function(config):
     if config["task"] in CLASSIFICATION_TASKS:
         from utils.error_functions import classification_error
         return classification_error
+    if config["task"] in BINARY_PIXEL_WISE_CLASSIFICATION:
+        from utils.error_functions import binary_pixel_wise_prediction_loss
+        return binary_pixel_wise_prediction_loss
 
 
 def run_VTAB_task(config):
