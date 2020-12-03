@@ -22,7 +22,7 @@ class VTABTask:
             optimizer,
             out_dir,
             scheduler=None,
-            batch_size=256,
+            batch_size=32,
             num_workers=12,
             device="cpu",
             pre_encode=True
@@ -39,6 +39,7 @@ class VTABTask:
         self.scheduler = scheduler
         self.device = device
         self.model.to(self.device)
+        self.pre_encode = pre_encode
 
         self.train_dataloader = torch.utils.data.DataLoader(train_set,
                                                             batch_size=batch_size,
@@ -48,7 +49,7 @@ class VTABTask:
                                                            batch_size=batch_size,
                                                            shuffle=False,
                                                            num_workers=num_workers)
-        if pre_encode:
+        if self.pre_encode:
             self.train_dataloader = EncodableDataloader(self.train_dataloader,
                                                         self.model,
                                                         batch_size=batch_size,
@@ -90,7 +91,7 @@ class VTABTask:
         train_losses = []
         train_errors = []
         num_samples = 0
-        if self.model.train_encoder:
+        if self.pre_encode:
             for x, label in self.train_dataloader:
                 num_samples_in_batch = x.size(0)
                 num_samples += num_samples_in_batch
@@ -122,7 +123,7 @@ class VTABTask:
         test_losses = []
         test_errors = []
         num_samples = 0
-        if self.model.train_encoder:
+        if self.pre_encode:
             for x, label in self.test_dataloader:
                 num_samples_in_batch = x.size(0)
                 num_samples += num_samples_in_batch
