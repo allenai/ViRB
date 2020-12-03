@@ -91,7 +91,7 @@ class VTABTask:
         train_losses = []
         train_errors = []
         num_samples = 0
-        if self.pre_encode:
+        if not self.pre_encode:
             for x, label in self.train_dataloader:
                 num_samples_in_batch = x.size(0)
                 num_samples += num_samples_in_batch
@@ -123,7 +123,7 @@ class VTABTask:
         test_losses = []
         test_errors = []
         num_samples = 0
-        if self.pre_encode:
+        if not self.pre_encode:
             for x, label in self.test_dataloader:
                 num_samples_in_batch = x.size(0)
                 num_samples += num_samples_in_batch
