@@ -22,7 +22,7 @@ class ResNet50Encoder(nn.Module):
         x = self.model.maxpool(x)
 
         x = self.model.layer1(x)
-        res["layer2"] = x
+        # res["layer2"] = x
         x = self.model.layer2(x)
         res["layer3"] = x
         x = self.model.layer3(x)

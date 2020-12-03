@@ -32,7 +32,7 @@ class PetsDetectionEncodableDataset(EncodableDataset):
         path = self.data[idx]
 
         mask_path = "data/pets/annotations/trimaps/" + path.split("/")[-1].replace("jpg", "png")
-        mask = torch.FloatTensor(np.array(Image.open(mask_path).resize((112, 112)))).unsqueeze(0)
+        mask = torch.FloatTensor(np.array(Image.open(mask_path).resize((56, 56)))).unsqueeze(0)
         mask -= 1
         mask[mask == 2] = 1
 
