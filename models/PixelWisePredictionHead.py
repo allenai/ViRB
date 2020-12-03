@@ -13,14 +13,14 @@ class PixelWisePredictionHead(nn.Module):
         self.up5 = upshufflenorelu(64, output_size, 2)
 
     def forward(self, x):
-        d5 = self.up1(x["layer5"])
-        d5_ = _upsample_add(d5, x["layer4"])
+        d5 = self.up1(x["layer5"].float())
+        d5_ = _upsample_add(d5, x["layer4"].float())
         d4 = self.up2(d5_)
-        d4_ = _upsample_add(d4, x["layer3"])
+        d4_ = _upsample_add(d4, x["layer3"].float())
         d3 = self.up3(d4_)
-        d3_ = _upsample_add(d3, x["layer2"])
+        d3_ = _upsample_add(d3, x["layer2"].float())
         d2 = self.up4(d3_)
-        d2_ = _upsample_add(d2, x["layer1"])
+        d2_ = _upsample_add(d2, x["layer1"].float())
         out = self.up5(d2_)
         return out
 

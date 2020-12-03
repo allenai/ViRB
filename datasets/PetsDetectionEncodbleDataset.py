@@ -19,14 +19,6 @@ class PetsDetectionEncodableDataset(EncodableDataset):
         super().__init__()
         path = 'data/pets/train/*/*.jpg' if train else 'data/pets/test/*/*.jpg'
         self.data = list(glob.glob(path))
-        random.shuffle(self.data)
-        self.labels = []
-        for path in self.data:
-            mask_path = "data/pets/annotations/trimaps/"+path.split("/")[-1].replace("jpg", "png")
-            mask = torch.LongTensor(np.array(Image.open(mask_path).resize((224, 224)))).unsqueeze(0)
-            mask -= 1
-            mask[mask == 2] = 1
-            self.labels.append(mask)
         self.preprocessor = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
@@ -37,10 +29,19 @@ class PetsDetectionEncodableDataset(EncodableDataset):
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
             idx = idx.tolist()
+        path = self.data[idx]
 
-        if len(self.encoded_data) == 0:
-            return self.preprocessor(Image.open(self.data[idx]).convert('RGB')), self.labels[idx]
-        return self.encoded_data[idx], self.labels[idx]
+        mask_path = "data/pets/annotations/trimaps/" + path.split("/")[-1].replace("jpg", "png")
+        mask = torch.FloatTensor(np.array(Image.open(mask_path).resize((224, 224)))).unsqueeze(0).half()
+        mask -= 1
+        mask[mask == 2] = 1
+
+        img = self.preprocessor(Image.open(path).convert('RGB')).half()
+
+        return img, mask
+
+    def __len__(self):
+        return len(self.data)
 
     def encode(self, model):
         model.to(self.device)
