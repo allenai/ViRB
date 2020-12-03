@@ -82,7 +82,7 @@ def get_loss_function(config):
     if config["task"] in CLASSIFICATION_TASKS:
         return torch.nn.CrossEntropyLoss()
     if config["task"] in BINARY_PIXEL_WISE_CLASSIFICATION:
-        return torch.nn.BCELoss()
+        return torch.nn.BCEWithLogitsLoss()
 
 
 def get_error_function(config):
