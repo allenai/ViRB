@@ -22,8 +22,6 @@ class PixelWisePredictionHead(nn.Module):
         d2 = self.up4(d3_)
         d2_ = _upsample_add(d2, x["layer1"])
         out = self.up5(d2_)
-        if out.size(3) == 1:
-            out = out.view(out.size(0), out.size(1), out.size(2))
         return out
 
     def required_encoding(self):
