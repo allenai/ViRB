@@ -22,7 +22,7 @@ CLEVERNumObjects:
 Pets:
   task: "Pets"
   optimizer: "adam"
-  lr: 0.001
+  lr: 0.0001
   num_epochs: 500
 dtd:
   task: "dtd"
