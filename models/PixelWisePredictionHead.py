@@ -18,7 +18,7 @@ class PixelWisePredictionHead(nn.Module):
         d4 = self.up2(d5_)
         d4_ = _upsample_add(d4, x["layer3"])
         d3 = self.up3(d4_)
-        d3_ = _upsample_add(d3, x["layer3"])
+        d3_ = _upsample_add(d3, x["layer2"])
         d2 = self.up4(d3_)
         d2_ = _upsample_add(d2, x["layer1"])
         out = self.up5(d2_)
