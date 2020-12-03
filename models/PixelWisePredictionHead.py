@@ -26,7 +26,7 @@ class PixelWisePredictionHead(nn.Module):
         return out
 
     def required_encoding(self):
-        return ["layer1", "layer2", "layer3", "layer4", "layer5"]
+        return ["layer2", "layer3", "layer4", "layer5"]
 
 
 def _upsample_add(x, y):
