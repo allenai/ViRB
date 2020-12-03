@@ -16,7 +16,7 @@ class EncodableDataloader:
             with torch.no_grad():
                 o = model.encoder_forward(d)
                 for name, data_stack in data_stacks.items():
-                    data_stack.append(o[name].detach().half())
+                    data_stack.append(o[name].detach())
                 # total_size = 0
                 # for name, data_stack in data_stacks.items():
                 #     for tensor in data_stack:
