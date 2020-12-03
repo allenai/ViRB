@@ -23,7 +23,7 @@ class PetsDetectionEncodableDataset(EncodableDataset):
         self.labels = []
         for path in self.data:
             mask_path = "data/pets/annotations/trimaps/"+path.split("/")[-1].replace("jpg", "png")
-            mask = torch.LongTensor(np.array(Image.open(mask_path).resize((56, 56)))).view(-1)
+            mask = torch.LongTensor(np.array(Image.open(mask_path).resize((224, 224)))).view(-1)
             mask - 1
             mask[mask == 2] = 1
             self.labels.append(mask)
