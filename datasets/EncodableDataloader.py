@@ -16,7 +16,7 @@ class EncodableDataloader:
             with torch.no_grad():
                 o = model.encoder_forward(d)
                 for name, data_stack in data_stacks.items():
-                    data_stack.append(o[name].half().detach())
+                    data_stack.append(o[name].detach())
                 # total_size = 0
                 # for name, data_stack in data_stacks.items():
                 #     for tensor in data_stack:
@@ -24,9 +24,9 @@ class EncodableDataloader:
                 # import time
                 # time.sleep(10)
                 # print("Size of stack: %.4f GB" % (total_size/1.0e9))
-            label_stack.append(l.half())
-        self.data = {name: torch.cat(data_stacks[name], dim=0).half().to(device) for name in data_stacks}
-        self.labels = torch.cat(label_stack, dim=0).half().to(device)
+            label_stack.append(l)
+        self.data = {name: torch.cat(data_stacks[name], dim=0).to(device) for name in data_stacks}
+        self.labels = torch.cat(label_stack, dim=0).to(device)
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.device = device
