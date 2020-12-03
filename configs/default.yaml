@@ -15,11 +15,11 @@
 #  lr: 0.001
 #  num_epochs: 500
 
-PetsDetection:
+PetsDetection-train-encoder:
   task: "Pets-Detection"
   optimizer: "adam"
   lr: 0.0001
-  num_epochs: 500
+  num_epochs: 100
 
 #CLEVERDist-adam-0.0001:
 #  task: "CLEVERDist"
