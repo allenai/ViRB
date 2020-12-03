@@ -20,8 +20,9 @@ class PixelWisePredictionHead(nn.Module):
         d3 = self.up3(d4_)
         d3_ = _upsample_add(d3, x["layer2"].float())
         d2 = self.up4(d3_)
-        d2_ = _upsample_add(d2, x["layer1"].float())
-        out = self.up5(d2_)
+        out = d2
+        # d2_ = _upsample_add(d2, x["layer1"].float())
+        # out = self.up5(d2_)
         return out
 
     def required_encoding(self):
