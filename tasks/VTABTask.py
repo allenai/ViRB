@@ -22,7 +22,7 @@ class VTABTask:
             optimizer,
             out_dir,
             scheduler=None,
-            batch_size=32,
+            batch_size=512,
             num_workers=12,
             device="cpu",
             pre_encode=True
@@ -42,11 +42,11 @@ class VTABTask:
         self.pre_encode = pre_encode
 
         self.train_dataloader = torch.utils.data.DataLoader(train_set,
-                                                            batch_size=batch_size,
+                                                            batch_size=1,
                                                             shuffle=True,
                                                             num_workers=num_workers)
         self.test_dataloader = torch.utils.data.DataLoader(test_set,
-                                                           batch_size=batch_size,
+                                                           batch_size=1,
                                                            shuffle=False,
                                                            num_workers=num_workers)
         if self.pre_encode:
