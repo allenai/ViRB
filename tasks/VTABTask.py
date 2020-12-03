@@ -24,7 +24,8 @@ class VTABTask:
             scheduler=None,
             batch_size=256,
             num_workers=12,
-            device="cpu"
+            device="cpu",
+            pre_encode=True
     ):
         self.name = name
         self.task = task
@@ -47,7 +48,7 @@ class VTABTask:
                                                            batch_size=batch_size,
                                                            shuffle=False,
                                                            num_workers=num_workers)
-        if not self.model.train_encoder:
+        if pre_encode:
             self.train_dataloader = EncodableDataloader(self.train_dataloader,
                                                         self.model,
                                                         batch_size=batch_size,
