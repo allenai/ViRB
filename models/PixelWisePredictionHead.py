@@ -6,8 +6,8 @@ class PixelWisePredictionHead(nn.Module):
 
     def __init__(self, output_size):
         super().__init__()
-        self.up1 = upshuffle(2048, 256, 2, kernel_size=3, stride=1, padding=1)
-        self.up2 = upshuffle(256, 64, 2, kernel_size=3, stride=1, padding=1)
+        self.up1 = upshuffle(2048, 64, 2, kernel_size=3, stride=1, padding=1)
+        self.up2 = upshuffle(64, 64, 2, kernel_size=3, stride=1, padding=1)
         self.up3 = upshuffle(64, 64, 2, kernel_size=3, stride=1, padding=1)
         self.up4 = upshuffle(64, 64, 2, kernel_size=3, stride=1, padding=1)
         self.up5 = upshufflenorelu(64, output_size, 2)
@@ -27,11 +27,11 @@ class PixelWisePredictionHead(nn.Module):
         d5 = self.up1(x["layer5"].float())
         d5_ = _upsample(d5, 2)
         d4 = self.up2(d5_)
-        d4_ =  _upsample(d4, 2)
+        d4_ = _upsample(d4, 2)
         d3 = self.up3(d4_)
-        d3_ =  _upsample(d3, 2)
+        d3_ = _upsample(d3, 2)
         d2 = self.up4(d3_)
-        d2_ =  _upsample(d2, 2)
+        d2_ = _upsample(d2, 2)
         out = self.up5(d2_)
         return out
 

@@ -29,6 +29,7 @@ class VTABTask:
     ):
         if pre_encode is None:
             pre_encode = not model.train_encoder
+        self.pre_encode = pre_encode
         self.name = name
         self.task = task
         self.loss = loss
@@ -41,7 +42,6 @@ class VTABTask:
         self.scheduler = scheduler
         self.device = device
         self.model.to(self.device)
-        self.pre_encode = pre_encode
 
         self.train_dataloader = torch.utils.data.DataLoader(train_set,
                                                             batch_size=batch_size,
