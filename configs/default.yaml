@@ -36,14 +36,35 @@
 #  lr: 0.0001
 #  num_epochs: 500
 
-PetsDetection-sgd-0.1:
-  task: "Pets-Detection"
-  optimizer: "sgd"
-  lr: 0.1
+#PetsDetection:
+#  task: "Pets-Detection"
+#  optimizer: "sgd"
+#  lr: 0.01
+#  num_epochs: 500
+#  scheduler:
+#    step_size: 100
+#    gamma: 0.5
+
+dtd-adam-0.0001:
+  task: "dtd"
+  optimizer: "adam"
+  lr: 0.0001
   num_epochs: 500
-  scheduler:
-    step_size: 100
-    gamma: 0.5
+dtd-adam-0.001:
+  task: "dtd"
+  optimizer: "adam"
+  lr: 0.001
+  num_epochs: 500
+dtd-sgd-0.001:
+  task: "dtd"
+  optimizer: "sgd"
+  lr: 0.001
+  num_epochs: 500
+dtd-sgd-0.01:
+  task: "dtd"
+  optimizer: "sgd"
+  lr: 0.01
+  num_epochs: 500
 
 #CLEVERDist-adam-0.0001:
 #  task: "CLEVERDist"
