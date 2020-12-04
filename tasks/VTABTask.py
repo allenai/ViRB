@@ -139,6 +139,7 @@ class VTABTask:
             return np.sum(test_losses) / num_samples, np.sum(test_errors) / num_samples
 
         out = None
+        label = None
 
         for x, label in self.test_dataloader:
             num_samples_in_batch = x[list(x.keys())[0]].size(0)
@@ -154,5 +155,8 @@ class VTABTask:
         npout = torch.round(torch.nn.functional.sigmoid(out[0, 0])).detach().cpu()
         plt.imshow(npout)
         plt.savefig("prediction.png")
+        nplabel = label[0, 0].detach().cpu()
+        plt.imshow(nplabel)
+        plt.savefig("label.png")
 
         return np.sum(test_losses) / num_samples, np.sum(test_errors) / num_samples

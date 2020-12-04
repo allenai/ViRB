@@ -26,9 +26,9 @@ class PixelWisePredictionHead(nn.Module):
 
         d5 = self.up1(x["layer5"].float())
         d4 = self.up2(d5)
-        d3 = self.up3(d4)
-        d2 = self.up4(d3)
-        out = self.up5(d2)
+        out = self.up3(d4)
+        # d2 = self.up4(d3)
+        # out = self.up5(d2)
         return out
 
     def required_encoding(self):
