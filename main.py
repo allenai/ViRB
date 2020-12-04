@@ -7,7 +7,7 @@ def main():
     runner = VTABRunner(
         encoder=ResNet50Encoder(weights=sys.argv[2]),
         run_name=sys.argv[1],
-        train_encoder=False,
+        train_encoder=True,
     )
     runner.run()
 
