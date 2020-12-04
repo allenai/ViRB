@@ -25,8 +25,8 @@ class PixelWisePredictionHead(nn.Module):
         # return out
 
         d5 = self.up1(x["layer5"].float())
-        d4 = self.up2(d5) + x["layer4"].float()
-        out = self.up3(d4)
+        d4 = self.up2(d5 + x["layer4"].float())
+        out = self.up3(d4 + x["layer3"].float())
         # d2 = self.up4(d3)
         # out = self.up5(d2)
         return out
