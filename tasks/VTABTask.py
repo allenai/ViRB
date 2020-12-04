@@ -153,7 +153,7 @@ class VTABTask:
 
         import matplotlib.pyplot as plt
         import random
-        ridx = random.randint(0, out.size(0))
+        ridx = random.randint(0, out.size(0)-1)
         npout = torch.round(torch.sigmoid(out[ridx, 0])).detach().cpu()
         plt.imshow(npout)
         plt.savefig("prediction.png")
