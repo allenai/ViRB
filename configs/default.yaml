@@ -39,7 +39,7 @@
 PetsDetection-pre-encoded:
   task: "Pets-Detection"
   optimizer: "adam"
-  lr: 0.0001
+  lr: 0.001
   num_epochs: 100
 
 #CLEVERDist-adam-0.0001:
