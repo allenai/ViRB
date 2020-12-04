@@ -25,8 +25,10 @@ class VTABTask:
             batch_size=256,
             num_workers=12,
             device="cpu",
-            pre_encode=True
+            pre_encode=None
     ):
+        if pre_encode is None:
+            pre_encode = not model.train_encoder
         self.name = name
         self.task = task
         self.loss = loss
