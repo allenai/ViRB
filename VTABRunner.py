@@ -105,7 +105,7 @@ def run_VTAB_task(config):
     error_function = get_error_function(config)
     optimizer = get_optimizer(config, model)
     # scheduler = torch.optim.lr_scheduler.StepLR(optimizer, config["lr_decay_step_size"], gamma=0.5)
-    pre_encode = config["pre_encode"] if "pre_encode" in config else True
+    pre_encode = config["pre_encode"] if "pre_encode" in config else None
     task = VTABTask(
         name=config["name"],
         task=config["task"],
