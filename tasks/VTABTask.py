@@ -152,10 +152,12 @@ class VTABTask:
                 test_errors.append(test_error.item() * num_samples_in_batch)
 
         import matplotlib.pyplot as plt
-        npout = torch.round(torch.sigmoid(out[1, 0])).detach().cpu()
+        import random
+        ridx = random.randint(0, out.size(0))
+        npout = torch.round(torch.sigmoid(out[ridx, 0])).detach().cpu()
         plt.imshow(npout)
         plt.savefig("prediction.png")
-        nplabel = label[1, 0].detach().cpu()
+        nplabel = label[ridx, 0].detach().cpu()
         plt.imshow(nplabel)
         plt.savefig("label.png")
 
