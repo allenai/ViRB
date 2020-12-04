@@ -9,5 +9,5 @@ def classification_error(out, labels):
 
 def binary_pixel_wise_prediction_loss(out, labels):
     with torch.no_grad():
-        predictions = torch.round(torch.nn.functional.sigmoid(out))
+        predictions = torch.round(torch.sigmoid(out))
         return (predictions == labels).sum() / (labels.size(0) * labels.size(2) * labels.size(3))
