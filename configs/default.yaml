@@ -36,7 +36,7 @@
 #  lr: 0.0001
 #  num_epochs: 500
 
-PetsDetection-0.01:
+PetsDetection-sgd-0.01-finetune:
   task: "Pets-Detection"
   optimizer: "sgd"
   lr: 0.01
@@ -45,7 +45,7 @@ PetsDetection-0.01:
     step_size: 100
     gamma: 0.5
 
-PetsDetectio-sgd-0.001:
+PetsDetectio-sgd-0.001-finetune:
   task: "Pets-Detection"
   optimizer: "sgd"
   lr: 0.001
