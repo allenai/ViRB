@@ -36,8 +36,8 @@
 #  lr: 0.0001
 #  num_epochs: 500
 
-PetsDetection-pre-encoded:
-  task: "Pets-Detection-adam"
+PetsDetection-adam:
+  task: "Pets-Detection"
   optimizer: "adam"
   lr: 0.01
   num_epochs: 500
