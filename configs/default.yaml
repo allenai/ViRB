@@ -36,7 +36,7 @@
 #  lr: 0.0001
 #  num_epochs: 500
 
-PetsDetection-adam:
+PetsDetection-adam-0.0001:
   task: "Pets-Detection"
   optimizer: "adam"
   lr: 0.0001
