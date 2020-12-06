@@ -36,23 +36,23 @@
 #  lr: 0.0001
 #  num_epochs: 500
 
-#PetsDetection-sgd-0.01-full-sized-output:
-#  task: "Pets-Detection"
-#  optimizer: "sgd"
-#  lr: 0.01
-#  num_epochs: 500
-#  scheduler:
-#    step_size: 100
-#    gamma: 0.5
-
-PetsDetectio-sgd-0.001-full-sized-output-saving:
+PetsDetection-sgd-0.01-full-sized-output-saving:
   task: "Pets-Detection"
   optimizer: "sgd"
-  lr: 0.001
+  lr: 0.01
   num_epochs: 500
   scheduler:
     step_size: 100
     gamma: 0.5
+
+#PetsDetectio-sgd-0.001-full-sized-output:
+#  task: "Pets-Detection"
+#  optimizer: "sgd"
+#  lr: 0.001
+#  num_epochs: 500
+#  scheduler:
+#    step_size: 100
+#    gamma: 0.5
 
 #dtd-adam-0.0001:
 #  task: "dtd"
