@@ -4,8 +4,8 @@ import tqdm
 
 class EncodableDataloader:
 
-    def __init__(self, dataloader, model, batch_size=32, shuffle=True, device="cpu"):
-        # device = "cpu"
+    def __init__(self, dataloader, model, batch_size=32, shuffle=True, device="cpu", principal_directions=None):
+        self.principal_directions = principal_directions
         model = model.to(device)
         model.eval()
         data_stacks = {name: [] for name in model.required_encoding()}
@@ -16,7 +16,18 @@ class EncodableDataloader:
             with torch.no_grad():
                 o = model.encoder_forward(d)
                 for name, data_stack in data_stacks.items():
-                    data_stack.append(o[name].detach().half())
+                    if model.pca_embeddings() is not None and name in model.pca_embeddings():
+                        with torch.no_grad():
+                            x = o[name].detach()
+                            if self.principal_directions is None:
+                                self.principal_directions = {}
+                            if name not in self.principal_directions:
+                                self.principal_directions[name] = get_principal_directions(
+                                    x, model.pca_embeddings()[name]
+                                )
+                            data_stack.append(get_principal_components(x, self.principal_directions[name]).half())
+                    else:
+                        data_stack.append(o[name].detach().half())
                 # total_size = 0
                 # for name, data_stack in data_stacks.items():
                 #     for tensor in data_stack:
@@ -41,3 +52,27 @@ class EncodableDataloader:
 
     def __len__(self):
         return self.data[list(self.data.keys())[0]].size(0)
+
+    def get_principal_directions(self):
+        return self.principal_directions
+
+
+def get_principal_directions(x, num_dims):
+    q = x.size(1)
+    if len(x.shape) == 4:
+        x = x.permute(0, 2, 3, 1)
+        x = x.reshape(-1, x.size(3))
+    _, _, V = torch.pca_lowrank(x, q=q, niter=10)
+    return V[:, :num_dims]
+
+
+def get_principal_components(x, V):
+    if len(x.shape) == 4:
+        x = x.permute(0, 2, 3, 1)
+        original_shape = x.shape
+        x = x.reshape(-1, x.size(3))
+    res = torch.matmul(x, V)
+    if len(original_shape) == 4:
+        res = res.reshape(original_shape[0], original_shape[1], original_shape[2], -1)
+        res = res.permute(0, 3, 1, 2)
+    return res

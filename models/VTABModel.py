@@ -28,3 +28,8 @@ class VTABModel(nn.Module):
 
     def required_encoding(self):
         return self.task_head.required_encoding()
+
+    def pca_embeddings(self):
+        if hasattr(self.task_head, "pca_embeddings"):
+            return self.task_head.pca_embeddings()
+        return None

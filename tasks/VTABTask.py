@@ -57,11 +57,13 @@ class VTABTask:
                                                         batch_size=batch_size,
                                                         shuffle=True,
                                                         device=device)
-            self.test_dataloader = EncodableDataloader(self.test_dataloader,
-                                                       self.model,
-                                                       batch_size=batch_size,
-                                                       shuffle=False,
-                                                       device=device)
+            self.test_dataloader = EncodableDataloader(
+                self.test_dataloader,
+                self.model,
+                batch_size=batch_size,
+                shuffle=False,
+                device=device,
+                principal_directions=self.train_dataloader.get_principal_directions())
 
     def run(self, epochs):
         print("Training %s on %s" % (self.name, self.task))
@@ -151,14 +153,14 @@ class VTABTask:
                 test_error = self.error(out, label)
                 test_errors.append(test_error.item() * num_samples_in_batch)
 
-        import matplotlib.pyplot as plt
-        import random
-        ridx = random.randint(0, out.size(0)-1)
-        npout = torch.round(torch.sigmoid(out[ridx, 0])).detach().cpu()
-        plt.imshow(npout)
-        plt.savefig("prediction.png")
-        nplabel = label[ridx, 0].detach().cpu()
-        plt.imshow(nplabel)
-        plt.savefig("label.png")
+        # import matplotlib.pyplot as plt
+        # import random
+        # ridx = random.randint(0, out.size(0)-1)
+        # npout = torch.round(torch.sigmoid(out[ridx, 0])).detach().cpu()
+        # plt.imshow(npout)
+        # plt.savefig("prediction.png")
+        # nplabel = label[ridx, 0].detach().cpu()
+        # plt.imshow(nplabel)
+        # plt.savefig("label.png")
 
         return np.sum(test_losses) / num_samples, np.sum(test_errors) / num_samples

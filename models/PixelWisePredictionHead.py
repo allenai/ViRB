@@ -32,7 +32,16 @@ class PixelWisePredictionHead(nn.Module):
         return out
 
     def required_encoding(self):
-        return ["layer5"]
+        return ["layer1", "layer2", "layer3", "layer4", "layer5"]
+
+    def pca_embeddings(self):
+        return {
+            "layer1": 8,
+            "layer2": 8,
+            "layer3": 8,
+            "layer4": 8,
+            "layer5": 64
+        }
 
 
 def _upsample_add(x, y):
