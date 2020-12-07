@@ -122,7 +122,7 @@ def run_VTAB_task(config):
         scheduler=scheduler,
         num_workers=config["num_workers"],
         device=config["device"],
-        pre_encode=pre_encode
+        pre_encode=None
     )
     results = task.run(config["num_epochs"])
     return results
