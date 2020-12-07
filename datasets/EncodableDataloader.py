@@ -58,7 +58,7 @@ class EncodableDataloader:
 
 
 def get_principal_directions(x, num_dims):
-    q = x.size(1)
+    q = min(x.size(1), 1024)
     if len(x.shape) == 4:
         x = x.permute(0, 2, 3, 1)
         x = x.reshape(-1, x.size(3))
