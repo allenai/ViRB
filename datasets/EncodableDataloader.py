@@ -37,7 +37,7 @@ class EncodableDataloader:
                 # print("Size of stack: %.4f GB" % (total_size/1.0e9))
             label_stack.append(l)
         print("data stacks!!!")
-        for name in data_stack:
+        for name in data_stacks:
             print(name, len(data_stacks[name]))
         self.data = {name: torch.cat(data_stacks[name], dim=0).to(device) for name in data_stacks}
         self.labels = torch.cat(label_stack, dim=0).to(device)
