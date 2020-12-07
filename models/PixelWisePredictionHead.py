@@ -8,10 +8,10 @@ class PixelWisePredictionHead(nn.Module):
     def __init__(self, output_size):
         super().__init__()
         self.up1 = upshuffle(256, 256, 2, kernel_size=3, stride=1, padding=1)
-        self.up2 = upshuffle(258, 256, 2, kernel_size=3, stride=1, padding=1)
-        self.up3 = upshuffle(258, 256, 2, kernel_size=3, stride=1, padding=1)
-        self.up4 = upshuffle(258, 64, 2, kernel_size=3, stride=1, padding=1)
-        self.up5 = upshufflenorelu(66, output_size, 2)
+        self.up2 = upshuffle(260, 256, 2, kernel_size=3, stride=1, padding=1)
+        self.up3 = upshuffle(260, 256, 2, kernel_size=3, stride=1, padding=1)
+        self.up4 = upshuffle(260, 64, 2, kernel_size=3, stride=1, padding=1)
+        self.up5 = upshufflenorelu(68, output_size, 2)
 
     def forward(self, x):
         # d5 = self.up1(x["layer5"].float())
@@ -38,10 +38,10 @@ class PixelWisePredictionHead(nn.Module):
 
     def pca_embeddings(self):
         return {
-            "layer1": 2,
-            "layer2": 2,
-            "layer3": 2,
-            "layer4": 2,
+            "layer1": 4,
+            "layer2": 4,
+            "layer3": 4,
+            "layer4": 4,
             "layer5": 256
         }
 
