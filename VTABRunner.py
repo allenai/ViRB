@@ -25,6 +25,9 @@ BINARY_PIXEL_WISE_CLASSIFICATION = [
     "Flowers-Detection",
     "Pets-Detection"
 ]
+PIXEL_WISE_REGRESSION = [
+    "THORDepth"
+]
 
 
 def get_dataset_class(config):
@@ -55,9 +58,15 @@ def get_dataset_class(config):
     if config["task"] == "SUN397":
         from datasets.SUN397EncodbleDataset import SUN397EncodableDataset
         return SUN397EncodableDataset
+    if config["task"] == "THORDepth":
+        from datasets.ThorDepthEncodbleDataset import ThorDepthEncodableDataset
+        return ThorDepthEncodableDataset
 
 
 def get_task_head(config, dataset):
+    if config["task"] in PIXEL_WISE_REGRESSION:
+        from models.PixelWisePredictionHead import PixelWisePredictionHead
+        return PixelWisePredictionHead(1)
     if config["task"] in BINARY_PIXEL_WISE_CLASSIFICATION:
         from models.PixelWisePredictionHead import PixelWisePredictionHead
         return PixelWisePredictionHead(1)
@@ -79,6 +88,8 @@ def get_optimizer(config, model):
 
 
 def get_loss_function(config):
+    if config["task"] in PIXEL_WISE_REGRESSION:
+        return torch.nn.SmoothL1Loss()
     if config["task"] in CLASSIFICATION_TASKS:
         return torch.nn.CrossEntropyLoss()
     if config["task"] in BINARY_PIXEL_WISE_CLASSIFICATION:
@@ -86,6 +97,8 @@ def get_loss_function(config):
 
 
 def get_error_function(config):
+    if config["task"] in PIXEL_WISE_REGRESSION:
+        return torch.nn.SmoothL1Loss()
     if config["task"] in CLASSIFICATION_TASKS:
         from utils.error_functions import classification_error
         return classification_error
