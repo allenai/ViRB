@@ -37,6 +37,16 @@ class PetsDetectionEncodableDataset(EncodableDataset):
         mask[mask == 2] = 1
 
         img = self.preprocessor(Image.open(path).convert('RGB'))
+
+        # i = img.detach().numpy().transpose(1, 2, 0)
+        # plt.figure(0)
+        # plt.imshow(i)
+        # m = mask.detach()
+        # plt.figure(1)
+        # plt.imshow(m[0])
+        # plt.show()
+        # exit()
+
         return img, mask
 
     def __len__(self):

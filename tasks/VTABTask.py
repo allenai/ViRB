@@ -46,7 +46,7 @@ class VTABTask:
         self.train_dataloader = torch.utils.data.DataLoader(train_set,
                                                             batch_size=batch_size,
                                                             shuffle=True,
-                                                            num_workers=num_workers)
+                                                            num_workers=12)
         self.test_dataloader = torch.utils.data.DataLoader(test_set,
                                                            batch_size=batch_size,
                                                            shuffle=False,
