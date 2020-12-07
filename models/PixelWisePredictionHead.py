@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -25,10 +26,10 @@ class PixelWisePredictionHead(nn.Module):
         # return out
 
         d5 = self.up1(x["layer5"].float())
-        d4 = self.up2(d5 + x["layer4"].float())
-        d3 = self.up3(d4 + x["layer3"].float())
-        d2 = self.up4(d3 + x["layer2"].float())
-        out = self.up5(d2 + x["layer1"].float())
+        d4 = self.up2(torch.cat((d5, x["layer4"].float()), dim=1))
+        d3 = self.up3(torch.cat((d4, x["layer3"].float()), dim=1))
+        d2 = self.up4(torch.cat((d3, x["layer2"].float()), dim=1))
+        out = self.up5(torch.cat((d2, x["layer1"].float()), dim=1))
         return out
 
     def required_encoding(self):
@@ -37,10 +38,10 @@ class PixelWisePredictionHead(nn.Module):
 
     def pca_embeddings(self):
         return {
-            "layer1": 1,
-            "layer2": 1,
-            "layer3": 1,
-            "layer4": 1,
+            "layer1": 4,
+            "layer2": 4,
+            "layer3": 4,
+            "layer4": 4,
             "layer5": 256
         }
 
