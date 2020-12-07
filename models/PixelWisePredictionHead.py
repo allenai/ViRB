@@ -6,10 +6,10 @@ class PixelWisePredictionHead(nn.Module):
 
     def __init__(self, output_size):
         super().__init__()
-        self.up1 = upshuffle(32, 64, 2, kernel_size=3, stride=1, padding=1)
-        self.up2 = upshuffle(64, 64, 2, kernel_size=3, stride=1, padding=1)
-        self.up3 = upshuffle(64, 64, 2, kernel_size=3, stride=1, padding=1)
-        self.up4 = upshuffle(64, 64, 2, kernel_size=3, stride=1, padding=1)
+        self.up1 = upshuffle(2048, 1024, 2, kernel_size=3, stride=1, padding=1)
+        self.up2 = upshuffle(1024, 512, 2, kernel_size=3, stride=1, padding=1)
+        self.up3 = upshuffle(512, 256, 2, kernel_size=3, stride=1, padding=1)
+        self.up4 = upshuffle(256, 64, 2, kernel_size=3, stride=1, padding=1)
         self.up5 = upshufflenorelu(64, output_size, 2)
 
     def forward(self, x):
