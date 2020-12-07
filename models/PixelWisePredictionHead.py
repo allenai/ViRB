@@ -6,30 +6,30 @@ class PixelWisePredictionHead(nn.Module):
 
     def __init__(self, output_size):
         super().__init__()
-        self.up1 = upshuffle(2048, 64, 2, kernel_size=3, stride=1, padding=1)
-        self.up2 = upshuffle(64, 64, 2, kernel_size=3, stride=1, padding=1)
-        self.up3 = upshuffle(64, 64, 2, kernel_size=3, stride=1, padding=1)
-        self.up4 = upshuffle(64, 64, 2, kernel_size=3, stride=1, padding=1)
-        self.up5 = upshufflenorelu(64, output_size, 2)
+        self.up1 = upshuffle(64, 8, 2, kernel_size=3, stride=1, padding=1)
+        self.up2 = upshuffle(8, 8, 2, kernel_size=3, stride=1, padding=1)
+        self.up3 = upshuffle(8, 8, 2, kernel_size=3, stride=1, padding=1)
+        self.up4 = upshuffle(8, 8, 2, kernel_size=3, stride=1, padding=1)
+        self.up5 = upshufflenorelu(8, output_size, 2)
 
     def forward(self, x):
-        # d5 = self.up1(x["layer5"].float())
-        # d5_ = _upsample_add(d5, x["layer4"].float())
-        # d4 = self.up2(d5_)
-        # d4_ = _upsample_add(d4, x["layer3"].float())
-        # d3 = self.up3(d4_)
-        # d3_ = _upsample_add(d3, x["layer2"].float())
-        # d2 = self.up4(d3_)
-        # d2_ = _upsample_add(d2, x["layer1"].float())
-        # out = self.up5(d2_)
-        # return out
-
         d5 = self.up1(x["layer5"].float())
-        d4 = self.up2(d5)
-        d3 = self.up3(d4)
-        d2 = self.up4(d3)
-        out = self.up5(d2)
+        d5_ = _upsample_add(d5, x["layer4"].float())
+        d4 = self.up2(d5_)
+        d4_ = _upsample_add(d4, x["layer3"].float())
+        d3 = self.up3(d4_)
+        d3_ = _upsample_add(d3, x["layer2"].float())
+        d2 = self.up4(d3_)
+        d2_ = _upsample_add(d2, x["layer1"].float())
+        out = self.up5(d2_)
         return out
+
+        # d5 = self.up1(x["layer5"].float())
+        # d4 = self.up2(d5)
+        # d3 = self.up3(d4)
+        # d2 = self.up4(d3)
+        # out = self.up5(d2)
+        # return out
 
     def required_encoding(self):
         return ["layer1", "layer2", "layer3", "layer4", "layer5"]
