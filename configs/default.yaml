@@ -9,32 +9,32 @@ CIFAR-100:
   task: "CIFAR-100"
   optimizer: "adam"
   lr: 0.0001
-  num_epochs: 500
+  num_epochs: 100
 Caltech101:
   task: "CalTech-101"
   optimizer: "adam"
   lr: 0.0001
-  num_epochs: 500
+  num_epochs: 100
 CLEVERNumObjects:
   task: "CLEVERNumObjects"
   optimizer: "adam"
   lr: 0.001
-  num_epochs: 500
+  num_epochs: 100
 Pets:
   task: "Pets"
   optimizer: "adam"
   lr: 0.0001
-  num_epochs: 500
+  num_epochs: 100
 dtd:
   task: "dtd"
   optimizer: "adam"
   lr: 0.0001
-  num_epochs: 500
+  num_epochs: 100
 Eurosat:
   task: "Eurosat"
   optimizer: "adam"
   lr: 0.0001
-  num_epochs: 500
+  num_epochs: 100
 PetsDetection-adam-0.0003:
   task: "Pets-Detection"
   optimizer: "adam"
