@@ -5,54 +5,54 @@
 #  lr: 0.0001
 #  num_epochs: 500
 
-#CIFAR-100:
-#  task: "CIFAR-100"
-#  optimizer: "adam"
-#  lr: 0.0001
-#  num_epochs: 500
-#Caltech101:
-#  task: "CalTech-101"
-#  optimizer: "adam"
-#  lr: 0.0001
-#  num_epochs: 500
-#CLEVERNumObjects:
-#  task: "CLEVERNumObjects"
-#  optimizer: "adam"
-#  lr: 0.001
-#  num_epochs: 500
-#Pets:
-#  task: "Pets"
-#  optimizer: "adam"
-#  lr: 0.0001
-#  num_epochs: 500
-#dtd:
-#  task: "dtd"
-#  optimizer: "adam"
-#  lr: 0.0001
-#  num_epochs: 500
-#Eurosat:
-#  task: "Eurosat"
-#  optimizer: "adam"
-#  lr: 0.0001
-#  num_epochs: 500
-#PetsDetection-adam-0.0003:
-#  task: "Pets-Detection"
-#  optimizer: "adam"
-#  lr: 0.0003
-#  num_epochs: 100
-
-
-ThorDepth-adam-0.0003:
-  task: "THORDepth"
+CIFAR-100:
+  task: "CIFAR-100"
+  optimizer: "adam"
+  lr: 0.0001
+  num_epochs: 500
+Caltech101:
+  task: "CalTech-101"
+  optimizer: "adam"
+  lr: 0.0001
+  num_epochs: 500
+CLEVERNumObjects:
+  task: "CLEVERNumObjects"
+  optimizer: "adam"
+  lr: 0.001
+  num_epochs: 500
+Pets:
+  task: "Pets"
+  optimizer: "adam"
+  lr: 0.0001
+  num_epochs: 500
+dtd:
+  task: "dtd"
+  optimizer: "adam"
+  lr: 0.0001
+  num_epochs: 500
+Eurosat:
+  task: "Eurosat"
+  optimizer: "adam"
+  lr: 0.0001
+  num_epochs: 500
+PetsDetection-adam-0.0003:
+  task: "Pets-Detection"
   optimizer: "adam"
   lr: 0.0003
   num_epochs: 100
 
-ThorDepth-adam-0.0001:
-  task: "THORDepth"
-  optimizer: "adam"
-  lr: 0.0001
-  num_epochs: 500
+
+#ThorDepth-adam-0.0003:
+#  task: "THORDepth"
+#  optimizer: "adam"
+#  lr: 0.0003
+#  num_epochs: 100
+#
+#ThorDepth-adam-0.0001:
+#  task: "THORDepth"
+#  optimizer: "adam"
+#  lr: 0.0001
+#  num_epochs: 500
 
 #PetsDetectio-sgd-0.001-full-sized-output:
 #  task: "Pets-Detection"
