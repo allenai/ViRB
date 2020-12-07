@@ -36,7 +36,7 @@
 #  lr: 0.0001
 #  num_epochs: 500
 
-PetsDetection-sgd-0.01-full-sized-pca-mixed-embeddings:
+PetsDetection-sgd-0.01-full-sized-pca-1-channel-embeddings:
   task: "Pets-Detection"
   optimizer: "sgd"
   lr: 0.01
