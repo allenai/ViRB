@@ -36,42 +36,38 @@
 #  lr: 0.0001
 #  num_epochs: 500
 
-PetsDetection-sgd-0.01-full-sized-no-pre-encode:
+PetsDetection-sgd-0.01-full-sized-big-decoder:
   task: "Pets-Detection"
   optimizer: "sgd"
   lr: 0.01
   num_epochs: 500
-  pre_encode: false
   scheduler:
     step_size: 100
     gamma: 0.5
 
-PetsDetection-sgd-0.001-full-sized-no-pre-encod:
+PetsDetection-sgd-0.001-full-sized-big-decoder:
   task: "Pets-Detection"
   optimizer: "sgd"
   lr: 0.001
   num_epochs: 500
-  pre_encode: false
   scheduler:
     step_size: 100
     gamma: 0.5
 
-PetsDetection-adam-0.001-full-sized-no-pre-encod:
+PetsDetection-adam-0.001-full-sized-big-decoder:
   task: "Pets-Detection"
   optimizer: "adam"
   lr: 0.001
   num_epochs: 500
-  pre_encode: false
   scheduler:
     step_size: 100
     gamma: 0.5
 
-PetsDetection-adam-0.0001-full-sized-no-pre-encod:
+PetsDetection-adam-0.0001-full-sized-big-decoder:
   task: "Pets-Detection"
   optimizer: "adam"
   lr: 0.0001
   num_epochs: 500
-  pre_encode: false
   scheduler:
     step_size: 100
     gamma: 0.5
