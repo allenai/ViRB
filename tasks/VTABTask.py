@@ -22,7 +22,7 @@ class VTABTask:
             optimizer,
             out_dir,
             scheduler=None,
-            batch_size=256,
+            batch_size=32,
             num_workers=12,
             device="cpu",
             pre_encode=None
@@ -46,7 +46,7 @@ class VTABTask:
         self.train_dataloader = torch.utils.data.DataLoader(train_set,
                                                             batch_size=batch_size,
                                                             shuffle=True,
-                                                            num_workers=12)
+                                                            num_workers=num_workers)
         self.test_dataloader = torch.utils.data.DataLoader(test_set,
                                                            batch_size=batch_size,
                                                            shuffle=False,
