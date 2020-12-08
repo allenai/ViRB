@@ -124,7 +124,7 @@ def run_VTAB_task(config):
     cpu_name = mp.current_process().name
     cpu_id = int(cpu_name[cpu_name.find('-') + 1:]) - 1
     gpu_id = GPU_IDS[cpu_id]
-    print("CPU ID %d, GPU ID" % (cpu_id, gpu_id))
+    print("CPU ID %d, GPU ID %s" % (cpu_id, gpu_id))
 
     dataset_class = get_dataset_class(config)
     trainset = dataset_class(train=True)
