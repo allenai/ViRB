@@ -135,17 +135,24 @@ def run_VTAB_task(config):
     training_configs = []
     print("AAA")
     for tc_name, tc in config["training_configs"].items():
-        encoder = config["encoder"]
+        print("1")
+        encoder = copy.deepcopy(config["encoder"])
+        print("2")
         task_head = get_task_head(config, trainset)
+        print("3")
         model = VTABModel(encoder, task_head, train_encoder=config["train_encoder"])
+        print("4")
         optimizer = get_optimizer(tc, model)
+        print("5")
         scheduler = get_scheduler(tc, optimizer)
+        print("6")
         training_configs.append({
             "name": tc_name,
             "model": model,
             "optimizer": optimizer,
             "scheduler": scheduler
         })
+        print("7")
     print("BBB")
     pre_encode = config["pre_encode"] if "pre_encode" in config else None
     task = VTABTask(
