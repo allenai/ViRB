@@ -123,8 +123,8 @@ def run_VTAB_task(config):
 
     cpu_name = mp.current_process().name
     cpu_id = int(cpu_name[cpu_name.find('-') + 1:]) - 1
-    print("CPU ID %d" % cpu_id)
     gpu_id = GPU_IDS[cpu_id]
+    print("CPU ID %d, GPU ID" % (cpu_id, gpu_id))
 
     dataset_class = get_dataset_class(config)
     trainset = dataset_class(train=True)
@@ -133,7 +133,7 @@ def run_VTAB_task(config):
     error_function = get_error_function(config)
 
     training_configs = []
-
+    print("AAA")
     for tc_name, tc in config["training_configs"].items():
         encoder = copy.deepcopy(config["encoder"])
         task_head = get_task_head(config, trainset)
@@ -146,7 +146,7 @@ def run_VTAB_task(config):
             "optimizer": optimizer,
             "scheduler": scheduler
         })
-
+    print("BBB")
     pre_encode = config["pre_encode"] if "pre_encode" in config else None
     task = VTABTask(
         config["experiment_name"],
@@ -162,6 +162,7 @@ def run_VTAB_task(config):
         pre_encode=pre_encode
     )
     results = task.run(config["num_epochs"])
+    print("CCC")
     return results
 
 
@@ -190,7 +191,7 @@ class VTABRunner:
                 self.experiment_queue.append(experiment)
 
     def run(self):
-        pool = mp.Pool(len(GPU_IDS))
+        pool = mp.Pool(min(len(GPU_IDS), len(self.experiment_queue)))
         pool.map(run_VTAB_task, self.experiment_queue)
 
         # if self.num_threads == 1 or len(self.experiment_queue) == 1:
