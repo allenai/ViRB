@@ -29,6 +29,7 @@ PIXEL_WISE_REGRESSION = [
     "THORDepth"
 ]
 
+GPU_IDS = ["cuda:%d" % i for i in range(torch.cuda.device_count())] if torch.cuda.device_count() > 0 else ["cpu"]
 
 def get_dataset_class(config):
     if config["task"] == "CalTech-101":
@@ -71,10 +72,10 @@ def get_task_head(config, dataset):
         from models.PixelWisePredictionHead import PixelWisePredictionHead
         return PixelWisePredictionHead(1)
     if config["task"] in CLASSIFICATION_TASKS:
-        if "embedding" not in config["output_shape"]:
+        if "embedding" not in config["encoder"].outputs():
             raise Exception("A model needs to have an embedding output in order to be tested on classification tasks!")
         from models.ClassificationHead import ClassificationHead
-        return ClassificationHead(config["output_shape"]["embedding"][0], dataset.num_classes())
+        return ClassificationHead(config["encoder"].outputs()["embedding"][0], dataset.num_classes())
 
 
 def get_optimizer(config, model):
@@ -85,6 +86,17 @@ def get_optimizer(config, model):
             return torch.optim.SGD(model.parameters(), lr=config["lr"], momentum=config["momentum"])
         else:
             return torch.optim.SGD(model.parameters(), lr=config["lr"])
+
+
+def get_scheduler(config, optimizer):
+    if "scheduler" not in config:
+        return None
+    if config["scheduler"]["type"] == "StepLR":
+        return torch.optim.lr_scheduler.StepLR(
+            optimizer,
+            config["scheduler"]["type"]["step_size"],
+            gamma=config["scheduler"]["type"]["gamma"]
+        )
 
 
 def get_loss_function(config):
@@ -108,95 +120,91 @@ def get_error_function(config):
 
 
 def run_VTAB_task(config):
+
+    cpu_name = mp.current_process().name
+    cpu_id = int(cpu_name[cpu_name.find('-') + 1:]) - 1
+    print("CPU ID %d" % cpu_id)
+    gpu_id = GPU_IDS[cpu_id]
+
     dataset_class = get_dataset_class(config)
     trainset = dataset_class(train=True)
     testset = dataset_class(train=False)
-    encoder = copy.deepcopy(config["encoder"])
-    task_head = get_task_head(config, trainset)
-    model = VTABModel(encoder, task_head, train_encoder=config["train_encoder"])
     loss_function = get_loss_function(config)
     error_function = get_error_function(config)
-    optimizer = get_optimizer(config, model)
-    scheduler = None
-    if "scheduler" in config:
-        sc = config["scheduler"]
-        scheduler = torch.optim.lr_scheduler.StepLR(optimizer, sc["step_size"], gamma=sc["gamma"])
+
+    training_configs = []
+
+    for tc_name, tc in config["training_configs"].items():
+        encoder = copy.deepcopy(config["encoder"])
+        task_head = get_task_head(config, trainset)
+        model = VTABModel(encoder, task_head, train_encoder=config["train_encoder"])
+        optimizer = get_optimizer(tc, model)
+        scheduler = get_scheduler(tc, optimizer)
+        training_configs.append({
+            "name": tc_name,
+            "model": model,
+            "optimizer": optimizer,
+            "scheduler": scheduler
+        })
+
     pre_encode = config["pre_encode"] if "pre_encode" in config else None
     task = VTABTask(
-        name=config["name"],
-        task=config["task"],
-        model=model,
+        config["experiment_name"],
+        config["task_name"],
+        training_configs=training_configs,
         train_set=trainset,
         test_set=testset,
         loss=loss_function,
         error=error_function,
-        optimizer=optimizer,
-        out_dir="out/"+config["run_name"]+"/"+config["name"],
-        scheduler=scheduler,
+        out_dir="out/"+config["experiment_name"]+"/"+config["task_name"],
         num_workers=config["num_workers"],
-        device=config["device"],
+        device=gpu_id,
         pre_encode=pre_encode
     )
     results = task.run(config["num_epochs"])
     return results
 
 
-def run_VTAB_queue(queue, return_dict=None):
-    if return_dict is None:
-        return_dict = {}
-    for experiment in queue:
-        return_dict[experiment["name"]] = run_VTAB_task(experiment)
-    return return_dict
-
-
 class VTABRunner:
 
     def __init__(
             self,
-            encoder,
-            run_name,
-            output_shape={"embedding": torch.Size([2048])},
+            experiments,
             train_encoder=False,
-            experiment_config_path="configs/default.yaml",
+            experiment_config_path="configs/vtab_configs/default.yaml",
             num_gpus=torch.cuda.device_count(),
             total_num_workers=12
     ):
         self.num_threads = num_gpus if num_gpus > 0 else 1
         with open(experiment_config_path) as file:
-            experiments = yaml.load(file, Loader=yaml.FullLoader)
+            tasks = yaml.load(file, Loader=yaml.FullLoader)
         self.experiment_queue = []
-        for i, (name, experiment) in enumerate(experiments.items()):
-            experiment["name"] = name
-            experiment["run_name"] = run_name
-            experiment["encoder"] = encoder
-            experiment["train_encoder"] = train_encoder
-            experiment["output_shape"] = output_shape
-            experiment["device"] = "cuda:%d" % (i % num_gpus) if num_gpus > 0 else "cpu"
-            experiment["num_workers"] = total_num_workers // self.num_threads
-            self.experiment_queue.append(experiment)
+        for experiment_name, experiment_encoder in experiments.items():
+            for task_name, task in tasks.items():
+                experiment = copy.deepcopy(task)
+                experiment["task_name"] = task_name
+                experiment["experiment_name"] = experiment_name
+                experiment["encoder"] = experiment_encoder
+                experiment["train_encoder"] = train_encoder
+                experiment["num_workers"] = total_num_workers // self.num_threads
+                self.experiment_queue.append(experiment)
 
     def run(self):
-        if self.num_threads == 1 or len(self.experiment_queue) == 1:
-            results = run_VTAB_queue(self.experiment_queue)
-        else:
-            experiments_per_device = [[] for _ in range(self.num_threads)]
-            for experiment in self.experiment_queue:
-                idx = int(experiment["device"][-1])
-                experiments_per_device[idx].append(experiment)
-            mp.freeze_support()
-            mp.set_start_method('spawn')
-            manager = mp.Manager()
-            results = manager.dict()
-            procs = [
-                mp.Process(target=run_VTAB_queue, args=(experiments_per_device[i], results))
-                for i in range(self.num_threads)
-            ]
-            [proc.start() for proc in procs]
-            [proc.join() for proc in procs]
-        with open("out/results.json", "w+") as f:
-            try:
-                current_results = json.load(f)
-            except:
-                current_results = {}
-            current_results.update(dict(results))
-            json.dump(current_results, f)
+        pool = mp.Pool(len(GPU_IDS))
+        pool.map(run_VTAB_task, self.experiment_queue)
+
+        # if self.num_threads == 1 or len(self.experiment_queue) == 1:
+        #     run_VTAB_queue(self.experiment_queue)
+        # else:
+        #     experiments_per_device = [[] for _ in range(self.num_threads)]
+        #     for experiment in self.experiment_queue:
+        #         idx = int(experiment["device"][-1])
+        #         experiments_per_device[idx].append(experiment)
+        #     mp.freeze_support()
+        #     mp.set_start_method('spawn')
+        #     procs = [
+        #         mp.Process(target=run_VTAB_queue, args=(experiments_per_device[i]))
+        #         for i in range(self.num_threads)
+        #     ]
+        #     [proc.start() for proc in procs]
+        #     [proc.join() for proc in procs]

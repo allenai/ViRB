@@ -1,45 +1,59 @@
 #### FINAL CONFIG
-#SUN397:
-#  task: "SUN397"
+SUN397-adam:
+  task: "SUN397"
+  training_configs:
+    adam-0.0001:
+      optimizer: "adam"
+      lr: 0.0001
+      num_epochs: 500
+    adam-0.001:
+      optimizer: "adam"
+      lr: 0.001
+      num_epochs: 500
+    sgd-0.01:
+      optimizer: "sgd"
+      lr: 0.01
+      num_epochs: 500
+    sgd-0.001:
+      optimizer: "sgd"
+      lr: 0.001
+      num_epochs: 500
+
+#CIFAR-100:
+#  task: "CIFAR-100"
 #  optimizer: "adam"
 #  lr: 0.0001
-#  num_epochs: 500
-
-CIFAR-100:
-  task: "CIFAR-100"
-  optimizer: "adam"
-  lr: 0.0001
-  num_epochs: 100
-Caltech101:
-  task: "CalTech-101"
-  optimizer: "adam"
-  lr: 0.0001
-  num_epochs: 100
-CLEVERNumObjects:
-  task: "CLEVERNumObjects"
-  optimizer: "adam"
-  lr: 0.001
-  num_epochs: 100
-Pets:
-  task: "Pets"
-  optimizer: "adam"
-  lr: 0.0001
-  num_epochs: 100
-dtd:
-  task: "dtd"
-  optimizer: "adam"
-  lr: 0.0001
-  num_epochs: 100
-Eurosat:
-  task: "Eurosat"
-  optimizer: "adam"
-  lr: 0.0001
-  num_epochs: 100
-PetsDetection-adam-0.0003:
-  task: "Pets-Detection"
-  optimizer: "adam"
-  lr: 0.0003
-  num_epochs: 100
+#  num_epochs: 100
+#Caltech101:
+#  task: "CalTech-101"
+#  optimizer: "adam"
+#  lr: 0.0001
+#  num_epochs: 100
+#CLEVERNumObjects:
+#  task: "CLEVERNumObjects"
+#  optimizer: "adam"
+#  lr: 0.001
+#  num_epochs: 100
+#Pets:
+#  task: "Pets"
+#  optimizer: "adam"
+#  lr: 0.0001
+#  num_epochs: 100
+#dtd:
+#  task: "dtd"
+#  optimizer: "adam"
+#  lr: 0.0001
+#  num_epochs: 100
+#Eurosat:
+#  task: "Eurosat"
+#  optimizer: "adam"
+#  lr: 0.0001
+#  num_epochs: 100
+#PetsDetection-adam-0.0003:
+#  task: "Pets-Detection"
+#  optimizer: "adam"
+#  lr: 0.0003
+#  num_epochs: 100
 
 
 #ThorDepth-adam-0.0003:
@@ -60,6 +74,7 @@ PetsDetection-adam-0.0003:
 #  lr: 0.001
 #  num_epochs: 500
 #  scheduler:
+#    type: "StepLR"
 #    step_size: 100
 #    gamma: 0.5
 

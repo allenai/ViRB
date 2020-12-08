@@ -34,3 +34,13 @@ class ResNet50Encoder(nn.Module):
         x = torch.flatten(x, 1)
         res["embedding"] = x
         return res
+
+    def outputs(self):
+        return {
+            "embedding": torch.Size([2048]),
+            "layer1": torch.Size([2048, 7, 7]),
+            "layer2": torch.Size([1024, 56, 56]),
+            "layer3": torch.Size([512, 28, 28]),
+            "layer4": torch.Size([256, 14, 14]),
+            "layer5": torch.Size([64, 7, 7])
+        }
