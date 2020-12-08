@@ -1,5 +1,5 @@
 #### FINAL CONFIG
-SUN397-adam:
+SUN397:
   task: "SUN397"
   training_configs:
     adam-0.0001:

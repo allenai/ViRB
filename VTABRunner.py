@@ -157,6 +157,7 @@ def run_VTAB_task(config):
         print("7")
     print("BBB")
     pre_encode = config["pre_encode"] if "pre_encode" in config else None
+    print("Experiment Name %s, Task Name %s" % (config["experiment_name"], config["task_name"]))
     task = VTABTask(
         config["experiment_name"],
         config["task_name"],
