@@ -199,7 +199,7 @@ class VTABRunner:
             idQueue.put(id)
         thread_storage = threading.local()
         pool = ThreadPool(len(GPU_IDS), initializer=init_gpu_id, initargs=(idQueue, thread_storage))
-        pool.map(run_VTAB_task, (self.experiment_queue, thread_storage))
+        pool.map(run_VTAB_task, self.experiment_queue, thread_storage)
 
         # if self.num_threads == 1 or len(self.experiment_queue) == 1:
         #     run_VTAB_queue(self.experiment_queue)
