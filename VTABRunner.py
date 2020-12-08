@@ -6,6 +6,7 @@ import copy
 import multiprocessing as mp
 from multiprocessing.pool import ThreadPool
 import threading
+import queue
 
 from models.ResNet50Encoder import ResNet50Encoder
 from models.VTABModel import VTABModel
@@ -194,8 +195,9 @@ class VTABRunner:
                 self.experiment_queue.append(experiment)
 
     def run(self):
-        manager = mp.Manager()
-        idQueue = manager.Queue()
+        # manager = mp.Manager()
+        # idQueue = manager.Queue()
+        idQueue = queue.Queue()
         print("GPU_IDS", GPU_IDS)
         for id in GPU_IDS:
             idQueue.put(id)
