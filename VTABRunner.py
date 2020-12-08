@@ -122,7 +122,7 @@ def get_error_function(config):
 
 
 def run_VTAB_task(config):
-
+    global GPU_ID
     print("GPU ID %s" % GPU_ID)
     dataset_class = get_dataset_class(config)
     trainset = dataset_class(train=True)
