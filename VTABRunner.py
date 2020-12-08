@@ -123,12 +123,7 @@ def get_error_function(config):
 
 def run_VTAB_task(config):
 
-    cpu_name = mp.current_process()
-    print(os.getpid())
-    # cpu_id = int(cpu_name[cpu_name.find('-') + 1:]) - 1
-    gpu_id = 0 # GPU_IDS[cpu_id]
     print("GPU ID %s" % GPU_ID)
-
     dataset_class = get_dataset_class(config)
     trainset = dataset_class(train=True)
     testset = dataset_class(train=False)
@@ -159,16 +154,16 @@ def run_VTAB_task(config):
         error=error_function,
         out_dir="out/"+config["experiment_name"]+"/"+config["task_name"],
         num_workers=config["num_workers"],
-        device=gpu_id,
+        device=GPU_ID,
         pre_encode=pre_encode
     )
     results = task.run(config["num_epochs"])
     return results
 
 
-def init_gpu(gpuid):
+def init_gpu_id(queue):
     global GPU_ID
-    GPU_ID = gpuid
+    GPU_ID = queue.get()
 
 
 class VTABRunner:
@@ -196,7 +191,11 @@ class VTABRunner:
                 self.experiment_queue.append(experiment)
 
     def run(self):
-        pool = ThreadPool(len(GPU_IDS), initializer=init_gpu, initargs=GPU_IDS)
+        manager = mp.Manager()
+        idQueue = manager.Queue()
+        for id in GPU_IDS:
+            idQueue.put(id)
+        pool = ThreadPool(len(GPU_IDS), initializer=init_gpu_id, initargs=(idQueue,))
         pool.map(run_VTAB_task, self.experiment_queue)
 
         # if self.num_threads == 1 or len(self.experiment_queue) == 1:
