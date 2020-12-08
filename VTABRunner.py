@@ -5,6 +5,7 @@ import json
 import copy
 import multiprocessing as mp
 from multiprocessing.pool import ThreadPool
+import threading
 
 from models.ResNet50Encoder import ResNet50Encoder
 from models.VTABModel import VTABModel
@@ -122,11 +123,11 @@ def get_error_function(config):
 
 def run_VTAB_task(config):
 
-    cpu_name = mp.current_process().name
+    cpu_name = mp.current_process()
     print(os.getpid())
     # cpu_id = int(cpu_name[cpu_name.find('-') + 1:]) - 1
     gpu_id = 0 # GPU_IDS[cpu_id]
-    print("CPU ID %d" % (os.getpid()))
+    print("GPU ID %s" % GPU_ID)
 
     dataset_class = get_dataset_class(config)
     trainset = dataset_class(train=True)
@@ -135,29 +136,19 @@ def run_VTAB_task(config):
     error_function = get_error_function(config)
 
     training_configs = []
-    print("AAA")
     for tc_name, tc in config["training_configs"].items():
-        print("1")
         encoder = copy.deepcopy(config["encoder"])
-        print("2")
         task_head = get_task_head(config, trainset)
-        print("3")
         model = VTABModel(encoder, task_head, train_encoder=config["train_encoder"])
-        print("4")
         optimizer = get_optimizer(tc, model)
-        print("5")
         scheduler = get_scheduler(tc, optimizer)
-        print("6")
         training_configs.append({
             "name": tc_name,
             "model": model,
             "optimizer": optimizer,
             "scheduler": scheduler
         })
-        print("7")
-    print("BBB")
     pre_encode = config["pre_encode"] if "pre_encode" in config else None
-    print("Experiment Name %s, Task Name %s" % (config["experiment_name"], config["task_name"]))
     task = VTABTask(
         config["experiment_name"],
         config["task_name"],
@@ -172,8 +163,12 @@ def run_VTAB_task(config):
         pre_encode=pre_encode
     )
     results = task.run(config["num_epochs"])
-    print("CCC")
     return results
+
+
+def init_gpu(gpuid):
+    global GPU_ID
+    GPU_ID = gpuid
 
 
 class VTABRunner:
@@ -201,7 +196,7 @@ class VTABRunner:
                 self.experiment_queue.append(experiment)
 
     def run(self):
-        pool = ThreadPool(min(len(GPU_IDS), len(self.experiment_queue)))
+        pool = ThreadPool(len(GPU_IDS), initializer=init_gpu, initargs=(GPU_IDS))
         pool.map(run_VTAB_task, self.experiment_queue)
 
         # if self.num_threads == 1 or len(self.experiment_queue) == 1:
