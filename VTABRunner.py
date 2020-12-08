@@ -196,7 +196,7 @@ class VTABRunner:
                 self.experiment_queue.append(experiment)
 
     def run(self):
-        pool = ThreadPool(len(GPU_IDS), initializer=init_gpu, initargs=(GPU_IDS))
+        pool = ThreadPool(len(GPU_IDS), initializer=init_gpu, initargs=GPU_IDS)
         pool.map(run_VTAB_task, self.experiment_queue)
 
         # if self.num_threads == 1 or len(self.experiment_queue) == 1:
