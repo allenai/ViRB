@@ -196,8 +196,10 @@ class VTABRunner:
     def run(self):
         manager = mp.Manager()
         idQueue = manager.Queue()
+        print("GPU_IDS", GPU_IDS)
         for id in GPU_IDS:
             idQueue.put(id)
+        print("idQueue", idQueue)
         pool = ThreadPool(len(GPU_IDS), initializer=init_gpu_id, initargs=(idQueue,))
         pool.map(run_VTAB_task, self.experiment_queue)
 
