@@ -124,12 +124,14 @@ def get_error_function(config):
 def run_VTAB_task(config):
     global GPU_ID
     print("GPU ID %s" % GPU_ID)
+    process = mp.current_process()
+    print(GPU_ID, process.pid)
     dataset_class = get_dataset_class(config)
     trainset = dataset_class(train=True)
     testset = dataset_class(train=False)
     loss_function = get_loss_function(config)
     error_function = get_error_function(config)
-
+    print("A")
     training_configs = []
     for tc_name, tc in config["training_configs"].items():
         encoder = copy.deepcopy(config["encoder"])
@@ -144,6 +146,7 @@ def run_VTAB_task(config):
             "scheduler": scheduler
         })
     pre_encode = config["pre_encode"] if "pre_encode" in config else None
+    print("B")
     task = VTABTask(
         config["experiment_name"],
         config["task_name"],
