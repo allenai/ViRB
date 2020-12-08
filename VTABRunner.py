@@ -4,6 +4,7 @@ import yaml
 import json
 import copy
 import multiprocessing as mp
+from multiprocessing.pool import ThreadPool
 
 from models.ResNet50Encoder import ResNet50Encoder
 from models.VTABModel import VTABModel
@@ -122,9 +123,10 @@ def get_error_function(config):
 def run_VTAB_task(config):
 
     cpu_name = mp.current_process().name
-    cpu_id = int(cpu_name[cpu_name.find('-') + 1:]) - 1
-    gpu_id = GPU_IDS[cpu_id]
-    print("CPU ID %d, GPU ID %s" % (cpu_id, gpu_id))
+    print(os.getpid())
+    # cpu_id = int(cpu_name[cpu_name.find('-') + 1:]) - 1
+    gpu_id = 0 # GPU_IDS[cpu_id]
+    print("CPU ID %d" % (os.getpid()))
 
     dataset_class = get_dataset_class(config)
     trainset = dataset_class(train=True)
@@ -198,7 +200,7 @@ class VTABRunner:
                 self.experiment_queue.append(experiment)
 
     def run(self):
-        pool = mp.Pool(min(len(GPU_IDS), len(self.experiment_queue)))
+        pool = ThreadPool(min(len(GPU_IDS), len(self.experiment_queue)))
         pool.map(run_VTAB_task, self.experiment_queue)
 
         # if self.num_threads == 1 or len(self.experiment_queue) == 1:
