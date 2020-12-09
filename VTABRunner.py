@@ -33,6 +33,7 @@ PIXEL_WISE_REGRESSION = [
 ]
 
 GPU_IDS = ["cuda:%d" % i for i in range(torch.cuda.device_count())] if torch.cuda.device_count() > 0 else ["cpu"]
+GPU_MAP = {}
 
 def get_dataset_class(config):
     if config["task"] == "CalTech-101":
@@ -122,9 +123,10 @@ def get_error_function(config):
         return binary_pixel_wise_prediction_loss
 
 
-def run_VTAB_task(config, thread_storage):
-    print("GPU ID %s" % thread_storage.GPU_ID)
-    process = mp.current_process()
+def run_VTAB_task(config):
+    global GPU_MAP
+    GPU_ID = GPU_MAP[threading.get_ident()]
+    print("GPU ID %s" % GPU_ID)
     dataset_class = get_dataset_class(config)
     trainset = dataset_class(train=True)
     testset = dataset_class(train=False)
@@ -156,15 +158,17 @@ def run_VTAB_task(config, thread_storage):
         error=error_function,
         out_dir="out/"+config["experiment_name"]+"/"+config["task_name"],
         num_workers=config["num_workers"],
-        device=thread_storage.GPU_ID,
+        device=GPU_ID,
         pre_encode=pre_encode
     )
     results = task.run(config["num_epochs"])
     return results
 
 
-def init_gpu_id(queue, thread_storage):
-    thread_storage.GPU_ID = queue.get()
+def init_gpu_id(queue):
+    global GPU_MAP
+    print(threading.get_ident())
+    GPU_MAP[threading.get_ident()] = queue.get()
 
 
 class VTABRunner:
@@ -198,8 +202,8 @@ class VTABRunner:
         for id in GPU_IDS:
             idQueue.put(id)
         thread_storage = threading.local()
-        pool = ThreadPool(len(GPU_IDS), initializer=init_gpu_id, initargs=(idQueue, thread_storage))
-        pool.map(run_VTAB_task, self.experiment_queue, thread_storage)
+        pool = ThreadPool(len(GPU_IDS), initializer=init_gpu_id, initargs=(idQueue, ))
+        pool.map(run_VTAB_task, self.experiment_queue)
 
         # if self.num_threads == 1 or len(self.experiment_queue) == 1:
         #     run_VTAB_queue(self.experiment_queue)
