@@ -20,7 +20,7 @@ for experiment in glob.glob("../out/*"):
     experiment_name = experiment.split("/")[-1]
     results[experiment_name] = {}
     for task in TASKS:
-        training_runs = experiment + "/" + task + "*"
+        training_runs = glob.glob(experiment + "/" + task + "*")
         if len(training_runs) > 0:
             results[experiment_name][task] = {"training_runs": {}}
         for training_run in (training_runs):
