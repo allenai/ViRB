@@ -11,9 +11,9 @@ def get_all_task_names(data):
 
 def get_ranking_for_task(data, task):
     rankings = []
-    for experiment in data:
+    for name, experiment in data.items():
         if task in experiment:
-            rankings.append((experiment, experiment[task]["best_test_config"], experiment[task]["best_test_result"]))
+            rankings.append((name, experiment[task]["best_test_config"], experiment[task]["best_test_result"]))
     rankings.sort(key=lambda x: x[1])
     return rankings
 
@@ -25,3 +25,5 @@ tasks = get_all_task_names(results)
 for task in tasks:
     rankings[task] = get_ranking_for_task(results, task)
 
+with open("../rankings.json", 'w') as out:
+    json.dump(rankings, out)
