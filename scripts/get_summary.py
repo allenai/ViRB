@@ -17,6 +17,7 @@ TASKS = [
 ]
 
 results = {}
+
 for experiment in glob.glob("../out/*"):
     experiment_name = experiment.split("/")[-1]
     results[experiment_name] = {}
@@ -24,11 +25,13 @@ for experiment in glob.glob("../out/*"):
         training_runs = glob.glob(experiment + "/" + task + "*")
         if len(training_runs) > 0:
             results[experiment_name][task] = {"training_runs": {}}
+
         for training_run in (training_runs):
             if os.path.exists(training_run+"/results.json"):
                 with open(training_run+"/results.json") as f:
                     run_results = json.load(f)
-                results[experiment_name][task]["training_runs"][training_run.replace(task+"-", "")] = run_results
+                results[experiment_name][task]["training_runs"][training_run.split("/")[-1].replace(task+"-", "")] \
+                    = run_results
         if task in results[experiment_name]:
             best_test_config = None
             best_test_result = 0.0
