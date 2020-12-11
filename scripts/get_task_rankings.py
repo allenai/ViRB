@@ -14,7 +14,7 @@ def get_ranking_for_task(data, task):
     for name, experiment in data.items():
         if task in experiment:
             rankings.append((name, experiment[task]["best_test_config"], experiment[task]["best_test_result"]))
-    rankings.sort(key=lambda x: x[1])
+    rankings.sort(key=lambda x: x[2])
     return rankings
 
 
