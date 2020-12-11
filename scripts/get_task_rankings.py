@@ -3,7 +3,7 @@ import json
 
 def get_all_task_names(data):
     tasks = set()
-    for experiment in data:
+    for name, experiment in data.items():
         for task in experiment:
             tasks.add(task)
     return list(tasks)
@@ -24,6 +24,7 @@ with open("../results.json") as f:
 tasks = get_all_task_names(results)
 for task in tasks:
     rankings[task] = get_ranking_for_task(results, task)
+print(rankings)
 
 with open("../rankings.json", 'w') as out:
     json.dump(rankings, out)
