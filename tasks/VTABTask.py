@@ -6,6 +6,7 @@ import tqdm
 import json
 
 from datasets.EncodableDataloader import EncodableDataloader
+from utils.progress_iterator import ProgressIterator
 
 
 class VTABTask:
@@ -20,7 +21,7 @@ class VTABTask:
             loss,
             error,
             out_dir,
-            scheduler=None,
+            logging_queue,
             batch_size=256,
             num_workers=12,
             device="cpu",
@@ -35,6 +36,7 @@ class VTABTask:
         self.error = error
         self.batch_size = batch_size
         self.out_dir_root = out_dir
+        self.logging_queue = logging_queue
 
         self.training_configs = training_configs
         self.device = device
@@ -51,26 +53,32 @@ class VTABTask:
         if self.pre_encode:
             self.train_dataloader = EncodableDataloader(self.train_dataloader,
                                                         self.training_configs[0]["model"],
+                                                        "Encoding Train Set",
+                                                        self.logging_queue,
                                                         batch_size=batch_size,
                                                         shuffle=True,
                                                         device=device)
             self.test_dataloader = EncodableDataloader(
                 self.test_dataloader,
                 self.training_configs[0]["model"],
+                "Encoding Test Set",
+                self.logging_queue,
                 batch_size=batch_size,
                 shuffle=False,
                 device=device,
                 principal_directions=self.train_dataloader.get_principal_directions())
 
     def run(self, epochs):
-        print("Training %s on %s" % (self.name, self.task))
         for config in self.training_configs:
             out_dir = self.out_dir_root + "-" + config["name"]
             config["model"].to(self.device)
             os.makedirs(out_dir, exist_ok=True)
             writer = SummaryWriter(log_dir=out_dir)
-            print("Training")
-            for e in tqdm.tqdm(range(epochs)):
+            for e in ProgressIterator(
+                    range(epochs),
+                    "Training %s on %s" % (self.name, self.task),
+                    self.logging_queue, self.device
+            ):
                 train_loss, train_accuracy = self.train_epoch(config["model"], config["optimizer"])
                 test_loss, test_accuracy = self.test(config["model"])
                 writer.add_scalar("TrainLoss/"+self.task, train_loss, e)

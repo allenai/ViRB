@@ -1,5 +1,6 @@
 import torch
 import os
+import sys
 import yaml
 import json
 import copy
@@ -7,6 +8,10 @@ import multiprocessing as mp
 from multiprocessing.pool import ThreadPool
 import threading
 import queue
+import time
+import curses
+import traceback
+from datetime import datetime
 
 from models.ResNet50Encoder import ResNet50Encoder
 from models.VTABModel import VTABModel
@@ -124,15 +129,11 @@ def get_error_function(config):
 
 
 def run_VTAB_task(config):
-    global GPU_MAP
-    GPU_ID = GPU_MAP[threading.get_ident()]
-    print("GPU ID %s" % GPU_ID)
     dataset_class = get_dataset_class(config)
     trainset = dataset_class(train=True)
     testset = dataset_class(train=False)
     loss_function = get_loss_function(config)
     error_function = get_error_function(config)
-    print("A")
     training_configs = []
     for tc_name, tc in config["training_configs"].items():
         encoder = copy.deepcopy(config["encoder"])
@@ -147,7 +148,6 @@ def run_VTAB_task(config):
             "scheduler": scheduler
         })
     pre_encode = config["pre_encode"] if "pre_encode" in config else None
-    print("B")
     task = VTABTask(
         config["experiment_name"],
         config["task_name"],
@@ -157,18 +157,20 @@ def run_VTAB_task(config):
         loss=loss_function,
         error=error_function,
         out_dir="out/"+config["experiment_name"]+"/"+config["task_name"],
+        logging_queue=config["logging_queue"],
         num_workers=config["num_workers"],
-        device=GPU_ID,
+        device=config["device_id"],
         pre_encode=pre_encode
     )
     results = task.run(config["num_epochs"])
     return results
 
 
-def init_gpu_id(queue):
-    global GPU_MAP
-    print(threading.get_ident())
-    GPU_MAP[threading.get_ident()] = queue.get()
+def thread_loop(gpu_id, config_queue):
+    while not config_queue.empty():
+        conf = config_queue.get()
+        conf["device_id"] = gpu_id
+        run_VTAB_task(conf)
 
 
 class VTABRunner:
@@ -184,7 +186,8 @@ class VTABRunner:
         self.num_threads = num_gpus if num_gpus > 0 else 1
         with open(experiment_config_path) as file:
             tasks = yaml.load(file, Loader=yaml.FullLoader)
-        self.experiment_queue = []
+        self.experiment_queue = queue.Queue()
+        self.logging_queue = queue.Queue()
         for experiment_name, experiment_encoder in experiments.items():
             for task_name, task in tasks.items():
                 experiment = copy.deepcopy(task)
@@ -193,30 +196,87 @@ class VTABRunner:
                 experiment["encoder"] = experiment_encoder
                 experiment["train_encoder"] = train_encoder
                 experiment["num_workers"] = total_num_workers // self.num_threads
-                self.experiment_queue.append(experiment)
+                experiment["logging_queue"] = self.logging_queue
+                self.experiment_queue.put(experiment)
 
     def run(self):
-        # manager = mp.Manager()
-        # idQueue = manager.Queue()
-        idQueue = queue.Queue()
-        for id in GPU_IDS:
-            idQueue.put(id)
-        thread_storage = threading.local()
-        pool = ThreadPool(len(GPU_IDS), initializer=init_gpu_id, initargs=(idQueue, ))
-        pool.map(run_VTAB_task, self.experiment_queue)
+        try:
+            total_num_experiments = self.experiment_queue.qsize()
+            stdscr = curses.initscr()
+            curses.noecho()
+            curses.cbreak()
+            stdscr.addstr(1, 5, "pyVTAB")
 
-        # if self.num_threads == 1 or len(self.experiment_queue) == 1:
-        #     run_VTAB_queue(self.experiment_queue)
-        # else:
-        #     experiments_per_device = [[] for _ in range(self.num_threads)]
-        #     for experiment in self.experiment_queue:
-        #         idx = int(experiment["device"][-1])
-        #         experiments_per_device[idx].append(experiment)
-        #     mp.freeze_support()
-        #     mp.set_start_method('spawn')
-        #     procs = [
-        #         mp.Process(target=run_VTAB_queue, args=(experiments_per_device[i]))
-        #         for i in range(self.num_threads)
-        #     ]
-        #     [proc.start() for proc in procs]
-        #     [proc.join() for proc in procs]
+            lidx = 0
+            stdscr.addstr(lidx, 0, "+")
+            stdscr.addstr(lidx, 1, "-" * 100)
+            stdscr.addstr(lidx, 101, "+")
+
+            lidx += 1
+            stdscr.addstr(lidx, 0, "|")
+            stdscr.addstr(lidx, 101, "|")
+
+            lidx += 1
+            stdscr.addstr(lidx, 0, "|")
+            stdscr.addstr(lidx, 1, "-" * 100)
+            stdscr.addstr(lidx, 101, "|")
+
+            lidx += 1
+            stdscr.addstr(lidx, 0, "|")
+            stdscr.addstr(lidx, 2, "Device")
+            stdscr.addstr(lidx, 20, "|")
+            stdscr.addstr(lidx, 22, "Task")
+            stdscr.addstr(lidx, 80, "|")
+            stdscr.addstr(lidx, 82, "Progress")
+            stdscr.addstr(lidx, 95, "|")
+            stdscr.addstr(lidx, 97, "ETA")
+            stdscr.addstr(lidx, 101, "|")
+
+            lidx += 1
+            stdscr.addstr(lidx, 0, "|")
+            stdscr.addstr(lidx, 1, "-" * 100)
+            stdscr.addstr(lidx, 101, "|")
+
+            for _ in range(len(GPU_IDS)):
+                lidx += 1
+                stdscr.addstr(lidx, 0, "|")
+                stdscr.addstr(lidx, 20, "|")
+                stdscr.addstr(lidx, 80, "|")
+                stdscr.addstr(lidx, 95, "|")
+                stdscr.addstr(lidx, 101, "|")
+                lidx += 1
+                stdscr.addstr(lidx, 0, "|")
+                stdscr.addstr(lidx, 1, "-" * 100)
+                stdscr.addstr(lidx, 101, "|")
+
+            stdscr.addstr(lidx, 0, "+")
+            stdscr.addstr(lidx, 1, "-" * 100)
+            stdscr.addstr(lidx, 101, "+")
+            stdscr.refresh()
+
+            for device_id in GPU_IDS:
+                p = mp.Process(target=thread_loop, args=(device_id, self.experiment_queue), daemon=False)
+                p.start()
+            while not self.experiment_queue.empty() or not self.logging_queue.empty():
+                stdscr.addstr(1, 30, "%s" % datetime.now().strftime("%H:%M:%S"))
+                stdscr.addstr(1, 60, " Number of Tasks Completed %d/%d" % (
+                    total_num_experiments - self.experiment_queue.qsize(),
+                    total_num_experiments
+                ))
+                stdscr.refresh()
+                if not self.logging_queue.empty():
+                    data = self.logging_queue.get()
+                    lidx = 5 if data.device == "cpu" else 5 + int(data.device)
+                    stdscr.addstr(lidx, 2, data.device)
+                    stdscr.addstr(lidx, 22, data.name)
+                    stdscr.addstr(lidx, 82, str(data.idx)+'/'+str(data.total))
+                    stdscr.addstr(lidx, 97, str((data.delta * (data.total - data.idx)) // 60))
+                    stdscr.refresh()
+                time.sleep(1)
+        except:
+            traceback.print_exc()
+        finally:
+            stdscr.keypad(0)
+            curses.echo()
+            curses.nocbreak()
+            curses.endwin()

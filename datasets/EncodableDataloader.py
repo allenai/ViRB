@@ -1,17 +1,28 @@
 import torch
-import tqdm
+
+
+from utils.progress_iterator import ProgressIterator
 
 
 class EncodableDataloader:
 
-    def __init__(self, dataloader, model, batch_size=32, shuffle=True, device="cpu", principal_directions=None):
+    def __init__(
+            self,
+            dataloader,
+            model,
+            name,
+            logging_queue,
+            batch_size=32,
+            shuffle=True,
+            device="cpu",
+            principal_directions=None
+    ):
         self.principal_directions = principal_directions
         model = model.to(device)
         model.eval()
         data_stacks = {name: [] for name in model.required_encoding()}
         label_stack = []
-        print("Encoding Data")
-        for d, l in tqdm.tqdm(dataloader):
+        for d, l in ProgressIterator(dataloader, name, logging_queue, device):
             d = d.to(device)
             with torch.no_grad():
                 o = model.encoder_forward(d)
@@ -28,17 +39,7 @@ class EncodableDataloader:
                             data_stack.append(get_principal_components(x, self.principal_directions[name]).half())
                     else:
                         data_stack.append(o[name].detach().half())
-                # total_size = 0
-                # for name, data_stack in data_stacks.items():
-                #     for tensor in data_stack:
-                #         total_size += tensor.element_size() * tensor.nelement()
-                # import time
-                # time.sleep(10)
-                # print("Size of stack: %.4f GB" % (total_size/1.0e9))
             label_stack.append(l)
-        # print("data stacks!!!")
-        # for name in data_stacks:
-        #     print(name, len(data_stacks[name]))
         self.data = {name: torch.cat(data_stacks[name], dim=0).to(device) for name in data_stacks}
         self.labels = torch.cat(label_stack, dim=0).to(device)
         self.batch_size = batch_size
