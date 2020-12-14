@@ -166,10 +166,11 @@ def run_VTAB_task(config):
     return results
 
 
-def thread_loop(gpu_id, config_queue):
+def thread_loop(gpu_id, config_queue, logging_queue):
     while not config_queue.empty():
         conf = config_queue.get()
         conf["device_id"] = gpu_id
+        conf["logging_queue"] = logging_queue
         run_VTAB_task(conf)
 
 
@@ -196,12 +197,12 @@ class VTABRunner:
                 experiment["encoder"] = experiment_encoder
                 experiment["train_encoder"] = train_encoder
                 experiment["num_workers"] = total_num_workers // self.num_threads
-                experiment["logging_queue"] = self.logging_queue
+                # experiment["logging_queue"] = self.logging_queue
                 self.experiment_queue.put(experiment)
 
     def run(self):
         try:
-            total_num_experiments = self.experiment_queue.qsize()
+            # total_num_experiments = self.experiment_queue.qsize()
             stdscr = curses.initscr()
             curses.noecho()
             curses.cbreak()
@@ -255,14 +256,15 @@ class VTABRunner:
             stdscr.refresh()
 
             for device_id in GPU_IDS:
-                p = mp.Process(target=thread_loop, args=(device_id, self.experiment_queue), daemon=False)
+                time.sleep(1)
+                p = mp.Process(target=thread_loop, args=(device_id, self.experiment_queue, self.logging_queue), daemon=False)
                 p.start()
             while not self.experiment_queue.empty() or not self.logging_queue.empty():
                 stdscr.addstr(1, 30, "%s" % datetime.now().strftime("%H:%M:%S"))
-                stdscr.addstr(1, 60, " Number of Tasks Completed %d/%d" % (
-                    total_num_experiments - self.experiment_queue.qsize(),
-                    total_num_experiments
-                ))
+                # stdscr.addstr(1, 60, " Number of Tasks Completed %d/%d" % (
+                #     total_num_experiments - self.experiment_queue.qsize(),
+                #     total_num_experiments
+                # ))
                 stdscr.refresh()
                 if not self.logging_queue.empty():
                     data = self.logging_queue.get()
