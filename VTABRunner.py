@@ -186,8 +186,8 @@ class VTABRunner:
         self.num_threads = num_gpus if num_gpus > 0 else 1
         with open(experiment_config_path) as file:
             tasks = yaml.load(file, Loader=yaml.FullLoader)
-        self.experiment_queue = queue.Queue()
-        self.logging_queue = queue.Queue()
+        self.experiment_queue = mp.Queue()
+        self.logging_queue = mp.Queue()
         for experiment_name, experiment_encoder in experiments.items():
             for task_name, task in tasks.items():
                 experiment = copy.deepcopy(task)
