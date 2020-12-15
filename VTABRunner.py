@@ -293,7 +293,7 @@ class VTABRunner:
                     if data.time_per_iter is not None:
                         mins = int((data.time_per_iter * (data.total - data.idx)) // 60)
                         secs = int((data.time_per_iter * (data.total - data.idx)) % 60)
-                        stdscr.addstr(lidx, 92, "%d:%d" % (mins, secs))
+                        stdscr.addstr(lidx, 92, "%02d:%02d" % (mins, secs))
                     stdscr.refresh()
         except:
             traceback.print_exc()
