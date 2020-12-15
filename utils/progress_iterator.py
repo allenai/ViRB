@@ -20,8 +20,12 @@ class ProgressIterator:
     def __next__(self):
         end_time = time.time()
         delta = end_time - self.start_time
-        self.queue.put(
-            ProgressDataPacket(self.name, self.device, self.idx+1, len(self.iter), delta)
+        self.queue.put(ProgressDataPacket(
+            name=self.name,
+            device=self.device,
+            idx=self.idx+1,
+            total=len(self.iter),
+            delta_time=delta)
         )
         if self.idx >= len(self.iter):
             raise StopIteration

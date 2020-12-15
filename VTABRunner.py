@@ -17,6 +17,7 @@ from models.ResNet50Encoder import ResNet50Encoder
 from models.VTABModel import VTABModel
 from models.ClassificationHead import ClassificationHead
 from tasks.VTABTask import VTABTask
+from utils.progress_data_packets import ProgressDataPacket
 
 
 CLASSIFICATION_TASKS = [
@@ -128,7 +129,7 @@ def get_error_function(config):
         return binary_pixel_wise_prediction_loss
 
 
-def run_VTAB_task(config):
+def run_VTAB_task(config, logging_queue):
     dataset_class = get_dataset_class(config)
     trainset = dataset_class(train=True)
     testset = dataset_class(train=False)
@@ -157,7 +158,7 @@ def run_VTAB_task(config):
         loss=loss_function,
         error=error_function,
         out_dir="out/"+config["experiment_name"]+"/"+config["task_name"],
-        logging_queue=config["logging_queue"],
+        logging_queue=logging_queue,
         num_workers=config["num_workers"],
         device=config["device_id"],
         pre_encode=pre_encode
@@ -167,11 +168,22 @@ def run_VTAB_task(config):
 
 
 def thread_loop(gpu_id, config_queue, logging_queue):
-    while not config_queue.empty():
-        conf = config_queue.get()
+    try:
+        conf = config_queue.get(timeout=10)
         conf["device_id"] = gpu_id
-        conf["logging_queue"] = logging_queue
-        run_VTAB_task(conf)
+        logging_queue.put(ProgressDataPacket(
+            name="Initializing",
+            device=gpu_id,
+            new_task=False
+        ))
+        run_VTAB_task(conf, logging_queue)
+        logging_queue.put(ProgressDataPacket(
+            name="Done",
+            device=gpu_id,
+            new_task=True
+        ))
+    except queue.Empty:
+        quit()
 
 
 class VTABRunner:
@@ -189,6 +201,7 @@ class VTABRunner:
             tasks = yaml.load(file, Loader=yaml.FullLoader)
         self.experiment_queue = mp.Queue()
         self.logging_queue = mp.Queue()
+        self.total_num_tasks = 0
         for experiment_name, experiment_encoder in experiments.items():
             for task_name, task in tasks.items():
                 experiment = copy.deepcopy(task)
@@ -197,12 +210,11 @@ class VTABRunner:
                 experiment["encoder"] = experiment_encoder
                 experiment["train_encoder"] = train_encoder
                 experiment["num_workers"] = total_num_workers // self.num_threads
-                # experiment["logging_queue"] = self.logging_queue
                 self.experiment_queue.put(experiment)
+                self.total_num_tasks += 1
 
     def run(self):
         try:
-            # total_num_experiments = self.experiment_queue.qsize()
             stdscr = curses.initscr()
             curses.noecho()
             curses.cbreak()
@@ -256,25 +268,35 @@ class VTABRunner:
             stdscr.refresh()
 
             for device_id in GPU_IDS:
-                time.sleep(1)
-                p = mp.Process(target=thread_loop, args=(device_id, self.experiment_queue, self.logging_queue), daemon=False)
+                p = mp.Process(
+                    target=thread_loop,
+                    args=(device_id, self.experiment_queue, self.logging_queue),
+                    daemon=False
+                )
                 p.start()
-            while not self.experiment_queue.empty() or not self.logging_queue.empty():
+
+            pending_tasks = self.total_num_tasks
+            while pending_tasks > 0:
                 stdscr.addstr(1, 30, "%s" % datetime.now().strftime("%H:%M:%S"))
-                # stdscr.addstr(1, 60, " Number of Tasks Completed %d/%d" % (
-                #     total_num_experiments - self.experiment_queue.qsize(),
-                #     total_num_experiments
-                # ))
-                stdscr.refresh()
-                if not self.logging_queue.empty():
-                    data = self.logging_queue.get()
+                stdscr.addstr(1, 60, " Number of Tasks Completed %d/%d" % (
+                    self.total_num_tasks - pending_tasks,
+                    self.total_num_tasks
+                ))
+                try:
+                    data = self.logging_queue.get(timeout=1)
+                except queue.Empty:
+                    data = None
+                if data is not None:
+                    if data.new_task:
+                        pending_tasks -= 1
                     lidx = 5 if data.device == "cpu" else 5 + int(data.device)
                     stdscr.addstr(lidx, 2, data.device)
                     stdscr.addstr(lidx, 22, data.name)
-                    stdscr.addstr(lidx, 82, str(data.idx)+'/'+str(data.total))
-                    stdscr.addstr(lidx, 97, str((data.delta * (data.total - data.idx)) // 60))
-                    stdscr.refresh()
-                time.sleep(1)
+                    if data.idx is not None:
+                        stdscr.addstr(lidx, 82, str(data.idx)+'/'+str(data.total))
+                    if data.time_per_iter is not None:
+                        stdscr.addstr(lidx, 97, str((data.time_per_iter * (data.total - data.idx)) // 60))
+                stdscr.refresh()
         except:
             traceback.print_exc()
         finally:
