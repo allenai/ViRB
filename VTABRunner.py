@@ -206,7 +206,11 @@ def thread_loop(gpu_id, config_queue, logging_queue):
             new_task=True
         ))
     except queue.Empty:
-        quit()
+        logging_queue.put(ProgressDataPacket(
+            name="No Task for me!",
+            device=gpu_id,
+            new_task=True
+        ))
 
 
 class VTABRunner:
