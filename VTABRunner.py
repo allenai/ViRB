@@ -289,7 +289,7 @@ class VTABRunner:
                 if data is not None:
                     if data.new_task:
                         pending_tasks -= 1
-                    lidx = 5 if data.device == "cpu" else 5 + int(data.device[-1])
+                    lidx = 5 if data.device == "cpu" else 5 + 2 * int(data.device[-1])
                     stdscr.addstr(lidx, 2, data.device)
                     stdscr.addstr(lidx, 22, data.name)
                     if data.idx is not None:
