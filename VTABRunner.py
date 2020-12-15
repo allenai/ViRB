@@ -223,53 +223,40 @@ class VTABRunner:
             stdscr = curses.initscr()
             curses.noecho()
             curses.cbreak()
-            stdscr.addstr(1, 5, "pyVTAB")
+            curses.curs_set(0)
 
             lidx = 0
-            stdscr.addstr(lidx, 0, "+")
-            stdscr.addstr(lidx, 1, "-" * 100)
-            stdscr.addstr(lidx, 101, "+")
+            stdscr.addstr(lidx, 0, "+" + "-"*99 + "+")
 
             lidx += 1
-            stdscr.addstr(lidx, 0, "|")
-            stdscr.addstr(lidx, 101, "|")
+            stdscr.addstr(lidx, 0, "|" + " "*99 + "|")
 
             lidx += 1
-            stdscr.addstr(lidx, 0, "|")
-            stdscr.addstr(lidx, 1, "-" * 100)
-            stdscr.addstr(lidx, 101, "|")
+            stdscr.addstr(lidx, 0, "|" + "-"*99 + "|")
 
             lidx += 1
             stdscr.addstr(lidx, 0, "|")
             stdscr.addstr(lidx, 2, "Device")
-            stdscr.addstr(lidx, 20, "|")
-            stdscr.addstr(lidx, 22, "Task")
-            stdscr.addstr(lidx, 80, "|")
-            stdscr.addstr(lidx, 82, "Progress")
-            stdscr.addstr(lidx, 95, "|")
-            stdscr.addstr(lidx, 97, "ETA")
-            stdscr.addstr(lidx, 101, "|")
+            stdscr.addstr(lidx, 15, "|")
+            stdscr.addstr(lidx, 17, "Task")
+            stdscr.addstr(lidx, 75, "|")
+            stdscr.addstr(lidx, 77, "Progress")
+            stdscr.addstr(lidx, 90, "|")
+            stdscr.addstr(lidx, 92, "ETA")
+            stdscr.addstr(lidx, 100, "|")
 
             lidx += 1
             stdscr.addstr(lidx, 0, "|")
-            stdscr.addstr(lidx, 1, "-" * 100)
-            stdscr.addstr(lidx, 101, "|")
+            stdscr.addstr(lidx, 1, "-" * 99)
+            stdscr.addstr(lidx, 100, "|")
 
             for _ in range(len(GPU_IDS)):
                 lidx += 1
-                stdscr.addstr(lidx, 0, "|")
-                stdscr.addstr(lidx, 20, "|")
-                stdscr.addstr(lidx, 80, "|")
-                stdscr.addstr(lidx, 95, "|")
-                stdscr.addstr(lidx, 101, "|")
+                stdscr.addstr(lidx, 0, "|" + " "*14 + "|" + " "*59 + "|" + " "*14 + "|" + " "*9 + "|")
                 lidx += 1
-                stdscr.addstr(lidx, 0, "|")
-                stdscr.addstr(lidx, 1, "-" * 100)
-                stdscr.addstr(lidx, 101, "|")
+                stdscr.addstr(lidx, 0, "|" + "-"*99 + "|")
 
-            stdscr.addstr(lidx, 0, "+")
-            stdscr.addstr(lidx, 1, "-" * 100)
-            stdscr.addstr(lidx, 101, "+")
+            stdscr.addstr(lidx, 0, "+" + "-"*99 + "+")
             stdscr.refresh()
 
             for device_id in GPU_IDS:
@@ -283,6 +270,7 @@ class VTABRunner:
             pending_tasks = self.total_num_tasks
             while pending_tasks > 0:
                 stdscr.refresh()
+                stdscr.addstr(1, 5, "pyVTAB")
                 stdscr.addstr(1, 30, "%s" % datetime.now().strftime("%H:%M:%S"))
                 stdscr.addstr(1, 60, " Number of Tasks Completed %d/%d" % (
                     self.total_num_tasks - pending_tasks,
@@ -297,15 +285,17 @@ class VTABRunner:
                     if data.new_task:
                         pending_tasks -= 1
                     lidx = 5 if data.device == "cpu" else 5 + 2 * int(data.device[-1])
+                    stdscr.addstr(lidx, 0, "|" + " " * 14 + "|" + " " * 59 + "|" + " " * 14 + "|" + " " * 9 + "|")
                     stdscr.addstr(lidx, 2, data.device)
-                    stdscr.addstr(lidx, 22, data.name)
+                    stdscr.addstr(lidx, 17, data.name)
                     if data.idx is not None:
-                        stdscr.addstr(lidx, 82, str(data.idx)+'/'+str(data.total))
+                        stdscr.addstr(lidx, 77, str(data.idx)+'/'+str(data.total))
                     if data.time_per_iter is not None:
-                        stdscr.addstr(lidx, 97, str((data.time_per_iter * (data.total - data.idx)) // 60))
+                        mins = int((data.time_per_iter * (data.total - data.idx)) // 60)
+                        secs = int((data.time_per_iter * (data.total - data.idx)) % 60)
+                        stdscr.addstr(lidx, 92, "%d:%d" % (mins, secs))
                     stdscr.refresh()
         except:
-            print("ERROR")
             traceback.print_exc()
         finally:
             stdscr.keypad(0)
