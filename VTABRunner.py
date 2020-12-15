@@ -286,7 +286,7 @@ class VTABRunner:
                     data = self.logging_queue.get(timeout=1)
                 except queue.Empty:
                     data = None
-                stdscr.addstr(1, 90, "AAA")
+                stdscr.addstr(1, 90, "AA" if data is None else "BB")
                 # if data is not None:
                 #     if data.new_task:
                 #         pending_tasks -= 1
