@@ -137,18 +137,7 @@ def run_VTAB_task(config, logging_queue):
     error_function = get_error_function(config)
     training_configs = []
     for tc_name, tc in config["training_configs"].items():
-        logging_queue.put(ProgressDataPacket(
-            name="pre-copy",
-            device=config["device_id"],
-            new_task=False
-        ))
         encoder = copy.deepcopy(config["encoder"])
-        # encoder = config["encoder"]
-        logging_queue.put(ProgressDataPacket(
-            name="post-copy",
-            device=config["device_id"],
-            new_task=False
-        ))
         task_head = get_task_head(config, trainset)
         model = VTABModel(encoder, task_head, train_encoder=config["train_encoder"])
         optimizer = get_optimizer(tc, model)
@@ -180,7 +169,7 @@ def run_VTAB_task(config, logging_queue):
 
 def thread_loop(gpu_id, config_queue, logging_queue):
     try:
-        conf = config_queue.get(timeout=10)
+        conf = config_queue.get(timeout=1)
         conf["device_id"] = gpu_id
         logging_queue.put(ProgressDataPacket(
             name="Initializing",
@@ -195,7 +184,7 @@ def thread_loop(gpu_id, config_queue, logging_queue):
         ))
     except queue.Empty:
         logging_queue.put(ProgressDataPacket(
-            name="No Task for me!",
+            name="No more tasks",
             device=gpu_id,
             new_task=False
         ))
