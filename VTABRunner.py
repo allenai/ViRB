@@ -291,7 +291,7 @@ class VTABRunner:
                         pending_tasks -= 1
                     lidx = 5 if data.device == "cpu" else 5 + int(data.device)
                     stdscr.addstr(lidx, 2, data.device)
-                    stdscr.addstr(lidx, 22, data.name)
+                    # stdscr.addstr(lidx, 22, data.name)
                     # if data.idx is not None:
                     #     stdscr.addstr(lidx, 82, str(data.idx)+'/'+str(data.total))
                     # if data.time_per_iter is not None:
