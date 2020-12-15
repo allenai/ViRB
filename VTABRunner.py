@@ -142,15 +142,8 @@ def run_VTAB_task(config, logging_queue):
             device=config["device_id"],
             new_task=False
         ))
-        try:
-            encoder = copy.deepcopy(config["encoder"])
-        except:
-            encoder = config["encoder"]
-            logging_queue.put(ProgressDataPacket(
-                name="ERRROR!",
-                device=config["device_id"],
-                new_task=False
-            ))
+        # encoder = copy.deepcopy(config["encoder"])
+        encoder = config["encoder"]
         logging_queue.put(ProgressDataPacket(
             name="post-copy",
             device=config["device_id"],
@@ -209,7 +202,7 @@ def thread_loop(gpu_id, config_queue, logging_queue):
         logging_queue.put(ProgressDataPacket(
             name="No Task for me!",
             device=gpu_id,
-            new_task=True
+            new_task=False
         ))
 
 
