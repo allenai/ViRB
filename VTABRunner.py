@@ -168,26 +168,28 @@ def run_VTAB_task(config, logging_queue):
 
 
 def thread_loop(gpu_id, config_queue, logging_queue):
-    try:
-        conf = config_queue.get(timeout=1)
-        conf["device_id"] = gpu_id
-        logging_queue.put(ProgressDataPacket(
-            name="Initializing",
-            device=gpu_id,
-            new_task=False
-        ))
-        run_VTAB_task(conf, logging_queue)
-        logging_queue.put(ProgressDataPacket(
-            name="Done",
-            device=gpu_id,
-            new_task=True
-        ))
-    except queue.Empty:
-        logging_queue.put(ProgressDataPacket(
-            name="No more tasks",
-            device=gpu_id,
-            new_task=False
-        ))
+    while True:
+        try:
+            conf = config_queue.get(timeout=1)
+            conf["device_id"] = gpu_id
+            logging_queue.put(ProgressDataPacket(
+                name="Initializing",
+                device=gpu_id,
+                new_task=False
+            ))
+            run_VTAB_task(conf, logging_queue)
+            logging_queue.put(ProgressDataPacket(
+                name="Done",
+                device=gpu_id,
+                new_task=True
+            ))
+        except queue.Empty:
+            logging_queue.put(ProgressDataPacket(
+                name="No more tasks",
+                device=gpu_id,
+                new_task=False
+            ))
+            break
 
 
 class VTABRunner:
