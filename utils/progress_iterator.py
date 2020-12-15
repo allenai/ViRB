@@ -20,7 +20,7 @@ class ProgressIterator:
         return self
 
     def __next__(self):
-        if self.idx >= len(self.iter):
+        if self.idx >= len(self.data):
             raise StopIteration
         if self.start_time is None:
             delta = None
