@@ -142,8 +142,8 @@ def run_VTAB_task(config, logging_queue):
             device=config["device_id"],
             new_task=False
         ))
-        # encoder = copy.deepcopy(config["encoder"])
-        encoder = config["encoder"]
+        encoder = copy.deepcopy(config["encoder"])
+        # encoder = config["encoder"]
         logging_queue.put(ProgressDataPacket(
             name="post-copy",
             device=config["device_id"],
@@ -159,11 +159,6 @@ def run_VTAB_task(config, logging_queue):
             "optimizer": optimizer,
             "scheduler": scheduler
         })
-    logging_queue.put(ProgressDataPacket(
-        name="C",
-        device=config["device_id"],
-        new_task=False
-    ))
     pre_encode = config["pre_encode"] if "pre_encode" in config else None
     task = VTABTask(
         config["experiment_name"],
