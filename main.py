@@ -2,9 +2,11 @@ from models.ResNet50Encoder import ResNet50Encoder
 from VTABRunner import VTABRunner
 import argparse
 import yaml
+import warnings
 
 
 def main():
+    warnings.filterwarnings("ignore")
     experiment_list = parse_args()
     runner = VTABRunner(
         experiments={
