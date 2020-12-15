@@ -7,6 +7,7 @@ from utils.progress_data_packets import ProgressDataPacket
 class ProgressIterator:
 
     def __init__(self, iterator, name, queue, device):
+        self.data = iterator
         self.iter = iterator.__iter__()
         self.name = name
         self.queue = queue
@@ -33,7 +34,7 @@ class ProgressIterator:
             name=self.name,
             device=self.device,
             idx=self.idx+1,
-            total=len(self.iter),
+            total=len(self.data),
             delta_time=delta)
         )
         item = self.iter.__next__()
