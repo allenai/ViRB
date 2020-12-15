@@ -286,12 +286,11 @@ class VTABRunner:
                     data = self.logging_queue.get(timeout=1)
                 except queue.Empty:
                     data = None
-                # stdscr.addstr(5, 2, data.device if data is not None else "Data is none")
                 if data is not None:
                     stdscr.addstr(5, 2, data.device if data is not None else "Data is none")
                     if data.new_task:
                         pending_tasks -= 1
-                    # lidx = 5 if data.device == "cpu" else 5 + int(data.device)
+                    lidx = 5 if data.device == "cpu" else 5 + int(data.device)
                     # stdscr.addstr(lidx, 2, data.device)
                     # stdscr.addstr(lidx, 22, data.name)
                     # if data.idx is not None:
