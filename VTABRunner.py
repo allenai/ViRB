@@ -137,7 +137,25 @@ def run_VTAB_task(config, logging_queue):
     error_function = get_error_function(config)
     training_configs = []
     for tc_name, tc in config["training_configs"].items():
-        encoder = copy.deepcopy(config["encoder"])
+        logging_queue.put(ProgressDataPacket(
+            name="pre-copy",
+            device=config["device_id"],
+            new_task=False
+        ))
+        try:
+            encoder = copy.deepcopy(config["encoder"])
+        except:
+            encoder = config["encoder"]
+            logging_queue.put(ProgressDataPacket(
+                name="ERRROR!",
+                device=config["device_id"],
+                new_task=False
+            ))
+        logging_queue.put(ProgressDataPacket(
+            name="post-copy",
+            device=config["device_id"],
+            new_task=False
+        ))
         task_head = get_task_head(config, trainset)
         model = VTABModel(encoder, task_head, train_encoder=config["train_encoder"])
         optimizer = get_optimizer(tc, model)
@@ -148,6 +166,11 @@ def run_VTAB_task(config, logging_queue):
             "optimizer": optimizer,
             "scheduler": scheduler
         })
+    logging_queue.put(ProgressDataPacket(
+        name="C",
+        device=config["device_id"],
+        new_task=False
+    ))
     pre_encode = config["pre_encode"] if "pre_encode" in config else None
     task = VTABTask(
         config["experiment_name"],
@@ -277,6 +300,7 @@ class VTABRunner:
 
             pending_tasks = self.total_num_tasks
             while pending_tasks > 0:
+                stdscr.refresh()
                 stdscr.addstr(1, 30, "%s" % datetime.now().strftime("%H:%M:%S"))
                 stdscr.addstr(1, 60, " Number of Tasks Completed %d/%d" % (
                     self.total_num_tasks - pending_tasks,
@@ -287,6 +311,7 @@ class VTABRunner:
                 except queue.Empty:
                     data = None
                 if data is not None:
+                    stdscr.refresh()
                     if data.new_task:
                         pending_tasks -= 1
                     lidx = 5 if data.device == "cpu" else 5 + 2 * int(data.device[-1])
@@ -296,7 +321,7 @@ class VTABRunner:
                         stdscr.addstr(lidx, 82, str(data.idx)+'/'+str(data.total))
                     if data.time_per_iter is not None:
                         stdscr.addstr(lidx, 97, str((data.time_per_iter * (data.total - data.idx)) // 60))
-                stdscr.refresh()
+                    stdscr.refresh()
         except:
             print("ERROR")
             traceback.print_exc()
