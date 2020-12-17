@@ -125,8 +125,8 @@ def get_error_function(config):
         from utils.error_functions import classification_error
         return classification_error
     if config["task"] in BINARY_PIXEL_WISE_CLASSIFICATION:
-        from utils.error_functions import binary_pixel_wise_prediction_loss
-        return binary_pixel_wise_prediction_loss
+        from utils.error_functions import iou
+        return iou
 
 
 def run_VTAB_task(config, logging_queue):
