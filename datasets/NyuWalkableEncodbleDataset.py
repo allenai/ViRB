@@ -12,7 +12,7 @@ import random
 from datasets.EncodableDataset import EncodableDataset
 
 
-class NyuDepthEncodableDataset(EncodableDataset):
+class NyuWalkableEncodableDataset(EncodableDataset):
     """NYU Depth encodable dataset class"""
 
     def __init__(self, train=True):
@@ -21,8 +21,8 @@ class NyuDepthEncodableDataset(EncodableDataset):
             if train else 'data/nyu/test/images/*.png'
         self.data = list(glob.glob(data_path))
         self.data.sort()
-        label_path = 'data/nyu/train/depths/*.png'\
-            if train else 'data/nyu/test/depths/*.png'
+        label_path = 'data/nyu/train/walkable/*.png'\
+            if train else 'data/nyu/test/walkable/*.png'
         self.labels = list(glob.glob(label_path))
         self.labels.sort()
         self.img_preprocessor = transforms.Compose([
@@ -45,7 +45,13 @@ class NyuDepthEncodableDataset(EncodableDataset):
 
         img = self.img_preprocessor(Image.open(img_path).convert('RGB'))
         mask = np.array(Image.open(label_path).resize((224, 224)) , dtype=np.float)
-        mask /= np.max(mask)
+        mask[mask != 0.0] = 1.0
+        # print(label_path)
+        # import matplotlib.pyplot as plt
+        # plt.imshow(mask)
+        # plt.show()
+        # exit()
+        # # mask /= np.max(mask)
         mask = torch.tensor(mask, dtype=torch.float)
         mask.unsqueeze(0)
 

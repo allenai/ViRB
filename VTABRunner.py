@@ -32,7 +32,8 @@ CLASSIFICATION_TASKS = [
 ]
 BINARY_PIXEL_WISE_CLASSIFICATION = [
     "Flowers-Detection",
-    "Pets-Detection"
+    "Pets-Detection",
+    "NYUWalkable"
 ]
 PIXEL_WISE_REGRESSION = [
     "THORDepth",
@@ -76,6 +77,9 @@ def get_dataset_class(config):
     if config["task"] == "NYUDepth":
         from datasets.NyuDepthEncodbleDataset import NyuDepthEncodableDataset
         return NyuDepthEncodableDataset
+    if config["task"] == "NYUWalkable":
+        from datasets.NyuWalkableEncodbleDataset import NyuWalkableEncodableDataset
+        return NyuWalkableEncodableDataset
 
 
 def get_task_head(config, dataset):

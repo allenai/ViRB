@@ -157,6 +157,21 @@ NYUDepth:
       lr: 0.01
   num_epochs: 100
 
+NYUWalkable:
+  task: "NYUWalkable"
+  training_configs:
+    adam-0.0001:
+      optimizer: "adam"
+      lr: 0.0003
+    sgd-0.01:
+      optimizer: "sgd"
+      lr: 0.01
+  num_epochs: 100
+
+
+
+
+
 #ThorDepth-adam-0.0003:
 #  task: "THORDepth"
 #  optimizer: "adam"

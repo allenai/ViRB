@@ -1,4 +1,5 @@
 SWAV_800: 'pretrained_weights/SWAV_800.pt'
+MoCov2_800: 'pretrained_weights/MoCov2_800.pt'
 #SWAV_200: 'pretrained_weights/SWAV_200.pt'
 #SWAVCombination: 'pretrained_weights/SWAVCombination.pt'
 #SWAVTaskonomy: 'pretrained_weights/SWAVTaskonomy.pt'
