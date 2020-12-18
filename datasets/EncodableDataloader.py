@@ -55,9 +55,8 @@ class EncodableDataloader:
             try:
                 if torch.is_tensor(obj) or (hasattr(obj, 'data') and torch.is_tensor(obj.data)):
                     tensors.append({
-                        "type": str(type(obj)),
-                        "size": str(obj.size()),
-                        "device": str(obj.get_device())
+                        "size": str(obj.shape),
+                        "device": str(obj.device)
                     })
             except:
                 pass
