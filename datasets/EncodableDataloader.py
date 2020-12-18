@@ -48,7 +48,14 @@ class EncodableDataloader:
         self.shuffle = shuffle
         self.device = device
         import time
-        print("SLEEPING!")
+        import gc
+        print("\n"* 50)
+        for obj in gc.get_objects():
+            try:
+                if torch.is_tensor(obj) or (hasattr(obj, 'data') and torch.is_tensor(obj.data)):
+                    print(type(obj), obj.size())
+            except:
+                pass
         time.sleep(30)
 
     def __iter__(self):
