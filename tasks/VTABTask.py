@@ -97,7 +97,7 @@ class VTABTask:
             with open(out_dir+"/results.json", "w") as f:
                 json.dump(data, f)
             torch.save(config["model"], out_dir+"/model.pt")
-            with open(out_dir+"/principle_directions.pkl") as f:
+            with open(out_dir+"/principle_directions.pkl", "w") as f:
                 pickle.dump(self.train_dataloader.get_principal_directions(), f)
 
 

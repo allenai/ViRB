@@ -30,13 +30,14 @@ class ProgressIterator:
             self.eta_list.append(end_time - self.start_time)
             self.start_time = end_time
             delta = np.mean(self.eta_list)
-        self.queue.put(ProgressDataPacket(
-            name=self.name,
-            device=self.device,
-            idx=self.idx+1,
-            total=len(self.data),
-            delta_time=delta)
-        )
+        if self.queue is not None:
+            self.queue.put(ProgressDataPacket(
+                name=self.name,
+                device=self.device,
+                idx=self.idx+1,
+                total=len(self.data),
+                delta_time=delta)
+            )
         item = self.iter.__next__()
         self.idx += 1
         return item
