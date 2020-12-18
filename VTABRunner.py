@@ -35,7 +35,8 @@ BINARY_PIXEL_WISE_CLASSIFICATION = [
     "Pets-Detection"
 ]
 PIXEL_WISE_REGRESSION = [
-    "THORDepth"
+    "THORDepth",
+    "NYUDepth"
 ]
 
 GPU_IDS = ["cuda:%d" % i for i in range(torch.cuda.device_count())] if torch.cuda.device_count() > 0 else ["cpu"]
@@ -72,6 +73,9 @@ def get_dataset_class(config):
     if config["task"] == "THORDepth":
         from datasets.ThorDepthEncodbleDataset import ThorDepthEncodableDataset
         return ThorDepthEncodableDataset
+    if config["task"] == "NYUDepth":
+        from datasets.NyuDepthEncodbleDataset import NyuDepthEncodableDataset
+        return NyuDepthEncodableDataset
 
 
 def get_task_head(config, dataset):
