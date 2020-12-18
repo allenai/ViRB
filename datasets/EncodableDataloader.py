@@ -47,31 +47,43 @@ class EncodableDataloader:
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.device = device
-        import gc
-        import json
-        print("\n"* 50)
-        tensors = []
-        for obj in gc.get_objects():
-            try:
-                if torch.is_tensor(obj) or (hasattr(obj, 'data') and torch.is_tensor(obj.data)):
-                    tensors.append({
-                        "size": str(obj.shape),
-                        "device": str(obj.device)
-                    })
-            except:
-                pass
-        print(tensors)
-        with open("tensor_dump.json", "w") as f:
-            json.dump(tensors, f)
-        exit()
+        self.batch_index = 0
+        self.batch_idxs = None
+        # import gc
+        # import json
+        # print("\n"* 50)
+        # tensors = []
+        # for obj in gc.get_objects():
+        #     try:
+        #         if torch.is_tensor(obj) or (hasattr(obj, 'data') and torch.is_tensor(obj.data)):
+        #             tensors.append({
+        #                 "size": str(obj.shape),
+        #                 "device": str(obj.device)
+        #             })
+        #     except:
+        #         pass
+        # print(tensors)
+        # with open("tensor_dump.json", "w") as f:
+        #     json.dump(tensors, f)
+        # exit()
 
     def __iter__(self):
         if self.shuffle:
             idxs = torch.randperm(self.__len__()).to(self.device)
         else:
             idxs = torch.arange(self.__len__()).to(self.device)
-        batch_idxs = [idxs[i*self.batch_size:min((i+1)*self.batch_size, self.__len__())] for i in range(self.__len__() // self.batch_size)]
-        return iter([({name: self.data[name][bi] for name in self.data}, self.labels[bi]) for bi in batch_idxs])
+        self.batch_idxs = [idxs[i*self.batch_size:min((i+1)*self.batch_size, self.__len__())] for i in range(self.__len__() // self.batch_size)]
+        self.batch_index = 0
+        return self
+        #iter([({name: self.data[name][bi] for name in self.data}, self.labels[bi]) for bi in batch_idxs])
+
+    def __next__(self):
+        if self.batch_index > len(self.batch_idxs):
+            raise StopIteration
+        bi = self.batch_idxs[self.batch_index]
+        data = {name: self.data[name][bi] for name in self.data}, self.labels[bi]
+        self.batch_index += 1
+        return data
 
     def __len__(self):
         return self.data[list(self.data.keys())[0]].size(0)
