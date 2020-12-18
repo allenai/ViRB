@@ -74,12 +74,11 @@ class EncodableDataloader:
             idxs = torch.arange(self.__len__()).to(self.device)
         self.batch_idxs = [idxs[i*self.batch_size:min((i+1)*self.batch_size, self.__len__())] for i in range(self.__len__() // self.batch_size)]
         self.batch_index = 0
-        print(self.batch_idxs)
         return self
         #iter([({name: self.data[name][bi] for name in self.data}, self.labels[bi]) for bi in batch_idxs])
 
     def __next__(self):
-        if self.batch_index > len(self.batch_idxs):
+        if self.batch_index >= len(self.batch_idxs):
             raise StopIteration
         bi = self.batch_idxs[self.batch_index]
         data = {name: self.data[name][bi] for name in self.data}, self.labels[bi]
