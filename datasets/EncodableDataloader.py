@@ -61,6 +61,7 @@ class EncodableDataloader:
                     })
             except:
                 pass
+        print(tensors)
         with open("tensor_dump.json", "w") as f:
             json.dump(tensors, f)
         exit()
