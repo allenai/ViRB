@@ -4,6 +4,7 @@ from torch.utils.tensorboard import SummaryWriter
 import os
 import tqdm
 import json
+import pickle
 
 from datasets.EncodableDataloader import EncodableDataloader
 from utils.progress_iterator import ProgressIterator
@@ -96,6 +97,9 @@ class VTABTask:
             with open(out_dir+"/results.json", "w") as f:
                 json.dump(data, f)
             torch.save(config["model"], out_dir+"/model.pt")
+            with open(out_dir+"/principle_directions.pkl") as f:
+                pickle.dump(self.train_dataloader.get_principal_directions(), f)
+
 
     def train_epoch(self, model, optimizer):
         model.train()
