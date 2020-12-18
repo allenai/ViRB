@@ -47,16 +47,23 @@ class EncodableDataloader:
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.device = device
-        import time
         import gc
+        import json
         print("\n"* 50)
+        tensors = []
         for obj in gc.get_objects():
             try:
                 if torch.is_tensor(obj) or (hasattr(obj, 'data') and torch.is_tensor(obj.data)):
-                    print(type(obj), obj.size())
+                    tensors.append({
+                        "type": type(obj),
+                        "size": obj.size(),
+                        "device": obj.get_device()
+                    })
             except:
                 pass
-        time.sleep(30)
+        with open("tensor_dump.json", "w") as f:
+            json.dump(tensors, f)
+        exit()
 
     def __iter__(self):
         if self.shuffle:
