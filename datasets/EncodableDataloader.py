@@ -47,6 +47,9 @@ class EncodableDataloader:
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.device = device
+        import time
+        print("SLEEPING!")
+        time.sleep(30)
 
     def __iter__(self):
         if self.shuffle:
