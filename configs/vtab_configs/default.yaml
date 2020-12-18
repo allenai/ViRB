@@ -150,7 +150,7 @@ THORDepth:
     sgd-0.001:
       optimizer: "sgd"
       lr: 0.001
-  num_epochs: 100
+  num_epochs: 25
 
 #ThorDepth-adam-0.0003:
 #  task: "THORDepth"
