@@ -95,7 +95,7 @@ class VTABTask:
             }
             with open(out_dir+"/results.json", "w") as f:
                 json.dump(data, f)
-        # torch.save(self.model, self.out_dir+"/model.pt")
+            torch.save(config["model"], out_dir+"/model.pt")
 
     def train_epoch(self, model, optimizer):
         model.train()
