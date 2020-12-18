@@ -22,9 +22,9 @@ class EncodableDataloader:
         model.eval()
         data_stacks = {name: [] for name in model.required_encoding()}
         label_stack = []
-        for d, l in ProgressIterator(dataloader, name, logging_queue, device):
-            d = d.to(device)
-            with torch.no_grad():
+        with torch.no_grad():
+            for d, l in ProgressIterator(dataloader, name, logging_queue, device):
+                d = d.to(device)
                 o = model.encoder_forward(d)
                 for name, data_stack in data_stacks.items():
                     if model.pca_embeddings() is not None and name in model.pca_embeddings():
@@ -39,10 +39,10 @@ class EncodableDataloader:
                             data_stack.append(get_principal_components(x, self.principal_directions[name]).half())
                     else:
                         data_stack.append(o[name].detach().half())
-            label_stack.append(l)
-        print(("\n"*20) + "Names:", [(name, len(data_stacks[name]), data_stacks[name][-1].shape) for name in data_stacks])
-        self.data = {name: torch.cat(data_stacks[name], dim=0).to(device) for name in data_stacks}
-        self.labels = torch.cat(label_stack, dim=0).to(device)
+                label_stack.append(l)
+            print(("\n"*20) + "Names:", [(name, len(data_stacks[name]), data_stacks[name][-1].shape) for name in data_stacks])
+            self.data = {name: torch.cat(data_stacks[name], dim=0).to(device) for name in data_stacks}
+            self.labels = torch.cat(label_stack, dim=0).to(device)
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.device = device
