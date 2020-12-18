@@ -40,8 +40,7 @@ class EncodableDataloader:
                     else:
                         data_stack.append(o[name].detach().half())
             label_stack.append(l)
-        print("Names:", [(name, len(data_stacks[name]), data_stacks[name][-1] is None) for name in data_stacks])
-        exit()
+        print("Names:", [(name, len(data_stacks[name]), data_stacks[name][-1].shape) for name in data_stacks])
         self.data = {name: torch.cat(data_stacks[name], dim=0).to(device) for name in data_stacks}
         self.labels = torch.cat(label_stack, dim=0).to(device)
         self.batch_size = batch_size
