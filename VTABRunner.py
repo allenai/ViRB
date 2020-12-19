@@ -128,7 +128,7 @@ def get_loss_function(config):
 
 def get_error_function(config):
     if config["task"] in PIXEL_WISE_REGRESSION:
-        return torch.nn.SmoothL1Loss()
+        return torch.nn.L1Loss()
     if config["task"] in CLASSIFICATION_TASKS:
         from utils.error_functions import classification_error
         return classification_error

@@ -44,7 +44,7 @@ class NyuDepthEncodableDataset(EncodableDataset):
         label_path = self.labels[idx]
 
         img = self.img_preprocessor(Image.open(img_path).convert('RGB'))
-        mask = np.array(Image.open(label_path).resize((224, 224)) , dtype=np.float)
+        mask = np.array(Image.open(label_path).resize((224, 224)), dtype=np.float)
         mask /= np.max(mask)
         mask = torch.tensor(mask, dtype=torch.float)
         mask = mask.unsqueeze(0)
