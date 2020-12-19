@@ -112,8 +112,8 @@ def get_scheduler(config, optimizer):
     if config["scheduler"]["type"] == "StepLR":
         return torch.optim.lr_scheduler.StepLR(
             optimizer,
-            config["scheduler"]["type"]["step_size"],
-            gamma=config["scheduler"]["type"]["gamma"]
+            config["scheduler"]["step_size"],
+            gamma=config["scheduler"]["gamma"]
         )
 
 
