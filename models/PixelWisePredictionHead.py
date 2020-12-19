@@ -36,7 +36,7 @@ class PixelWisePredictionHead(nn.Module):
         d3 = self.up3(torch.cat((d4, x["layer3"].float()), dim=1))
         d2 = self.up4(torch.cat((d3, x["layer2"].float()), dim=1))
         out = self.up5(torch.cat((d2, x["layer1"].float()), dim=1))
-        return out
+        return torch.sigmoid(out)
 
     def required_encoding(self):
         # return ["layer5"]
