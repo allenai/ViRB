@@ -152,13 +152,13 @@ NYUDepth:
     adam-0.0001:
       optimizer: "adam"
       lr: 0.0003
-#    sgd-0.01:
-#      optimizer: "sgd"
-#      lr: 0.1
-#      scheduler:
-#        type: "StepLR"
-#        step_size: 100
-#        gamma: 0.1
+    sgd-0.01:
+      optimizer: "sgd"
+      lr: 0.01
+      scheduler:
+        type: "StepLR"
+        step_size: 50
+        gamma: 0.1
   num_epochs: 100
 
 #NYUWalkable:
