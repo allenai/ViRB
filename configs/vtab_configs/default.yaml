@@ -146,7 +146,7 @@
 #      lr: 0.01
 #  num_epochs: 25
 
-NYUDepth:
+NYUDepth-Non-Smooth-L1:
   task: "NYUDepth"
   training_configs:
     adam-0.0001:
