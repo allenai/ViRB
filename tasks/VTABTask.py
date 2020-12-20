@@ -97,10 +97,11 @@ class VTABTask:
             with open(out_dir+"/results.json", "w") as f:
                 json.dump(data, f)
             torch.save(config["model"].task_head.state_dict(), out_dir+"/model_head.pt")
-            principle_directions = self.train_dataloader.get_principal_directions()
-            cpu_principle_directions = {name: pd.detach().cpu() for name, pd in principle_directions.items()}
-            with open(out_dir+"/principle_directions.pkl", "wb") as f:
-                pickle.dump(cpu_principle_directions, f)
+            if config["model"].train_encoder:
+                principle_directions = self.train_dataloader.get_principal_directions()
+                cpu_principle_directions = {name: pd.detach().cpu() for name, pd in principle_directions.items()}
+                with open(out_dir+"/principle_directions.pkl", "wb") as f:
+                    pickle.dump(cpu_principle_directions, f)
 
     def train_epoch(self, model, optimizer):
         model.train()
