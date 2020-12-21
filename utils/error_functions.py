@@ -26,4 +26,4 @@ def iou(out, labels):
         intersection = (out == layer_wise_label_mask).sum(-1).sum(-1)
         union = (out + layer_wise_label_mask).sum(-1).sum(-1)
 
-        return torch.mean(intersection / union)
+        return torch.mean((intersection + 1e-8) / (union + 1e-8))
