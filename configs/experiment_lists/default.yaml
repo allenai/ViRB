@@ -1,6 +1,6 @@
 # Baselines
 Random: 'pretrained_weights/Random.pt'
-Suprovised: 'pretrained_weights/Suprovised.pt'
+Suprovised: 'pretrained_weights/Supervised.pt'
 # Pre Trained
 SWAV_800: 'pretrained_weights/SWAV_800.pt'
 MoCov2_800: 'pretrained_weights/MoCov2_800.pt'
