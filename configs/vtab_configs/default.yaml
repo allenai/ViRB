@@ -162,17 +162,17 @@ NYUDepth:
   num_epochs: 40
   num_dataset_repeats: 25
 
-#NYUWalkable:
-#  task: "NYUWalkable"
-#  training_configs:
-#    adam-0.0001:
-#      optimizer: "adam"
-#      lr: 0.0003
-#    sgd-0.01:
-#      optimizer: "sgd"
-#      lr: 0.01
-#  num_epochs: 100
-#  num_dataset_repeats: 10
+NYUWalkable:
+  task: "NYUWalkable"
+  training_configs:
+    adam-0.0001:
+      optimizer: "adam"
+      lr: 0.0003
+    sgd-0.01:
+      optimizer: "sgd"
+      lr: 0.01
+  num_epochs: 40
+  num_dataset_repeats: 25
 
 
 
