@@ -135,16 +135,16 @@
 #      lr: 0.001
 #  num_epochs: 100
 
-#THORDepth:
-#  task: "THORDepth"
-#  training_configs:
-#    adam-0.0001:
-#      optimizer: "adam"
-#      lr: 0.0003
-#    sgd-0.01:
-#      optimizer: "sgd"
-#      lr: 0.01
-#  num_epochs: 25
+THORDepth:
+  task: "THORDepth-l1"
+  training_configs:
+    adam-0.0001:
+      optimizer: "adam"
+      lr: 0.0003
+    sgd-0.01:
+      optimizer: "sgd"
+      lr: 0.01
+  num_epochs: 25
 
 NYUDepth:
   task: "NYUDepth"
@@ -159,8 +159,8 @@ NYUDepth:
         type: "StepLR"
         step_size: 10
         gamma: 0.1
-  num_epochs: 20
-  num_dataset_repeats: 50
+  num_epochs: 40
+  num_dataset_repeats: 25
 
 #NYUWalkable:
 #  task: "NYUWalkable"
