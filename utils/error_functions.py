@@ -24,6 +24,6 @@ def iou(out, labels):
         out = torch.round(torch.sigmoid(out))
 
         intersection = torch.logical_and(out, layer_wise_label_mask).sum(-1).sum(-1)
-        union = torch.logical_od(out, layer_wise_label_mask).sum(-1).sum(-1)
+        union = torch.logical_or(out, layer_wise_label_mask).sum(-1).sum(-1)
 
         return torch.mean((intersection + 1e-8) / (union + 1e-8))
