@@ -55,14 +55,14 @@ class NyuWalkableEncodableDataset(EncodableDataset):
         mask = torch.tensor(mask, dtype=torch.float)
         mask = mask.unsqueeze(0)
 
-        i = img.detach().numpy().transpose(1, 2, 0)
-        plt.figure(0)
-        plt.imshow(i)
-        m = mask.detach()
-        plt.figure(1)
-        plt.imshow(m[0])
-        plt.show()
-        exit()
+        # i = img.detach().numpy().transpose(1, 2, 0)
+        # plt.figure(0)
+        # plt.imshow(i)
+        # m = mask.detach()
+        # plt.figure(1)
+        # plt.imshow(m[0])
+        # plt.show()
+        # exit()
 
         return img, mask
 
