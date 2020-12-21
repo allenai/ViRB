@@ -27,7 +27,6 @@ class EncodableDataloader:
             for k in range(num_dataset_repeats):
                 for d, l in ProgressIterator(dataloader, progress_name+" - Pass %d" % (k+1), logging_queue, device):
                     d = d.to(device)
-                    l = l.to(device)
                     o = model.encoder_forward(d)
                     for name, data_stack in data_stacks.items():
                         if model.pca_embeddings() is not None and name in model.pca_embeddings():
@@ -39,9 +38,9 @@ class EncodableDataloader:
                                     self.principal_directions[name] = get_principal_directions(
                                         x, model.pca_embeddings()[name]
                                     )
-                                data_stack.append(get_principal_components(x, self.principal_directions[name]).half())
+                                data_stack.append(get_principal_components(x, self.principal_directions[name]).half().cpu())
                         else:
-                            data_stack.append(o[name].detach().half())
+                            data_stack.append(o[name].detach().half().cpu())
                     label_stack.append(l)
             self.data = {name: torch.cat(data_stacks[name], dim=0).half().to(device) for name in data_stacks}
             self.labels = torch.cat(label_stack, dim=0).to(device)
