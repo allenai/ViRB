@@ -37,7 +37,8 @@ BINARY_PIXEL_WISE_CLASSIFICATION = [
 ]
 PIXEL_WISE_REGRESSION = [
     "THORDepth",
-    "NYUDepth"
+    "NYUDepth",
+    "TaskonomyInpainting"
 ]
 
 GPU_IDS = ["cuda:%d" % i for i in range(torch.cuda.device_count())] if torch.cuda.device_count() > 0 else ["cpu"]
@@ -80,9 +81,15 @@ def get_dataset_class(config):
     if config["task"] == "NYUWalkable":
         from datasets.NyuWalkableEncodbleDataset import NyuWalkableEncodableDataset
         return NyuWalkableEncodableDataset
+    if config["task"] == "TaskonomyInpainting":
+        from datasets.TaskonomyInpaintingEncodbleDataset import TaskonomyInpaintingEncodableDataset
+        return TaskonomyInpaintingEncodableDataset
 
 
 def get_task_head(config, dataset):
+    if config["task"] == "TaskonomyInpainting":
+        from models.PixelWisePredictionHead import PixelWisePredictionHead
+        return PixelWisePredictionHead(3)
     if config["task"] in PIXEL_WISE_REGRESSION:
         from models.PixelWisePredictionHead import PixelWisePredictionHead
         return PixelWisePredictionHead(1)

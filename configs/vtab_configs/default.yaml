@@ -1,19 +1,19 @@
-#### FINAL CONFIG
+### FINAL CONFIG
 Pets:
   task: "Pets"
   training_configs:
     adam-0.0001:
       optimizer: "adam"
       lr: 0.0001
-    adam-0.001:
-      optimizer: "adam"
-      lr: 0.001
-    sgd-0.01:
-      optimizer: "sgd"
-      lr: 0.01
-    sgd-0.001:
-      optimizer: "sgd"
-      lr: 0.001
+#    adam-0.001:
+#      optimizer: "adam"
+#      lr: 0.001
+#    sgd-0.01:
+#      optimizer: "sgd"
+#      lr: 0.01
+#    sgd-0.001:
+#      optimizer: "sgd"
+#      lr: 0.001
   num_epochs: 500
 
 #SUN397:
@@ -39,15 +39,15 @@ CIFAR-100:
     adam-0.0001:
       optimizer: "adam"
       lr: 0.0001
-    adam-0.001:
-      optimizer: "adam"
-      lr: 0.001
-    sgd-0.01:
-      optimizer: "sgd"
-      lr: 0.01
-    sgd-0.001:
-      optimizer: "sgd"
-      lr: 0.001
+#    adam-0.001:
+#      optimizer: "adam"
+#      lr: 0.001
+#    sgd-0.01:
+#      optimizer: "sgd"
+#      lr: 0.01
+#    sgd-0.001:
+#      optimizer: "sgd"
+#      lr: 0.001
   num_epochs: 100
 
 CalTech-101:
@@ -56,15 +56,15 @@ CalTech-101:
     adam-0.0001:
       optimizer: "adam"
       lr: 0.0001
-    adam-0.001:
-      optimizer: "adam"
-      lr: 0.001
-    sgd-0.01:
-      optimizer: "sgd"
-      lr: 0.01
-    sgd-0.001:
-      optimizer: "sgd"
-      lr: 0.001
+#    adam-0.001:
+#      optimizer: "adam"
+#      lr: 0.001
+#    sgd-0.01:
+#      optimizer: "sgd"
+#      lr: 0.01
+#    sgd-0.001:
+#      optimizer: "sgd"
+#      lr: 0.001
   num_epochs: 500
 
 Eurosat:
@@ -73,15 +73,15 @@ Eurosat:
     adam-0.0001:
       optimizer: "adam"
       lr: 0.0001
-    adam-0.001:
-      optimizer: "adam"
-      lr: 0.001
-    sgd-0.01:
-      optimizer: "sgd"
-      lr: 0.01
-    sgd-0.001:
-      optimizer: "sgd"
-      lr: 0.001
+#    adam-0.001:
+#      optimizer: "adam"
+#      lr: 0.001
+#    sgd-0.01:
+#      optimizer: "sgd"
+#      lr: 0.01
+#    sgd-0.001:
+#      optimizer: "sgd"
+#      lr: 0.001
   num_epochs: 200
 
 dtd:
@@ -90,15 +90,15 @@ dtd:
     adam-0.0001:
       optimizer: "adam"
       lr: 0.0001
-    adam-0.001:
-      optimizer: "adam"
-      lr: 0.001
-    sgd-0.01:
-      optimizer: "sgd"
-      lr: 0.01
-    sgd-0.001:
-      optimizer: "sgd"
-      lr: 0.001
+#    adam-0.001:
+#      optimizer: "adam"
+#      lr: 0.001
+#    sgd-0.01:
+#      optimizer: "sgd"
+#      lr: 0.01
+#    sgd-0.001:
+#      optimizer: "sgd"
+#      lr: 0.001
   num_epochs: 100
 #
 CLEVERNumObjects:
@@ -107,15 +107,15 @@ CLEVERNumObjects:
     adam-0.0001:
       optimizer: "adam"
       lr: 0.0001
-    adam-0.001:
-      optimizer: "adam"
-      lr: 0.001
-    sgd-0.01:
-      optimizer: "sgd"
-      lr: 0.01
-    sgd-0.001:
-      optimizer: "sgd"
-      lr: 0.001
+#    adam-0.001:
+#      optimizer: "adam"
+#      lr: 0.001
+#    sgd-0.01:
+#      optimizer: "sgd"
+#      lr: 0.01
+#    sgd-0.001:
+#      optimizer: "sgd"
+#      lr: 0.001
   num_epochs: 100
 
 Pets-Detection:
@@ -124,15 +124,15 @@ Pets-Detection:
     adam-0.0001:
       optimizer: "adam"
       lr: 0.0001
-    adam-0.001:
-      optimizer: "adam"
-      lr: 0.001
-    sgd-0.01:
-      optimizer: "sgd"
-      lr: 0.01
-    sgd-0.001:
-      optimizer: "sgd"
-      lr: 0.001
+#    adam-0.001:
+#      optimizer: "adam"
+#      lr: 0.001
+#    sgd-0.01:
+#      optimizer: "sgd"
+#      lr: 0.01
+#    sgd-0.001:
+#      optimizer: "sgd"
+#      lr: 0.001
   num_epochs: 100
 
 THORDepth:
@@ -141,9 +141,9 @@ THORDepth:
     adam-0.0001-l1:
       optimizer: "adam"
       lr: 0.0003
-    sgd-0.01-l1:
-      optimizer: "sgd"
-      lr: 0.01
+#    sgd-0.01-l1:
+#      optimizer: "sgd"
+#      lr: 0.01
   num_epochs: 50
 
 NYUDepth:
@@ -152,13 +152,13 @@ NYUDepth:
     adam-0.0003-l1:
       optimizer: "adam"
       lr: 0.0003
-    sgd-0.001-no-step-l1:
-      optimizer: "sgd"
-      lr: 0.001
-      scheduler:
-        type: "StepLR"
-        step_size: 40
-        gamma: 0.1
+#    sgd-0.001-no-step-l1:
+#      optimizer: "sgd"
+#      lr: 0.001
+#      scheduler:
+#        type: "StepLR"
+#        step_size: 40
+#        gamma: 0.1
   num_epochs: 40
   num_dataset_repeats: 25
 
@@ -168,13 +168,13 @@ NYUWalkable:
     adam-0.0003-l1:
       optimizer: "adam"
       lr: 0.0003
-    sgd-0.001-no-step-l1:
-      optimizer: "sgd"
-      lr: 0.001
-      scheduler:
-        type: "StepLR"
-        step_size: 40
-        gamma: 0.1
+#    sgd-0.001-no-step-l1:
+#      optimizer: "sgd"
+#      lr: 0.001
+#      scheduler:
+#        type: "StepLR"
+#        step_size: 40
+#        gamma: 0.1
   num_epochs: 40
   num_dataset_repeats: 25
 
@@ -182,67 +182,14 @@ NYUWalkable:
 
 
 
-#ThorDepth-adam-0.0003:
-#  task: "THORDepth"
-#  optimizer: "adam"
-#  lr: 0.0003
-#  num_epochs: 100
-#
-#ThorDepth-adam-0.0001:
-#  task: "THORDepth"
-#  optimizer: "adam"
-#  lr: 0.0001
-#  num_epochs: 500
 
-#PetsDetectio-sgd-0.001-full-sized-output:
-#  task: "Pets-Detection"
-#  optimizer: "sgd"
-#  lr: 0.001
-#  num_epochs: 500
-#  scheduler:
-#    type: "StepLR"
-#    step_size: 100
-#    gamma: 0.5
-
-#dtd-adam-0.0001:
-#  task: "dtd"
-#  optimizer: "adam"
-#  lr: 0.0001
-#  num_epochs: 500
-#dtd-adam-0.001:
-#  task: "dtd"
-#  optimizer: "adam"
-#  lr: 0.001
-#  num_epochs: 500
-#dtd-sgd-0.001:
-#  task: "dtd"
-#  optimizer: "sgd"
-#  lr: 0.001
-#  num_epochs: 500
-#dtd-sgd-0.01:
-#  task: "dtd"
-#  optimizer: "sgd"
-#  lr: 0.01
-#  num_epochs: 500
-
-#CLEVERDist-adam-0.0001:
-#  task: "CLEVERDist"
-#  optimizer: "adam"
-#  lr: 0.0001
-#  num_epochs: 500
-#CLEVERDist-adam-0.001:
-#  task: "CLEVERDist"
-#  optimizer: "adam"
-#  lr: 0.001
-#  num_epochs: 500
-#CLEVERDist-sgd-0.001:
-#  task: "CLEVERDist"
-#  optimizer: "sgd"
-#  lr: 0.001
-#  num_epochs: 500
-#CLEVERDist-sgd-0.01:
-#  task: "CLEVERDist"
-#  optimizer: "sgd"
-#  lr: 0.01
-#  num_epochs: 500
-#
+#TaskonomyInpainting:
+#  task: "TaskonomyInpainting"
+#  training_configs:
+#    adam-0.0001-l1:
+#      optimizer: "adam"
+#      lr: 0.0003
+#    sgd-0.01-l1:
+#      optimizer: "sgd"
+#      lr: 0.01
+#  num_epochs: 50
