@@ -26,7 +26,8 @@ class VTABTask:
             batch_size=32,
             num_workers=12,
             device="cpu",
-            pre_encode=None
+            pre_encode=None,
+            num_dataset_repeats=1,
     ):
         if pre_encode is None:
             pre_encode = not training_configs[0]["model"].train_encoder
@@ -58,7 +59,8 @@ class VTABTask:
                                                         self.logging_queue,
                                                         batch_size=batch_size,
                                                         shuffle=True,
-                                                        device=device)
+                                                        device=device,
+                                                        num_dataset_repeats=num_dataset_repeats)
             self.test_dataloader = EncodableDataloader(
                 self.test_dataloader,
                 self.training_configs[0]["model"],

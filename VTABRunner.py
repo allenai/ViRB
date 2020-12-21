@@ -157,6 +157,7 @@ def run_VTAB_task(config, logging_queue):
             "scheduler": scheduler
         })
     pre_encode = config["pre_encode"] if "pre_encode" in config else None
+    num_dataset_repeats = config["num_dataset_repeats"] if "num_dataset_repeats" in config else 1
     task = VTABTask(
         config["experiment_name"],
         config["task_name"],
@@ -169,7 +170,8 @@ def run_VTAB_task(config, logging_queue):
         logging_queue=logging_queue,
         num_workers=config["num_workers"],
         device=config["device_id"],
-        pre_encode=pre_encode
+        pre_encode=pre_encode,
+        num_dataset_repeats=num_dataset_repeats,
     )
     results = task.run(config["num_epochs"])
     return results

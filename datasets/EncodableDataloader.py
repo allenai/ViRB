@@ -15,7 +15,8 @@ class EncodableDataloader:
             batch_size=32,
             shuffle=True,
             device="cpu",
-            principal_directions=None
+            principal_directions=None,
+            num_dataset_repeats=1,
     ):
         self.principal_directions = principal_directions
         model = model.to(device)
@@ -23,23 +24,24 @@ class EncodableDataloader:
         data_stacks = {name: [] for name in model.required_encoding()}
         label_stack = []
         with torch.no_grad():
-            for d, l in ProgressIterator(dataloader, name, logging_queue, device):
-                d = d.to(device)
-                o = model.encoder_forward(d)
-                for name, data_stack in data_stacks.items():
-                    if model.pca_embeddings() is not None and name in model.pca_embeddings():
-                        with torch.no_grad():
-                            x = o[name].detach()
-                            if self.principal_directions is None:
-                                self.principal_directions = {}
-                            if name not in self.principal_directions:
-                                self.principal_directions[name] = get_principal_directions(
-                                    x, model.pca_embeddings()[name]
-                                )
-                            data_stack.append(get_principal_components(x, self.principal_directions[name]).half().cpu())
-                    else:
-                        data_stack.append(o[name].detach().half().cpu())
-                label_stack.append(l)
+            for k in range(num_dataset_repeats):
+                for d, l in ProgressIterator(dataloader, name+"-%d" % k, logging_queue, device):
+                    d = d.to(device)
+                    o = model.encoder_forward(d)
+                    for name, data_stack in data_stacks.items():
+                        if model.pca_embeddings() is not None and name in model.pca_embeddings():
+                            with torch.no_grad():
+                                x = o[name].detach()
+                                if self.principal_directions is None:
+                                    self.principal_directions = {}
+                                if name not in self.principal_directions:
+                                    self.principal_directions[name] = get_principal_directions(
+                                        x, model.pca_embeddings()[name]
+                                    )
+                                data_stack.append(get_principal_components(x, self.principal_directions[name]).half().cpu())
+                        else:
+                            data_stack.append(o[name].detach().half().cpu())
+                    label_stack.append(l)
             self.data = {name: torch.cat(data_stacks[name], dim=0).half().to(device) for name in data_stacks}
             self.labels = torch.cat(label_stack, dim=0).to(device)
             del data_stacks
