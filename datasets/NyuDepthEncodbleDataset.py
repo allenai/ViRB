@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import torchvision.transforms as transforms
 import glob
 from PIL import Image
+import h5py
 import random
 
 
@@ -21,10 +22,11 @@ class NyuDepthEncodableDataset(EncodableDataset):
             if train else 'data/nyu/test/images/*.png'
         self.data = list(glob.glob(data_path))
         self.data.sort()
-        label_path = 'data/nyu/train/depths/*.png'\
-            if train else 'data/nyu/test/depths/*.png'
+        label_path = 'data/nyu/train/depths/*.tiff'\
+            if train else 'data/nyu/test/depths/*.tiff'
         self.labels = list(glob.glob(label_path))
         self.labels.sort()
+
         self.img_preprocessor = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
@@ -33,7 +35,8 @@ class NyuDepthEncodableDataset(EncodableDataset):
         self.label_preprocessor = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
-            transforms.Normalize(mean=0.5, std=0.25)
+            transforms.Normalize(mean=[0.5, 0.5, 0.5],
+                                 std=[0.5, 0.5, 0.5])
         ])
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -43,18 +46,19 @@ class NyuDepthEncodableDataset(EncodableDataset):
         img_path = self.data[idx]
         label_path = self.labels[idx]
 
-        img = self.img_preprocessor(Image.open(img_path).convert('RGB'))
-        mask = np.array(Image.open(label_path).resize((224, 224)), dtype=np.float)
-        mask /= np.max(mask)
-        mask = torch.tensor(mask, dtype=torch.float)
+        img = self.img_preprocessor(Image.open(img_path))
+        # mask = self.label_preprocessor(Image.open(label_path))
+        # mask = self.label_preprocessor(Image.open(label_path).convert('RGB'))
+        mask = np.array(Image.open(label_path).resize((224, 224)))
+        mask = torch.tensor(mask)
         mask = mask.unsqueeze(0)
 
+        # print(np.min(mask), np.max(mask), label_path)
         # i = img.detach().numpy().transpose(1, 2, 0)
         # plt.figure(0)
         # plt.imshow(i)
-        # m = mask.detach()
         # plt.figure(1)
-        # plt.imshow(m[0])
+        # plt.imshow(mask[0])
         # plt.show()
         # exit()
 
