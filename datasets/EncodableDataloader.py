@@ -10,7 +10,7 @@ class EncodableDataloader:
             self,
             dataloader,
             model,
-            name,
+            progress_name,
             logging_queue,
             batch_size=32,
             shuffle=True,
@@ -25,7 +25,7 @@ class EncodableDataloader:
         label_stack = []
         with torch.no_grad():
             for k in range(num_dataset_repeats):
-                for d, l in ProgressIterator(dataloader, name+"-%d" % k, logging_queue, device):
+                for d, l in ProgressIterator(dataloader, progress_name+" - Pass %d" % (k+1), logging_queue, device):
                     d = d.to(device)
                     o = model.encoder_forward(d)
                     for name, data_stack in data_stacks.items():

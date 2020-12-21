@@ -47,15 +47,15 @@ class VTABTask:
         self.train_dataloader = torch.utils.data.DataLoader(train_set,
                                                             batch_size=batch_size,
                                                             shuffle=True,
-                                                            num_workers=0)
+                                                            num_workers=num_workers)
         self.test_dataloader = torch.utils.data.DataLoader(test_set,
                                                            batch_size=batch_size,
                                                            shuffle=False,
-                                                           num_workers=0)
+                                                           num_workers=num_workers)
         if self.pre_encode:
             self.train_dataloader = EncodableDataloader(self.train_dataloader,
                                                         self.training_configs[0]["model"],
-                                                        "Encoding Train Set",
+                                                        "Encoding Train Set for %s on %s" % (self.name, self.task),
                                                         self.logging_queue,
                                                         batch_size=batch_size,
                                                         shuffle=True,
@@ -64,7 +64,7 @@ class VTABTask:
             self.test_dataloader = EncodableDataloader(
                 self.test_dataloader,
                 self.training_configs[0]["model"],
-                "Encoding Test Set",
+                "Encoding Test Set for %s on %s" % (self.name, self.task),
                 self.logging_queue,
                 batch_size=batch_size,
                 shuffle=False,
@@ -79,7 +79,7 @@ class VTABTask:
             writer = SummaryWriter(log_dir=out_dir)
             for e in ProgressIterator(
                     range(epochs),
-                    "Training %s on %s" % (self.name, self.task),
+                    "Training %s on %s with config %s" % (self.name, self.task, config["name"]),
                     self.logging_queue, self.device
             ):
                 train_loss, train_accuracy = self.train_epoch(config["model"], config["optimizer"])
