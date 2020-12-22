@@ -28,7 +28,8 @@ CLASSIFICATION_TASKS = [
     "dtd",
     "CLEVERNumObjects",
     "CLEVERDist",
-    "SUN397"
+    "SUN397",
+    "Imagenet"
 ]
 BINARY_PIXEL_WISE_CLASSIFICATION = [
     "Flowers-Detection",
@@ -84,6 +85,9 @@ def get_dataset_class(config):
     if config["task"] == "TaskonomyInpainting":
         from datasets.TaskonomyInpaintingEncodbleDataset import TaskonomyInpaintingEncodableDataset
         return TaskonomyInpaintingEncodableDataset
+    if config["task"] == "Imagenet":
+        from datasets.ImagenetEncodbleDataset import ImagenetEncodableDataset
+        return ImagenetEncodableDataset
 
 
 def get_task_head(config, dataset):
