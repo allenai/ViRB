@@ -257,15 +257,15 @@ class VTABRunner:
             stdscr.addstr(lidx, 0, "|" + "-"*99 + "|")
 
             lidx += 1
-            # stdscr.addstr(lidx, 0, "|")
-            # stdscr.addstr(lidx, 2, "Device")
-            # stdscr.addstr(lidx, 15, "|")
-            # stdscr.addstr(lidx, 17, "Task")
-            # stdscr.addstr(lidx, 75, "|")
-            # stdscr.addstr(lidx, 77, "Progress")
-            # stdscr.addstr(lidx, 90, "|")
-            # stdscr.addstr(lidx, 92, "ETA")
-            # stdscr.addstr(lidx, 100, "|")
+            stdscr.addstr(lidx, 0, "|")
+            stdscr.addstr(lidx, 2, "Device")
+            stdscr.addstr(lidx, 15, "|")
+            stdscr.addstr(lidx, 17, "Task")
+            stdscr.addstr(lidx, 75, "|")
+            stdscr.addstr(lidx, 77, "Progress")
+            stdscr.addstr(lidx, 90, "|")
+            stdscr.addstr(lidx, 92, "ETA")
+            stdscr.addstr(lidx, 100, "|")
 
             lidx += 1
             stdscr.addstr(lidx, 0, "|")
