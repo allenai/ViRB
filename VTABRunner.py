@@ -254,6 +254,9 @@ class VTABRunner:
 
     def run(self):
         try:
+            import time
+            print("A")
+            time.sleep(10)
             stdscr = curses.initscr()
             curses.noecho()
             curses.cbreak()
@@ -282,9 +285,6 @@ class VTABRunner:
             stdscr.addstr(lidx, 0, "|")
             stdscr.addstr(lidx, 1, "-" * 99)
             stdscr.addstr(lidx, 100, "|")
-
-            import time
-            time.sleep(10)
 
             for _ in range(len(GPU_IDS)):
                 lidx += 1
