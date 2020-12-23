@@ -254,23 +254,12 @@ class VTABRunner:
 
     def run(self):
         try:
-            import time
-            print("A")
-            time.sleep(10)
             stdscr = curses.initscr()
-            print("B")
-            time.sleep(10)
             curses.noecho()
-            print("c")
-            time.sleep(10)
             curses.cbreak()
-            print("D")
-            time.sleep(10)
             curses.curs_set(0)
             lidx = 0
             stdscr.addstr(lidx, 0, "+" + "-"*99 + "+")
-            print("E")
-            time.sleep(10)
 
             lidx += 1
             stdscr.addstr(lidx, 0, "|" + " "*99 + "|")
@@ -294,14 +283,24 @@ class VTABRunner:
             stdscr.addstr(lidx, 1, "-" * 99)
             stdscr.addstr(lidx, 100, "|")
 
+            import time
+            print("a")
+            time.sleep(10)
+
             for _ in range(len(GPU_IDS)):
                 lidx += 1
                 stdscr.addstr(lidx, 0, "|" + " "*14 + "|" + " "*59 + "|" + " "*14 + "|" + " "*9 + "|")
                 lidx += 1
                 stdscr.addstr(lidx, 0, "|" + "-"*99 + "|")
 
+            print("b")
+            time.sleep(10)
+
             stdscr.addstr(lidx, 0, "+" + "-"*99 + "+")
             stdscr.refresh()
+
+            print("c")
+            time.sleep(10)
 
             for device_id in GPU_IDS:
                 p = mp.Process(
@@ -310,6 +309,9 @@ class VTABRunner:
                     daemon=False
                 )
                 p.start()
+
+            print("d")
+            time.sleep(10)
 
             pending_tasks = self.total_num_tasks
             while pending_tasks > 0:
