@@ -268,9 +268,13 @@ class VTABRunner:
 
             lidx += 1
             stdscr.addstr(lidx, 0, "|" + " "*99 + "|")
+            print("3")
+            time.sleep(10)
 
             lidx += 1
             stdscr.addstr(lidx, 0, "|" + "-"*99 + "|")
+            print("4")
+            time.sleep(10)
 
             lidx += 1
             stdscr.addstr(lidx, 0, "|")
@@ -282,6 +286,8 @@ class VTABRunner:
             stdscr.addstr(lidx, 90, "|")
             stdscr.addstr(lidx, 92, "ETA")
             stdscr.addstr(lidx, 100, "|")
+            print("5")
+            time.sleep(10)
 
             lidx += 1
             stdscr.addstr(lidx, 0, "|")
