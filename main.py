@@ -6,8 +6,8 @@ import warnings
 
 
 def main():
-    warnings.filterwarnings("ignore")
     experiment_list = parse_args()
+    print(experiment_list)
     runner = VTABRunner(
         experiments={
             name: ResNet50Encoder(weights=weights)
@@ -15,6 +15,7 @@ def main():
         },
         train_encoder=False
     )
+    print("IN")
     runner.run()
 
 
