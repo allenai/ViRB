@@ -259,7 +259,12 @@ class VTABRunner:
             curses.cbreak()
             curses.curs_set(0)
             lidx = 0
+            import time
+            print("1")
+            time.sleep(10)
             stdscr.addstr(lidx, 0, "+" + "-"*99 + "+")
+            print("2")
+            time.sleep(10)
 
             lidx += 1
             stdscr.addstr(lidx, 0, "|" + " "*99 + "|")
@@ -283,7 +288,6 @@ class VTABRunner:
             stdscr.addstr(lidx, 1, "-" * 99)
             stdscr.addstr(lidx, 100, "|")
 
-            import time
             print("a")
             time.sleep(10)
 
