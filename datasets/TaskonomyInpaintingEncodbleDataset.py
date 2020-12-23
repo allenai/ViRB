@@ -37,7 +37,14 @@ class TaskonomyInpaintingEncodableDataset(EncodableDataset):
             idx = idx.tolist()
         img_path = self.data[idx]
 
-        img = self.img_preprocessor(Image.open(img_path).convert('RGB'))
+        try:
+            img = self.img_preprocessor(Image.open(img_path).convert('RGB'))
+        except:
+            print(img_path)
+            import time
+            time.sleep(10)
+            print(img_path)
+            exit()
         mask = img.detach().clone()
         img[:,64:160, 64:160] = 0.0
 
