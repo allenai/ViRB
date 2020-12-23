@@ -20,6 +20,10 @@ class TaskonomyInpaintingEncodableDataset(EncodableDataset):
         data_path = 'data/taskonomy/train/rgb/*/*.png'\
             if train else 'data/taskonomy/test/rgb/*/*.png'
         self.data = list(glob.glob(data_path))
+        ## TODO FIx this!
+        import random
+        random.shuffle(self.data)
+        self.data = self.data[:30000]
         self.data.sort()
         self.labels = self.data
         self.img_preprocessor = transforms.Compose([
