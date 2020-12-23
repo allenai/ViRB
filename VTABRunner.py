@@ -254,11 +254,12 @@ class VTABRunner:
 
     def run(self):
         try:
+            print("Hey")
             stdscr = curses.initscr()
             curses.noecho()
             curses.cbreak()
             curses.curs_set(0)
-
+            print("Hello")
             lidx = 0
             stdscr.addstr(lidx, 0, "+" + "-"*99 + "+")
 
@@ -332,6 +333,7 @@ class VTABRunner:
         except:
             traceback.print_exc()
         finally:
+            print("Down here")
             stdscr.keypad(0)
             curses.echo()
             curses.nocbreak()
