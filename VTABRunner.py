@@ -258,11 +258,19 @@ class VTABRunner:
             print("A")
             time.sleep(10)
             stdscr = curses.initscr()
+            print("B")
+            time.sleep(10)
             curses.noecho()
+            print("c")
+            time.sleep(10)
             curses.cbreak()
+            print("D")
+            time.sleep(10)
             curses.curs_set(0)
             lidx = 0
             stdscr.addstr(lidx, 0, "+" + "-"*99 + "+")
+            print("E")
+            time.sleep(10)
 
             lidx += 1
             stdscr.addstr(lidx, 0, "|" + " "*99 + "|")
