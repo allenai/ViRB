@@ -149,16 +149,11 @@ def get_error_function(config):
 
 
 def run_VTAB_task(config, logging_queue):
-    print("1")
     dataset_class = get_dataset_class(config)
-    print("2")
     trainset = dataset_class(train=True)
     testset = dataset_class(train=False)
-    print("3")
     loss_function = get_loss_function(config)
-    print("4")
     error_function = get_error_function(config)
-    print("5")
     training_configs = []
     for tc_name, tc in config["training_configs"].items():
         encoder = copy.deepcopy(config["encoder"])
@@ -172,10 +167,8 @@ def run_VTAB_task(config, logging_queue):
             "optimizer": optimizer,
             "scheduler": scheduler
         })
-    print("6")
     pre_encode = config["pre_encode"] if "pre_encode" in config else None
     num_dataset_repeats = config["num_dataset_repeats"] if "num_dataset_repeats" in config else 1
-    print("7")
     task = VTABTask(
         config["experiment_name"],
         config["task_name"],
@@ -191,16 +184,13 @@ def run_VTAB_task(config, logging_queue):
         pre_encode=pre_encode,
         num_dataset_repeats=num_dataset_repeats,
     )
-    print("8")
     results = task.run(config["num_epochs"])
-    print("9")
     return results
 
 
 def thread_loop(gpu_id, config_queue, logging_queue):
     while True:
         try:
-            print("A")
             conf = config_queue.get(timeout=1)
             conf["device_id"] = gpu_id
             logging_queue.put(ProgressDataPacket(
@@ -208,7 +198,6 @@ def thread_loop(gpu_id, config_queue, logging_queue):
                 device=gpu_id,
                 new_task=False
             ))
-            print("B")
             run_VTAB_task(conf, logging_queue)
             logging_queue.put(ProgressDataPacket(
                 name="Done",
@@ -259,46 +248,29 @@ class VTABRunner:
             curses.cbreak()
             curses.curs_set(0)
             lidx = 0
-            import time
-            print("1")
-            time.sleep(10)
             stdscr.addstr(lidx, 0, "+" + "-"*99 + "+")
-            print("2")
-            time.sleep(10)
 
             lidx += 1
             stdscr.addstr(lidx, 0, "|" + " "*99 + "|")
-            print("3")
-            time.sleep(10)
 
             lidx += 1
             stdscr.addstr(lidx, 0, "|" + "-"*99 + "|")
-            print("4")
-            time.sleep(10)
-            stdscr.refresh()
 
             lidx += 1
-            stdscr.addstr(lidx, 0, "|")
-            stdscr.addstr(lidx, 2, "Device")
-            stdscr.addstr(lidx, 15, "|")
-            stdscr.addstr(lidx, 17, "Task")
-            stdscr.addstr(lidx, 75, "|")
-            stdscr.addstr(lidx, 77, "Progress")
-            stdscr.addstr(lidx, 90, "|")
-            stdscr.addstr(lidx, 92, "ETA")
-            stdscr.addstr(lidx, 100, "|")
-            stdscr.refresh()
-            print("5")
-            time.sleep(10)
+            # stdscr.addstr(lidx, 0, "|")
+            # stdscr.addstr(lidx, 2, "Device")
+            # stdscr.addstr(lidx, 15, "|")
+            # stdscr.addstr(lidx, 17, "Task")
+            # stdscr.addstr(lidx, 75, "|")
+            # stdscr.addstr(lidx, 77, "Progress")
+            # stdscr.addstr(lidx, 90, "|")
+            # stdscr.addstr(lidx, 92, "ETA")
+            # stdscr.addstr(lidx, 100, "|")
 
             lidx += 1
             stdscr.addstr(lidx, 0, "|")
             stdscr.addstr(lidx, 1, "-" * 99)
             stdscr.addstr(lidx, 100, "|")
-            stdscr.refresh()
-
-            print("a")
-            time.sleep(10)
 
             for _ in range(len(GPU_IDS)):
                 lidx += 1
@@ -306,14 +278,7 @@ class VTABRunner:
                 lidx += 1
                 stdscr.addstr(lidx, 0, "|" + "-"*99 + "|")
 
-            print("b")
-            time.sleep(10)
-
             stdscr.addstr(lidx, 0, "+" + "-"*99 + "+")
-            stdscr.refresh()
-
-            print("c")
-            time.sleep(10)
 
             for device_id in GPU_IDS:
                 p = mp.Process(
@@ -322,9 +287,6 @@ class VTABRunner:
                     daemon=False
                 )
                 p.start()
-
-            print("d")
-            time.sleep(10)
 
             pending_tasks = self.total_num_tasks
             while pending_tasks > 0:

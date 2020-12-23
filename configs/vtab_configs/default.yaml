@@ -1,20 +1,20 @@
 ### FINAL CONFIG
-#Pets:
-#  task: "Pets"
-#  training_configs:
-#    adam-0.0001:
+Pets:
+  task: "Pets"
+  training_configs:
+    adam-0.0001:
+      optimizer: "adam"
+      lr: 0.0001
+#    adam-0.001:
 #      optimizer: "adam"
-#      lr: 0.0001
-##    adam-0.001:
-##      optimizer: "adam"
-##      lr: 0.001
-##    sgd-0.01:
-##      optimizer: "sgd"
-##      lr: 0.01
-##    sgd-0.001:
-##      optimizer: "sgd"
-##      lr: 0.001
-#  num_epochs: 500
+#      lr: 0.001
+#    sgd-0.01:
+#      optimizer: "sgd"
+#      lr: 0.01
+#    sgd-0.001:
+#      optimizer: "sgd"
+#      lr: 0.001
+  num_epochs: 500
 #
 #SUN397:
 #  task: "SUN397"
@@ -209,13 +209,13 @@
 #  num_epochs: 100
 
 
-TaskonomyInpainting:
-  task: "TaskonomyInpainting"
-  training_configs:
-    adam-0.0001-l1:
-      optimizer: "adam"
-      lr: 0.0003
-    sgd-0.01-l1:
-      optimizer: "sgd"
-      lr: 0.01
-  num_epochs: 50
+#TaskonomyInpainting:
+#  task: "TaskonomyInpainting"
+#  training_configs:
+#    adam-0.0001-l1:
+#      optimizer: "adam"
+#      lr: 0.0003
+#    sgd-0.01-l1:
+#      optimizer: "sgd"
+#      lr: 0.01
+#  num_epochs: 50
