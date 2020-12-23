@@ -29,6 +29,9 @@ class TaskonomyInpaintingEncodableDataset(EncodableDataset):
         ])
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+        import time
+        time.sleep(10)
+
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
             idx = idx.tolist()
