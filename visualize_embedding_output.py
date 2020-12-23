@@ -9,6 +9,7 @@ from datasets.EncodableDataloader import EncodableDataloader
 from models.ClassificationHead import ClassificationHead
 from models.ResNet50Encoder import ResNet50Encoder
 from models.VTABModel import VTABModel
+from utils.error_functions import classification_error
 
 
 if sys.argv[1] == "Pets":
@@ -41,35 +42,42 @@ inv_normalize = transforms.Normalize(
     std=[1/0.229, 1/0.224, 1/0.255]
 )
 
-test_dataloader = torch.utils.data.DataLoader(dataset, batch_size=100, shuffle=False, num_workers=0)
+test_dataloader = torch.utils.data.DataLoader(dataset, batch_size=50, shuffle=False, num_workers=0)
+ctr = 0
 for img, label in test_dataloader:
+    ctr += 1
+    if ctr < 2:
+        continue
     rgb_imgs = img
     break
 
-test_dataloader = torch.utils.data.DataLoader(dataset, batch_size=100, shuffle=False, num_workers=0)
+test_dataloader = torch.utils.data.DataLoader(dataset, batch_size=50, shuffle=False, num_workers=0)
 test_dataloader = EncodableDataloader(
     test_dataloader,
     model,
     "Encoding Test Set",
     None,
-    batch_size=100,
+    batch_size=50,
     shuffle=False,
     device="cpu",
     principal_directions=None
 )
 names = dataset.class_names()
 
+ctr = 0
 for img, label in test_dataloader:
+    ctr += 1
+    if ctr < 2:
+        continue
     with torch.no_grad():
         out = model.head_forward(img)
+        error = classification_error(out, label)
         out = torch.argmax(out, dim=1)
-    fig, axs = plt.subplots(nrows=5, ncols=5, figsize=(5, 5))
-    # print(torch.mean(torch.abs(out - label)))
-    # print(torch.min(out), torch.max(out))
-    # print(torch.min(label), torch.max(label))
-    for i in range(25):
+    fig, axs = plt.subplots(nrows=5, ncols=10, figsize=(5, 5))
+    print(error)
+    for i in range(50):
         img = inv_tensor = inv_normalize(rgb_imgs[i].detach()).numpy().transpose((1, 2, 0))
-        axs[i//5, i%5].imshow(img)
-        axs[i//5, i%5].set_title('P:%s\nL:%s' % (names[out[i].item()], names[label[i].item()]))
+        axs[i//10, i%10].imshow(img)
+        axs[i//10, i%10].set_title('P:%s\nL:%s' % (names[out[i].item()], names[label[i].item()]))
     plt.show()
     break
