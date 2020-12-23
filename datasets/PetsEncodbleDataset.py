@@ -20,9 +20,9 @@ class PetsEncodableDataset(EncodableDataset):
         path = 'data/pets/train/*/*.jpg' if train else 'data/pets/test/*/*.jpg'
         self.data = list(glob.glob(path))
         random.shuffle(self.data)
-        cats = list(set([path.split("/")[3] for path in self.data]))
-        cats.sort()
-        self.labels = torch.LongTensor([cats.index(path.split("/")[3]) for path in self.data])
+        self.cats = list(set([path.split("/")[3] for path in self.data]))
+        self.cats.sort()
+        self.labels = torch.LongTensor([self.cats.index(path.split("/")[3]) for path in self.data])
         self.preprocessor = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
@@ -37,6 +37,9 @@ class PetsEncodableDataset(EncodableDataset):
         if len(self.encoded_data) == 0:
             return self.preprocessor(Image.open(self.data[idx]).convert('RGB')), self.labels[idx]
         return self.encoded_data[idx], self.labels[idx]
+
+    def class_names(self):
+        return self.cats
 
     def encode(self, model):
         model.to(self.device)
