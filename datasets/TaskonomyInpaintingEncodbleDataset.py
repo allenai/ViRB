@@ -23,7 +23,7 @@ class TaskonomyInpaintingEncodableDataset(EncodableDataset):
         ## TODO FIx this!
         import random
         random.shuffle(self.data)
-        self.data = self.data[:30000]
+        self.data = self.data[:15000] if train else self.data[:2000]
         self.data.sort()
         self.labels = self.data
         self.img_preprocessor = transforms.Compose([
