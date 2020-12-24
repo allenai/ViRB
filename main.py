@@ -9,10 +9,10 @@ def main():
     experiment_list = parse_args()
     runner = VTABRunner(
         experiments={
-            name: ResNet50Encoder(weights=None)
+            name: ResNet50Encoder(weights=weights)
             for name, weights in experiment_list.items()
         },
-        train_encoder=False
+        train_encoder=True
     )
     runner.run()
 
