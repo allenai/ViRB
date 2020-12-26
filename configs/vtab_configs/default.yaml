@@ -211,6 +211,7 @@
 
 TaskonomyInpainting:
   task: "TaskonomyInpainting"
+  pre_encoder: False,
   training_configs:
     adam-0.0001-l1:
       optimizer: "adam"
