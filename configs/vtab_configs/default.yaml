@@ -1,11 +1,11 @@
 ### FINAL CONFIG
 #
-#Pets-Detection:
-#  task: "Pets-Detection"
-#  training_configs:
-#    adam-0.0001:
-#      optimizer: "adam"
-#      lr: 0.0001
+Pets-Detection:
+  task: "Pets-Detection"
+  training_configs:
+    adam-0.0003:
+      optimizer: "adam"
+      lr: 0.0003
 #    adam-0.001:
 #      optimizer: "adam"
 #      lr: 0.001
@@ -15,7 +15,7 @@
 #    sgd-0.001:
 #      optimizer: "sgd"
 #      lr: 0.001
-#  num_epochs: 100
+  num_epochs: 100
 #
 #THORDepth:
 #  task: "THORDepth"
@@ -87,14 +87,14 @@
 #        gamma: 0.1
 #  num_epochs: 100
 
-TaskonomyInpainting:
-  task: "TaskonomyInpainting"
-  pre_encode: true
-  training_configs:
-    adam-0.0001-l1:
-      optimizer: "adam"
-      lr: 0.0003
-#    sgd-0.01-l1:
-#      optimizer: "sgd"
-#      lr: 0.01
-  num_epochs: 25
+#TaskonomyInpainting:
+#  task: "TaskonomyInpainting"
+#  pre_encode: true
+#  training_configs:
+#    adam-0.0001-l1:
+#      optimizer: "adam"
+#      lr: 0.0003
+##    sgd-0.01-l1:
+##      optimizer: "sgd"
+##      lr: 0.01
+#  num_epochs: 25
