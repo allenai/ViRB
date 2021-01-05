@@ -12,7 +12,7 @@ def main():
             name: ResNet50Encoder(weights=weights)
             for name, weights in experiment_list.items()
         },
-        train_encoder=True
+        train_encoder=False
     )
     runner.run()
 

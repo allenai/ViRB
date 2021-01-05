@@ -34,7 +34,7 @@
 #    sgd-0.0001:
 #      optimizer: "sgd"
 #      lr: 0.0001
-#  num_epochs: 250
+#  num_epochs: 100
 #
 #CIFAR-100:
 #  task: "CIFAR-100"
@@ -210,12 +210,12 @@
 
 TaskonomyInpainting:
   task: "TaskonomyInpainting"
-  pre_encode: false
+  pre_encode: true
   training_configs:
     adam-0.0001-l1:
       optimizer: "adam"
       lr: 0.0003
-    sgd-0.01-l1:
-      optimizer: "sgd"
-      lr: 0.01
-  num_epochs: 50
+#    sgd-0.01-l1:
+#      optimizer: "sgd"
+#      lr: 0.01
+  num_epochs: 25
