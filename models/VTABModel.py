@@ -42,7 +42,7 @@ class VTABModel(nn.Module):
                 self.principal_directions = {}
             if name not in self.principal_directions:
                 self.principal_directions[name] = self.get_principal_directions(
-                    x, self.task_head.pca_embeddings()[name]
+                    x, self.task_head.pca_embedding_sizes()[name]
                 )
             out[name] = self.get_principal_components(x, self.principal_directions[name])
         return out
