@@ -36,8 +36,8 @@ class VTABModel(nn.Module):
     def compress_encoding(self, encoding):
         # Run PCA
         out = {}
-        for name, data in encoding.items():
-            x = data.detach()
+        for name in self.task_head.pca_embedding_sizes():
+            x = encoding[name].detach()
             if self.principal_directions is None:
                 self.principal_directions = {}
             if name not in self.principal_directions:
