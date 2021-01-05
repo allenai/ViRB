@@ -42,7 +42,7 @@ class PixelWisePredictionHead(nn.Module):
         # return ["layer5"]
         return ["layer1", "layer2", "layer3", "layer4", "layer5"]
 
-    def pca_embeddings(self):
+    def pca_embedding_sizes(self):
         return {
             "layer1": 2,
             "layer2": 2,

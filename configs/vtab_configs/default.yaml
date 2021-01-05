@@ -208,10 +208,9 @@
 #        gamma: 0.1
 #  num_epochs: 100
 
-
 TaskonomyInpainting:
   task: "TaskonomyInpainting"
-  pre_encode: false
+  pre_encode: true
   training_configs:
     adam-0.0001-l1:
       optimizer: "adam"

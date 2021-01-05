@@ -68,8 +68,7 @@ class VTABTask:
                 self.logging_queue,
                 batch_size=batch_size,
                 shuffle=False,
-                device=device,
-                principal_directions=self.train_dataloader.get_principal_directions())
+                device=device)
 
     def run(self, epochs):
         for config in self.training_configs:
@@ -99,11 +98,11 @@ class VTABTask:
             with open(out_dir+"/results.json", "w") as f:
                 json.dump(data, f)
             torch.save(config["model"].task_head.state_dict(), out_dir+"/model_head.pt")
-            if not config["model"].train_encoder and config["model"].pca_embeddings() is not None:
-                principle_directions = self.train_dataloader.get_principal_directions()
-                cpu_principle_directions = {name: pd.detach().cpu() for name, pd in principle_directions.items()}
-                with open(out_dir+"/principle_directions.pkl", "wb") as f:
-                    pickle.dump(cpu_principle_directions, f)
+            # if not config["model"].train_encoder and config["model"].pca_embeddings() is not None:
+            #     principle_directions = self.train_dataloader.get_principal_directions()
+            #     cpu_principle_directions = {name: pd.detach().cpu() for name, pd in principle_directions.items()}
+            #     with open(out_dir+"/principle_directions.pkl", "wb") as f:
+            #         pickle.dump(cpu_principle_directions, f)
 
     def train_epoch(self, model, optimizer):
         model.train()
