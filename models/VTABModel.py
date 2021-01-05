@@ -36,7 +36,7 @@ class VTABModel(nn.Module):
     def compress_encoding(self, encoding):
         # Run PCA
         out = {}
-        for name, data in encoding:
+        for name, data in encoding.items():
             x = data.detach()
             if self.principal_directions is None:
                 self.principal_directions = {}
@@ -53,7 +53,7 @@ class VTABModel(nn.Module):
     def state_dict(self):
         sd = super().state_dict()
         if self.principal_directions is not None:
-            for name, pd in self.principal_directions:
+            for name, pd in self.principal_directions.items():
                 sd["principal_directions."+name] = pd
         return sd
 
