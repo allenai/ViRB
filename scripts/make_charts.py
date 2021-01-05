@@ -14,4 +14,4 @@ def get_best_result(experiments, run):
         res.append((e, max(datapoints)))
     return res
 
-print(get_best_result(["Supervised-end-to-end", "Supervised-full-channel"], "TaskonomyInpainting"))
+print(get_best_result(["Random-full-channel", "Supervised-full-channel"], "TaskonomyInpainting"))
