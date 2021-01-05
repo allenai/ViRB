@@ -15,7 +15,7 @@ Pets-Detection:
 #    sgd-0.001:
 #      optimizer: "sgd"
 #      lr: 0.001
-  num_epochs: 100
+  num_epochs: 50
 #
 #THORDepth:
 #  task: "THORDepth"
