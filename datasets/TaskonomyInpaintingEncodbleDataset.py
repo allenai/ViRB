@@ -20,11 +20,8 @@ class TaskonomyInpaintingEncodableDataset(EncodableDataset):
         data_path = 'data/taskonomy/train/rgb/*/*.png'\
             if train else 'data/taskonomy/test/rgb/*/*.png'
         self.data = list(glob.glob(data_path))
-        ## TODO FIx this!
-        import random
-        random.shuffle(self.data)
-        self.data = self.data[:7000] if train else self.data[:1000]
         self.data.sort()
+        self.data = self.data[:7000] if train else self.data[:1000]
         self.labels = self.data
         self.img_preprocessor = transforms.Compose([
             transforms.Resize((224, 224)),
@@ -32,9 +29,6 @@ class TaskonomyInpaintingEncodableDataset(EncodableDataset):
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-        import time
-        time.sleep(10)
 
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
@@ -50,16 +44,7 @@ class TaskonomyInpaintingEncodableDataset(EncodableDataset):
             print(img_path)
             exit()
         mask = img.detach().clone()
-        img[:,64:160, 64:160] = 0.0
-
-        # i = img.detach().numpy().transpose(1, 2, 0)
-        # plt.figure(0)
-        # plt.imshow(i)
-        # m = mask.detach().numpy().transpose(1, 2, 0)
-        # plt.figure(1)
-        # plt.imshow(m)
-        # plt.show()
-        # exit()
+        img[:, 64:160, 64:160] = 0.0
 
         return img, mask
 
