@@ -67,7 +67,7 @@ for img, label in test_dataloader:
 
     plt.figure(4)
     plt.imshow(out[4])
-    plt.imsave("inpainting-random.png", out[4])
+    plt.imsave("inpainting-random.png", out[4] / np.max(out[4]))
     # plt.imshow(label[4])
 
     plt.figure(8)
