@@ -152,6 +152,9 @@ class VTABTask:
                     test_losses.append(test_loss.item() * num_samples_in_batch)
                     test_error = self.error(out, label)
                     test_errors.append(test_error.item() * num_samples_in_batch)
+            import matplotlib.pyplot as plt
+            plt.imshow(out.detach().numpy().transpose(0, 2, 3, 1)[0])
+            plt.savefig("out.jpg")
             return np.sum(test_losses) / num_samples, np.sum(test_errors) / num_samples
 
         out = None
