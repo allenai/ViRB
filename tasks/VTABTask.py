@@ -155,6 +155,7 @@ class VTABTask:
             import matplotlib.pyplot as plt
             plt.imshow(out.detach().cpu().numpy().transpose(0, 2, 3, 1)[0])
             plt.savefig("out.jpg")
+            torch.save(model.state_dict(), "random_encoder_step.pt")
             return np.sum(test_losses) / num_samples, np.sum(test_errors) / num_samples
 
         out = None
