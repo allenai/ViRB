@@ -21,7 +21,6 @@ class TaskonomyInpaintingEncodableDataset(EncodableDataset):
             if train else 'data/taskonomy/test/rgb/*/*.png'
         self.data = list(glob.glob(data_path))
         self.data.sort()
-        self.data = self.data[:7000] if train else self.data[:1000]
         self.labels = self.data
         self.img_preprocessor = transforms.Compose([
             transforms.Resize((224, 224)),
