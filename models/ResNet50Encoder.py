@@ -9,9 +9,17 @@ class ResNet50Encoder(nn.Module):
         super().__init__()
         if weights:
             self.model = torchvision.models.resnet50(pretrained=False)
+            x1 = self.model.state_dict()["conv1.weight"].clone()
             self.load_state_dict(torch.load(weights, map_location="cpu"), strict=False)
+            x2 = self.model.state_dict()["conv1.weight"].clone()
+            print("are weights pre and post load the same?", torch.all(x1 == x2))
+            import time
+            time.sleep(10)
         else:
             self.model = torchvision.models.resnet50(pretrained=True)
+            print("We are here somehow?")
+            import time
+            time.sleep(10)
 
     def forward(self, x):
         res = {}
