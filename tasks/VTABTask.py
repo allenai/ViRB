@@ -78,8 +78,10 @@ class VTABTask:
             writer = SummaryWriter(log_dir=out_dir)
             for e in ProgressIterator(
                     range(epochs),
-                    "Training %s on %s with config %s" % (self.name, self.task, config["name"]),
+                    "Training %s on %s" % (self.name, self.task),
                     self.logging_queue, self.device
+                    # "Training %s on %s with config %s" % (self.name, self.task, config["name"]),
+                    # self.logging_queue, self.device
             ):
                 train_loss, train_accuracy = self.train_epoch(config["model"], config["optimizer"])
                 test_loss, test_accuracy = self.test(config["model"])
