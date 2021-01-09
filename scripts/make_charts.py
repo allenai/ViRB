@@ -2,6 +2,12 @@ import json
 import glob
 import csv
 import matplotlib.pyplot as plt
+import matplotlib
+import numpy as np
+
+import scipy
+import scipy.stats
+import os
 
 
 ALL_EXPERIMENTS = [
@@ -35,7 +41,8 @@ ALL_TASKS = [
     "CalTech-101",
     "Eurosat",
     "dtd",
-    "CLEVERNumObjects"
+    "CLEVERNumObjects",
+    "Imagenet"
 ]
 
 def get_best_result(experiments, run, include_names=False):
@@ -69,11 +76,11 @@ def get_best_result(experiments, run, include_names=False):
 
 #### Converting the output to csv format
 experiment_results = {name: {} for name in ALL_EXPERIMENTS}
-for task in ALL_TASKS:
+for task in ["Imagenet"]:
     res = get_best_result(ALL_EXPERIMENTS, task, include_names=True)
     for name, number in res:
         experiment_results[name][task] = number
-with open('results.csv', mode='w') as csv_file:
+with open('Imagenet-results.csv', mode='w') as csv_file:
     fieldnames = ["Encoder"] + ALL_TASKS
     writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
     writer.writeheader()
@@ -81,4 +88,23 @@ with open('results.csv', mode='w') as csv_file:
         row = {"Encoder": name}
         row.update(results)
         writer.writerow(row)
+
+
+#### Generating Pearson and Spearman Correlations
+# n = len(datasets)
+# spearman = np.zeros((n,n))
+# pearson = np.zeros((n,n))
+# spearman_pval = np.zeros((n,n))
+# pearson_pval = np.zeros((n,n))
+# for i in range(n):
+#     for j in range(n):
+#         models_to_use = [model for model in data[datasets[i]] if model in data[datasets[j]]]
+#         values_i = [data[datasets[i]][model] for model in models_to_use]
+#         values_j = [data[datasets[j]][model] for model in models_to_use]
+#         s, sp = scipy.stats.spearmanr(values_i, values_j)
+#         p, pp = scipy.stats.pearsonr(values_i, values_j)
+#         spearman[i][j] = s
+#         pearson[i][j] = p
+#         spearman_pval[i][j] = sp
+#         pearson_pval[i][j] = pp
 
