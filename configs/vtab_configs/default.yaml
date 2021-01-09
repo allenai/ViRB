@@ -149,9 +149,9 @@ NYUDepth:
   task: "NYUDepth"
   pre_encode: false
   training_configs:
-    adam-0.0003:
-      optimizer: "adam"
-      lr: 0.0003
+#    adam-0.0003:
+#      optimizer: "adam"
+#      lr: 0.0003
     sgd-0.001-no-step-l1:
       optimizer: "sgd"
       lr: 0.001
@@ -159,7 +159,7 @@ NYUDepth:
         type: "StepLR"
         step_size: 500
         gamma: 0.1
-  num_epochs: 2000
+  num_epochs: 1000
 
 #NYUWalkable:
 #  task: "NYUWalkable"
