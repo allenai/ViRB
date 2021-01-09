@@ -145,13 +145,13 @@
 ##      lr: 0.01
 #  num_epochs: 50
 #
-#NYUDepth:
-#  task: "NYUDepth"
-#  pre_encode: false
-#  training_configs:
-##    adam-0.0003:
-##      optimizer: "adam"
-##      lr: 0.0003
+NYUDepth:
+  task: "NYUDepth"
+  pre_encode: false
+  training_configs:
+    adam-0.0003:
+      optimizer: "adam"
+      lr: 0.0003
 #    sgd-0.001-no-step-l1:
 #      optimizer: "sgd"
 #      lr: 0.001
@@ -159,23 +159,23 @@
 #        type: "StepLR"
 #        step_size: 500
 #        gamma: 0.1
-#  num_epochs: 1000
-#
-#NYUWalkable:
-#  task: "NYUWalkable"
-#  pre_encode: false
-#  training_configs:
-#    adam-0.0003:
-#      optimizer: "adam"
-#      lr: 0.0003
-##    sgd-0.001-no-step-l1:
-##      optimizer: "sgd"
-##      lr: 0.001
-##      scheduler:
-##        type: "StepLR"
-##        step_size: 40
-##        gamma: 0.1
-#  num_epochs: 200
+  num_epochs: 1000
+
+NYUWalkable:
+  task: "NYUWalkable"
+  pre_encode: false
+  training_configs:
+    adam-0.0003:
+      optimizer: "adam"
+      lr: 0.0003
+#    sgd-0.001-no-step-l1:
+#      optimizer: "sgd"
+#      lr: 0.001
+#      scheduler:
+#        type: "StepLR"
+#        step_size: 40
+#        gamma: 0.1
+  num_epochs: 1000
 #
 #Imagenet:
 #  task: "Imagenet"
@@ -201,15 +201,15 @@
 #        step_size: 50
 #        gamma: 0.1
 #  num_epochs: 100
-
-TaskonomyInpainting:
-  task: "TaskonomyInpainting"
-  pre_encode: false
-  training_configs:
-    adam-0.0003:
-      optimizer: "adam"
-      lr: 0.0003
-#    sgd-0.01-l1:
-#      optimizer: "sgd"
-#      lr: 0.001
-  num_epochs: 200
+#
+#TaskonomyInpainting:
+#  task: "TaskonomyInpainting"
+#  pre_encode: false
+#  training_configs:
+#    adam-0.0003:
+#      optimizer: "adam"
+#      lr: 0.0003
+##    sgd-0.01-l1:
+##      optimizer: "sgd"
+##      lr: 0.001
+#  num_epochs: 200
