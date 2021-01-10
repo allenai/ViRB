@@ -159,7 +159,7 @@ NYUDepth:
 #        type: "StepLR"
 #        step_size: 500
 #        gamma: 0.1
-  num_epochs: 1000
+  num_epochs: 250
 
 NYUWalkable:
   task: "NYUWalkable"
@@ -175,7 +175,7 @@ NYUWalkable:
 #        type: "StepLR"
 #        step_size: 40
 #        gamma: 0.1
-  num_epochs: 1000
+  num_epochs: 250
 #
 #Imagenet:
 #  task: "Imagenet"
