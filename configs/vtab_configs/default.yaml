@@ -122,28 +122,29 @@
 ##      lr: 0.001
 #  num_epochs: 100
 #
-#Pets-Detection:
-#  task: "Pets-Detection"
-#  pre_encode: false
-#  training_configs:
-#    adam-0.0003:
-#      optimizer: "adam"
-#      lr: 0.0003
-##    sgd-0.001:
-##      optimizer: "sgd"
-##      lr: 0.001
-#  num_epochs: 100
-#
-#THORDepth:
-#  task: "THORDepth"
-#  training_configs:
-#    adam-0.0001-l1:
-#      optimizer: "adam"
-#      lr: 0.0003
-##    sgd-0.01-l1:
-##      optimizer: "sgd"
-##      lr: 0.01
-#  num_epochs: 50
+Pets-Detection:
+  task: "Pets-Detection"
+  pre_encode: false
+  training_configs:
+    adam-0.0003:
+      optimizer: "adam"
+      lr: 0.0003
+#    sgd-0.001:
+#      optimizer: "sgd"
+#      lr: 0.001
+  num_epochs: 100
+
+THORDepth:
+  task: "THORDepth"
+  pre_encode: false
+  training_configs:
+    adam-0.0001-l1:
+      optimizer: "adam"
+      lr: 0.0003
+#    sgd-0.01-l1:
+#      optimizer: "sgd"
+#      lr: 0.01
+  num_epochs: 50
 
 #NYUDepth:
 #  task: "NYUDepth"
@@ -202,14 +203,14 @@
 #        gamma: 0.1
 #  num_epochs: 100
 #
-TaskonomyInpainting:
-  task: "TaskonomyInpainting"
-  pre_encode: false
-  training_configs:
-    adam-0.0003:
-      optimizer: "adam"
-      lr: 0.0003
-#    sgd-0.01-l1:
-#      optimizer: "sgd"
-#      lr: 0.001
-  num_epochs: 100
+#TaskonomyInpainting:
+#  task: "TaskonomyInpainting"
+#  pre_encode: false
+#  training_configs:
+#    adam-0.0003:
+#      optimizer: "adam"
+#      lr: 0.0003
+##    sgd-0.01-l1:
+##      optimizer: "sgd"
+##      lr: 0.001
+#  num_epochs: 100
