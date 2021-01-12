@@ -39,6 +39,7 @@ BINARY_PIXEL_WISE_CLASSIFICATION = [
 PIXEL_WISE_REGRESSION = [
     "THORDepth",
     "NYUDepth",
+    "TaskonomyEdges",
     "TaskonomyInpainting"
 ]
 
@@ -88,6 +89,9 @@ def get_dataset_class(config):
     if config["task"] == "Imagenet":
         from datasets.ImagenetEncodbleDataset import ImagenetEncodableDataset
         return ImagenetEncodableDataset
+    if config["task"] == "TaskonomyEdges":
+        from datasets.TaskonomyEdgesEncodbleDataset import TaskonomyEdgesEncodableDataset
+        return TaskonomyEdgesEncodableDataset
 
 
 def get_task_head(config, dataset):
