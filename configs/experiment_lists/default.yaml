@@ -1,5 +1,5 @@
 ### Baselines
- Random: 'pretrained_weights/Random.pt'
+Random: 'pretrained_weights/Random.pt'
 Supervised: 'pretrained_weights/Supervised.pt'
 ### Pre Trained
 SWAV_800: 'pretrained_weights/SWAV_800.pt'
