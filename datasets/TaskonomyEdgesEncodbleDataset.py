@@ -58,7 +58,7 @@ class TaskonomyEdgesEncodableDataset(EncodableDataset):
         # mask = self.label_preprocessor(Image.open(label_path))
         # mask = self.label_preprocessor(Image.open(label_path).convert('RGB'))
         mask = np.array(Image.open(label_path).resize((224, 224)))
-        mask = torch.tensor(mask, dtype=torch.double)
+        mask = torch.tensor(mask, dtype=torch.float)
         mask -= mask.min()
         mask /= mask.max()
         # mask = torch.round(mask)

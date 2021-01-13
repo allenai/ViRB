@@ -16,7 +16,7 @@ class ClassificationHead(nn.Module):
         self.head = nn.Linear(embedding_size, output_size)
 
     def forward(self, x):
-        return self.head(x["embedding"].double())
+        return self.head(x["embedding"].float())
 
     def required_encoding(self):
         return ["embedding"]
