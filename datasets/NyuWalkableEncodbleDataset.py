@@ -53,7 +53,7 @@ class NyuWalkableEncodableDataset(EncodableDataset):
         label_path = self.labels[idx]
 
         img = self.img_preprocessor(Image.open(img_path).convert('RGB'))
-        mask = np.array(Image.open(label_path).resize((224, 224)), dtype=np.float)
+        mask = np.array(Image.open(label_path).resize((224, 224)), dtype=np.double)
         mask[mask != 0.0] = 1.0
         # print(label_path)
         # import matplotlib.pyplot as plt
@@ -61,7 +61,7 @@ class NyuWalkableEncodableDataset(EncodableDataset):
         # plt.show()
         # exit()
         # # mask /= np.max(mask)
-        mask = torch.tensor(mask, dtype=torch.float)
+        mask = torch.tensor(mask, dtype=torch.double)
         mask = mask.unsqueeze(0)
 
         # i = img.detach().numpy().transpose(1, 2, 0)
