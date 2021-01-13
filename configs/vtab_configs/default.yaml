@@ -203,20 +203,8 @@
 ##        gamma: 0.1
 #  num_epochs: 100
 
-#TaskonomyInpainting:
-#  task: "TaskonomyInpainting"
-#  pre_encode: false
-#  training_configs:
-#    adam-0.0003:
-#      optimizer: "adam"
-#      lr: 0.0003
-##    sgd-0.01-l1:
-##      optimizer: "sgd"
-##      lr: 0.001
-#  num_epochs: 25
-#
-TaskonomyEdges:
-  task: "TaskonomyEdges"
+TaskonomyInpainting:
+  task: "TaskonomyInpainting"
   pre_encode: false
   training_configs:
     adam-0.0003:
@@ -225,4 +213,16 @@ TaskonomyEdges:
 #    sgd-0.01-l1:
 #      optimizer: "sgd"
 #      lr: 0.001
-  num_epochs: 10
+  num_epochs: 25
+
+#TaskonomyEdges:
+#  task: "TaskonomyEdges"
+#  pre_encode: false
+#  training_configs:
+#    adam-0.0003:
+#      optimizer: "adam"
+#      lr: 0.0003
+##    sgd-0.01-l1:
+##      optimizer: "sgd"
+##      lr: 0.001
+#  num_epochs: 10
