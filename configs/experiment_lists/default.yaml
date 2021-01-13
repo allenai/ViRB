@@ -1,6 +1,6 @@
 #### Baselines
 #Random: 'pretrained_weights/Random.pt'
-#Supervised: 'pretrained_weights/Supervised.pt'
+Supervised: 'pretrained_weights/Supervised.pt'
 #### Pre Trained
 #SWAV_800: 'pretrained_weights/SWAV_800.pt'
 #MoCov2_800: 'pretrained_weights/MoCov2_800.pt'
@@ -25,7 +25,7 @@
 #SWAVLogImagenet: 'pretrained_weights/SWAVLogImagenet.pt'
 
 ## EXTRAS
-MoCov2UnbalancedImagenet: 'pretrained_weights/MoCov2UnbalancedImagenet.pt'
-SWAVUnbalancedImagenet: 'pretrained_weights/SWAVUnbalancedImagenet.pt'
-MoCov2QuarterImagenet: 'pretrained_weights/MoCov2QuarterImagenet.pt'
-SWAVQuarterImagenet: 'pretrained_weights/SWAVQuarterImagenet.pt'
+#MoCov2UnbalancedImagenet: 'pretrained_weights/MoCov2UnbalancedImagenet.pt'
+#SWAVUnbalancedImagenet: 'pretrained_weights/SWAVUnbalancedImagenet.pt'
+#MoCov2QuarterImagenet: 'pretrained_weights/MoCov2QuarterImagenet.pt'
+#SWAVQuarterImagenet: 'pretrained_weights/SWAVQuarterImagenet.pt'

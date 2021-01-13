@@ -10,6 +10,7 @@ from datasets.ThorDepthEncodbleDataset import ThorDepthEncodableDataset
 from datasets.NyuDepthEncodbleDataset import NyuDepthEncodableDataset
 from datasets.NyuWalkableEncodbleDataset import NyuWalkableEncodableDataset
 from datasets.TaskonomyInpaintingEncodbleDataset import TaskonomyInpaintingEncodableDataset
+from datasets.TaskonomyEdgesEncodbleDataset import TaskonomyEdgesEncodableDataset
 from datasets.EncodableDataset import EncodableDataset
 from datasets.EncodableDataloader import EncodableDataloader
 from models.PixelWisePredictionHead import PixelWisePredictionHead
@@ -37,9 +38,13 @@ elif sys.argv[1] == "taskonomy-inpainting":
     dataset = TaskonomyInpaintingEncodableDataset(train=False)
     head = PixelWisePredictionHead(3)
     head.load_state_dict(torch.load(sys.argv[3], map_location=torch.device('cpu')))
+elif sys.argv[1] == "taskonomy-edges":
+    dataset = TaskonomyEdgesEncodableDataset(train=False)
+    head = PixelWisePredictionHead(1)
+    head.load_state_dict(torch.load(sys.argv[3], map_location=torch.device('cpu')))
 else:
     print("Usage python visualize_mask_output.py "
-          "<pets | nyu-walkable | nyu-depth | thor-depth | taskonomy-inpainting> "
+          "<pets | nyu-walkable | nyu-depth | thor-depth | taskonomy-inpainting | taskonomy-edges> "
           "<ENCODER_WEIGHTS_PATH> "
           "<TASK_HEAD_WEIGHTS_PATH>")
     exit()
@@ -64,14 +69,16 @@ for img, label in test_dataloader:
         if sys.argv[1] in ["taskonomy-inpainting"]:
             out = inv_normalize(out.detach()).numpy().transpose(0, 2, 3, 1)
             label = inv_normalize(label.detach()).numpy().transpose(0, 2, 3, 1)
-
-    plt.figure(4)
+        if sys.argv[1] in ["taskonomy-edges"]:
+            out = out.squeeze()
+            label = label.squeeze()
+    plt.figure(0)
     plt.imshow(out[4])
-    # plt.imsave("inpainting-random.png", out[4] / np.max(out[4]))
-    # plt.imshow(label[4])
+    plt.figure(1)
+    plt.imshow(label[4])
 
-    plt.figure(8)
-    plt.imshow(out[8])
+    # plt.figure(8)
+    # plt.imshow(out[8])
     # plt.imshow(label[8])
 
     plt.show()

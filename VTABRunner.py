@@ -134,7 +134,7 @@ def get_scheduler(config, optimizer):
 
 def get_loss_function(config):
     if config["task"] in PIXEL_WISE_REGRESSION:
-        return torch.nn.L1Loss()
+        return torch.nn.MSELoss()
     if config["task"] in CLASSIFICATION_TASKS:
         return torch.nn.CrossEntropyLoss()
     if config["task"] in BINARY_PIXEL_WISE_CLASSIFICATION:

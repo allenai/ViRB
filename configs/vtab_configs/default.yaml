@@ -17,25 +17,25 @@
 ##      lr: 0.001
 #  num_epochs: 500
 
-SUN397:
-  task: "SUN397"
-  training_configs:
-    adam-0.0001:
-      optimizer: "adam"
-      lr: 0.0001
-#    adam-0.001:
+#SUN397:
+#  task: "SUN397"
+#  training_configs:
+#    adam-0.0001:
 #      optimizer: "adam"
-#      lr: 0.001
-#    sgd-0.01:
-#      optimizer: "sgd"
-#      lr: 0.01
-#    sgd-0.001:
-#      optimizer: "sgd"
-#      lr: 0.001
-#    sgd-0.0001:
-#      optimizer: "sgd"
 #      lr: 0.0001
-  num_epochs: 250
+##    adam-0.001:
+##      optimizer: "adam"
+##      lr: 0.001
+##    sgd-0.01:
+##      optimizer: "sgd"
+##      lr: 0.01
+##    sgd-0.001:
+##      optimizer: "sgd"
+##      lr: 0.001
+##    sgd-0.0001:
+##      optimizer: "sgd"
+##      lr: 0.0001
+#  num_epochs: 250
 
 #CIFAR-100:
 #  task: "CIFAR-100"
@@ -177,31 +177,31 @@ SUN397:
 ##        step_size: 40
 ##        gamma: 0.1
 #  num_epochs: 250
-
-Imagenet:
-  task: "Imagenet"
-  training_configs:
-    adam-0.0001:
-      optimizer: "adam"
-      lr: 0.0001
-#    adam-0.001:
+#
+#Imagenet:
+#  task: "Imagenet"
+#  training_configs:
+#    adam-0.0001:
 #      optimizer: "adam"
-#      lr: 0.001
-#    sgd-0.01:
-#      optimizer: "sgd"
-#      lr: 0.01
-#      scheduler:
-#        type: "StepLR"
-#        step_size: 50
-#        gamma: 0.1
-#    sgd-0.001:
-#      optimizer: "sgd"
-#      lr: 0.001
-#      scheduler:
-#        type: "StepLR"
-#        step_size: 50
-#        gamma: 0.1
-  num_epochs: 100
+#      lr: 0.0001
+##    adam-0.001:
+##      optimizer: "adam"
+##      lr: 0.001
+##    sgd-0.01:
+##      optimizer: "sgd"
+##      lr: 0.01
+##      scheduler:
+##        type: "StepLR"
+##        step_size: 50
+##        gamma: 0.1
+##    sgd-0.001:
+##      optimizer: "sgd"
+##      lr: 0.001
+##      scheduler:
+##        type: "StepLR"
+##        step_size: 50
+##        gamma: 0.1
+#  num_epochs: 100
 
 #TaskonomyInpainting:
 #  task: "TaskonomyInpainting"
@@ -215,14 +215,14 @@ Imagenet:
 ##      lr: 0.001
 #  num_epochs: 25
 #
-#TaskonomyEdges:
-#  task: "TaskonomyEdges"
-#  pre_encode: false
-#  training_configs:
-#    adam-0.0003:
-#      optimizer: "adam"
-#      lr: 0.0003
-##    sgd-0.01-l1:
-##      optimizer: "sgd"
-##      lr: 0.001
-#  num_epochs: 25
+TaskonomyEdges:
+  task: "TaskonomyEdges"
+  pre_encode: false
+  training_configs:
+    adam-0.0003:
+      optimizer: "adam"
+      lr: 0.0003
+#    sgd-0.01-l1:
+#      optimizer: "sgd"
+#      lr: 0.001
+  num_epochs: 25
