@@ -1,6 +1,5 @@
 import torch
 
 
-def pixel_wise_prediction(out, labels):
-    out = out.permute(0, 2, 3, 1).
-    return None
+def weighted_l1_loss(out, labels):
+    return torch.mean(torch.abs(out - labels) * labels)

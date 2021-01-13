@@ -133,8 +133,11 @@ def get_scheduler(config, optimizer):
 
 
 def get_loss_function(config):
+    if config["task"] == "TaskonomyEdges":
+        from utils.loss_functions import weighted_l1_loss
+        return weighted_l1_loss
     if config["task"] in PIXEL_WISE_REGRESSION:
-        return torch.nn.MSELoss()
+        return torch.nn.L1Loss()
     if config["task"] in CLASSIFICATION_TASKS:
         return torch.nn.CrossEntropyLoss()
     if config["task"] in BINARY_PIXEL_WISE_CLASSIFICATION:

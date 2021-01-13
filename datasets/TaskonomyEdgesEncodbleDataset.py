@@ -64,6 +64,10 @@ class TaskonomyEdgesEncodableDataset(EncodableDataset):
         # mask = torch.round(mask)
         mask = mask.unsqueeze(0)
 
+        # plt.hist(mask.view(-1).numpy(), bins=100)
+        # plt.show()
+        # exit()
+
         # i = img.detach().numpy().transpose(1, 2, 0)
         # m = mask.detach().numpy()[0]
         # print(m.min(), m.max())
