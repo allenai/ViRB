@@ -219,10 +219,10 @@ TaskonomyEdges:
   task: "TaskonomyEdges"
   pre_encode: false
   training_configs:
-    adam-0.0003:
-      optimizer: "adam"
-      lr: 0.0003
-#    sgd-0.01-l1:
-#      optimizer: "sgd"
-#      lr: 0.001
+#    adam-0.0003:
+#      optimizer: "adam"
+#      lr: 0.0003
+    sgd-0.01-l1:
+      optimizer: "sgd"
+      lr: 0.001
   num_epochs: 2
