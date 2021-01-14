@@ -137,7 +137,7 @@ ALL_TASKS = [
     "dtd",
     "CLEVERNumObjects",
     "Imagenet",
-    "Pets-Detection",
+    # "Pets-Detection",
     "NYUDepth",
     "NYUWalkable",
     "THORDepth",
@@ -285,18 +285,24 @@ with open('results.csv', mode='w') as csv_file:
 #     labels.append(label)
 # make_ranked_bar_chart(names, results, "Top-1 Accuracy", "Imagenet Classification", labels=labels)
 #
-# sns.set_theme()
-# plt.figure(figsize=(20, 10))
 #
 data = pandas.read_csv("results.csv")
-# results = data.sort_values("Imagenet", ascending=False).reset_index()
-# g = sns.barplot(x="Imagenet", y="Encoder", hue="Method", data=results, dodge=False)
-# for _, data in results.iterrows():
-#     g.text(data.Imagenet - 0.015, data.name + 0.12, round(data.Imagenet, 4), color='white', ha="center", size=10, weight='bold')
-# plt.savefig("imagenet-plot.png", dpi=100)
-# plt.show()
+for task in ALL_TASKS:
+    sns.set_theme()
+    plt.figure(figsize=(20, 10))
+    data = pandas.read_csv("results.csv")
+    results = data.sort_values(task, ascending=False).reset_index()
+    g = sns.barplot(x=task, y="Encoder", hue="Method", data=results, dodge=False)
+    sign = 1.0 if results[task][0] > 0 else -1.0
+    for _, data in results.iterrows():
+        g.text(data[task] - (sign * 0.02), data.name + 0.12, round(data[task], 4), color='white', ha="center", size=10, weight='bold')
+    plt.title("%s Test Results" % task)
+    plt.xlabel("Test Performance")
+    plt.savefig("graphs/%s-test-results.png" % task, dpi=100)
+    # plt.show()
 
 #### Generating Pearson and Spearman Correlations
+data = pandas.read_csv("results.csv")
 n = len(ALL_TASKS)
 spearman = np.zeros((n,n))
 pearson = np.zeros((n,n))
