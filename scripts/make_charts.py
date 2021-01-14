@@ -136,7 +136,20 @@ ALL_TASKS = [
     "Eurosat",
     "dtd",
     "CLEVERNumObjects",
-    "Imagenet"
+    "Imagenet",
+    "Pets-Detection",
+    "NYUDepth",
+    "NYUWalkable",
+    "THORDepth",
+    "TaskonomyInpainting",
+    "TaskonomyEdges"
+]
+
+REVERSED_SUCCESS_TASKS = [
+    "TaskonomyInpainting",
+    "TaskonomyEdges",
+    "NYUDepth",
+    "THORDepth",
 ]
 
 def get_best_result(experiments, run, include_names=False, c=1.0):
@@ -210,56 +223,40 @@ def make_ranked_bar_chart(names, results, success_metric, task, labels=None):
 # plt.show()
 
 #### Converting the output to csv format
-# experiment_results = {name.replace("Imagenet", "IN"): {} for name in ALL_EXPERIMENTS}
-# for task in ALL_TASKS:
-#     res = get_best_result(ALL_EXPERIMENTS, task, include_names=True)
-#     rankings, _ = zip(*sorted(res, key=lambda x: x[1], reverse=True))
-#     for name, number in res:
-#         sn = name.replace("Imagenet", "IN")
-#         experiment_results[sn][task] = number
-#         experiment_results[sn][task+"-rank"] = rankings.index(name)+1
-#
-# with open('results.csv', mode='w') as csv_file:
-#     fieldnames = ["Encoder", "Method"] + ALL_TASKS + [task+"-rank" for task in ALL_TASKS]
-#     writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-#     writer.writeheader()
-#     for name, results in experiment_results.items():
-#         if "MoCo" in name:
-#             method = "MoCo"
-#         elif "SWAV" in name:
-#             method = "SWAV"
-#         elif "PIRL" in name:
-#             method = "PIRL"
-#         elif "SimCLR" in name:
-#             method = "SimCLR"
-#         elif "Supervised" in name:
-#             method = "Supervised"
-#         elif "Random" in name:
-#             method = "Random"
-#         else:
-#             method = "Other"
-#         row = {"Encoder": name, "Method": method}
-#         row.update(results)
-#         writer.writerow(row)
+experiment_results = {name.replace("Imagenet", "IN"): {} for name in ALL_EXPERIMENTS}
+for task in ALL_TASKS:
+    if task in REVERSED_SUCCESS_TASKS:
+        res = get_best_result(ALL_EXPERIMENTS, task, include_names=True, c=-1.0)
+    else:
+        res = get_best_result(ALL_EXPERIMENTS, task, include_names=True)
+    rankings, _ = zip(*sorted(res, key=lambda x: x[1], reverse=True))
+    for name, number in res:
+        sn = name.replace("Imagenet", "IN")
+        experiment_results[sn][task] = number
+        experiment_results[sn][task+"-rank"] = rankings.index(name)+1
 
-
-#### Generating Pearson and Spearman Correlations
-# n = len(datasets)
-# spearman = np.zeros((n,n))
-# pearson = np.zeros((n,n))
-# spearman_pval = np.zeros((n,n))
-# pearson_pval = np.zeros((n,n))
-# for i in range(n):
-#     for j in range(n):
-#         models_to_use = [model for model in data[datasets[i]] if model in data[datasets[j]]]
-#         values_i = [data[datasets[i]][model] for model in models_to_use]
-#         values_j = [data[datasets[j]][model] for model in models_to_use]
-#         s, sp = scipy.stats.spearmanr(values_i, values_j)
-#         p, pp = scipy.stats.pearsonr(values_i, values_j)
-#         spearman[i][j] = s
-#         pearson[i][j] = p
-#         spearman_pval[i][j] = sp
-#         pearson_pval[i][j] = pp
+with open('results.csv', mode='w') as csv_file:
+    fieldnames = ["Encoder", "Method"] + ALL_TASKS + [task+"-rank" for task in ALL_TASKS]
+    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+    writer.writeheader()
+    for name, results in experiment_results.items():
+        if "MoCo" in name:
+            method = "MoCo"
+        elif "SWAV" in name:
+            method = "SWAV"
+        elif "PIRL" in name:
+            method = "PIRL"
+        elif "SimCLR" in name:
+            method = "SimCLR"
+        elif "Supervised" in name:
+            method = "Supervised"
+        elif "Random" in name:
+            method = "Random"
+        else:
+            method = "Other"
+        row = {"Encoder": name, "Method": method}
+        row.update(results)
+        writer.writerow(row)
 
 
 ### BIG TABLE
@@ -287,29 +284,35 @@ def make_ranked_bar_chart(names, results, success_metric, task, labels=None):
 #         label = "Other"
 #     labels.append(label)
 # make_ranked_bar_chart(names, results, "Top-1 Accuracy", "Imagenet Classification", labels=labels)
-
-sns.set_theme(palette="husl")
-plt.figure(figsize=(20, 10))
-
+#
+# sns.set_theme()
+# plt.figure(figsize=(20, 10))
+#
 data = pandas.read_csv("results.csv")
-results = data.sort_values("Imagenet", ascending=False).reset_index()
-g = sns.barplot(x="Imagenet", y="Encoder", hue="Method", data=results, dodge=False)
-for _, data in results.iterrows():
-    g.text(data.Imagenet - 0.015, data.name + 0.12, round(data.Imagenet, 4), color='white', ha="center", size=10, weight='bold')
-plt.savefig("imagenet-plot.png", dpi=100)
-plt.show()
+# results = data.sort_values("Imagenet", ascending=False).reset_index()
+# g = sns.barplot(x="Imagenet", y="Encoder", hue="Method", data=results, dodge=False)
+# for _, data in results.iterrows():
+#     g.text(data.Imagenet - 0.015, data.name + 0.12, round(data.Imagenet, 4), color='white', ha="center", size=10, weight='bold')
+# plt.savefig("imagenet-plot.png", dpi=100)
+# plt.show()
 
-
-import seaborn as sns
-import matplotlib.pyplot as plt
-import numpy as np
-
-df = sns.load_dataset("tips")
-groupedvalues=df.groupby('day').sum().reset_index()
-
-g=sns.barplot(y='day',x='tip',data=groupedvalues, orient='h')
-
-for index, row in groupedvalues.iterrows():
-    g.text(row.tip, row.name, round(row.tip,2), color='black', ha="center")
-
+#### Generating Pearson and Spearman Correlations
+n = len(ALL_TASKS)
+spearman = np.zeros((n,n))
+pearson = np.zeros((n,n))
+spearman_pval = np.zeros((n,n))
+pearson_pval = np.zeros((n,n))
+for i in range(n):
+    for j in range(n):
+        values_i = data[ALL_TASKS[i]]
+        values_j = data[ALL_TASKS[j]]
+        s, sp = scipy.stats.spearmanr(values_i, values_j)
+        p, pp = scipy.stats.pearsonr(values_i, values_j)
+        spearman[i][j] = s
+        pearson[i][j] = p
+        spearman_pval[i][j] = sp
+        pearson_pval[i][j] = pp
+ax = sns.heatmap(spearman, annot=True)
+ax.set_yticklabels(ALL_TASKS, rotation=0)
+ax.set_xticklabels(ALL_TASKS, rotation=30, rotation_mode="anchor", ha='right', va="center")
 plt.show()
