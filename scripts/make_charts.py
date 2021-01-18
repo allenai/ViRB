@@ -137,7 +137,26 @@ ALL_TASKS = [
     "dtd",
     "CLEVERNumObjects",
     "Imagenet",
-    # "Pets-Detection",
+    "Pets-Detection",
+    "NYUDepth",
+    "NYUWalkable",
+    "THORDepth",
+    # "TaskonomyInpainting",
+    # "TaskonomyEdges"
+]
+
+EMBEDDING_TASKS = [
+    "Pets",
+    "SUN397",
+    "CIFAR-100",
+    "CalTech-101",
+    "Eurosat",
+    "dtd",
+    "CLEVERNumObjects",
+    "Imagenet",
+]
+PIXEL_TASKS = [
+    "Pets-Detection",
     "NYUDepth",
     "NYUWalkable",
     "THORDepth",
@@ -209,6 +228,33 @@ def make_ranked_bar_chart(names, results, success_metric, task, labels=None):
         autolabel(r, ax)
     fig.tight_layout()
 
+def get_normalized_summed_scores(data):
+    embedding_matrix = np.zeros((len(EMBEDDING_TASKS), len(data["Encoder"])))
+    for i, task in enumerate(EMBEDDING_TASKS):
+        task_data = np.array(data[task])
+        task_data -= np.min(task_data)
+        task_data /= np.max(task_data)
+        embedding_matrix[i] = task_data
+    embedding_means = embedding_matrix.mean(axis=0)
+    pixel_matrix = np.zeros((len(PIXEL_TASKS), len(data["Encoder"])))
+    for i, task in enumerate(PIXEL_TASKS):
+        task_data = np.array(data[task])
+        if task in REVERSED_SUCCESS_TASKS:
+            task_data *= -1.0
+        task_data -= np.min(task_data)
+        task_data /= np.max(task_data)
+        pixel_matrix[i] = task_data
+    pixel_means = pixel_matrix.mean(axis=0)
+    return [
+        {
+            "Encoder": name,
+            "Method": data["Method"][i],
+            "Embedding": embedding_means[i],
+            "Pixel": pixel_means[i]
+        } for i, name in enumerate(data["Encoder"])
+    ]
+
+
 
 #### Taskonomy Inpainting number of channels
 # RUNS = ["Random", "Supervised", "SWAV_800", "MoCov2_800", "PIRL", "MoCov2_200", "MoCov2Taskonomy", "SWAVTaskonomy"]
@@ -223,40 +269,40 @@ def make_ranked_bar_chart(names, results, success_metric, task, labels=None):
 # plt.show()
 
 #### Converting the output to csv format
-experiment_results = {name.replace("Imagenet", "IN"): {} for name in ALL_EXPERIMENTS}
-for task in ALL_TASKS:
-    if task in REVERSED_SUCCESS_TASKS:
-        res = get_best_result(ALL_EXPERIMENTS, task, include_names=True, c=-1.0)
-    else:
-        res = get_best_result(ALL_EXPERIMENTS, task, include_names=True)
-    rankings, _ = zip(*sorted(res, key=lambda x: x[1], reverse=True))
-    for name, number in res:
-        sn = name.replace("Imagenet", "IN")
-        experiment_results[sn][task] = number
-        experiment_results[sn][task+"-rank"] = rankings.index(name)+1
-
-with open('results.csv', mode='w') as csv_file:
-    fieldnames = ["Encoder", "Method"] + ALL_TASKS + [task+"-rank" for task in ALL_TASKS]
-    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-    writer.writeheader()
-    for name, results in experiment_results.items():
-        if "MoCo" in name:
-            method = "MoCo"
-        elif "SWAV" in name:
-            method = "SWAV"
-        elif "PIRL" in name:
-            method = "PIRL"
-        elif "SimCLR" in name:
-            method = "SimCLR"
-        elif "Supervised" in name:
-            method = "Supervised"
-        elif "Random" in name:
-            method = "Random"
-        else:
-            method = "Other"
-        row = {"Encoder": name, "Method": method}
-        row.update(results)
-        writer.writerow(row)
+# experiment_results = {name.replace("Imagenet", "IN"): {} for name in ALL_EXPERIMENTS}
+# for task in ALL_TASKS:
+#     if task in REVERSED_SUCCESS_TASKS:
+#         res = get_best_result(ALL_EXPERIMENTS, task, include_names=True, c=-1.0)
+#     else:
+#         res = get_best_result(ALL_EXPERIMENTS, task, include_names=True)
+#     rankings, _ = zip(*sorted(res, key=lambda x: x[1], reverse=True))
+#     for name, number in res:
+#         sn = name.replace("Imagenet", "IN")
+#         experiment_results[sn][task] = number
+#         experiment_results[sn][task+"-rank"] = rankings.index(name)+1
+#
+# with open('results.csv', mode='w') as csv_file:
+#     fieldnames = ["Encoder", "Method"] + ALL_TASKS + [task+"-rank" for task in ALL_TASKS]
+#     writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+#     writer.writeheader()
+#     for name, results in experiment_results.items():
+#         if "MoCo" in name:
+#             method = "MoCo"
+#         elif "SWAV" in name:
+#             method = "SWAV"
+#         elif "PIRL" in name:
+#             method = "PIRL"
+#         elif "SimCLR" in name:
+#             method = "SimCLR"
+#         elif "Supervised" in name:
+#             method = "Supervised"
+#         elif "Random" in name:
+#             method = "Random"
+#         else:
+#             method = "Other"
+#         row = {"Encoder": name, "Method": method}
+#         row.update(results)
+#         writer.writerow(row)
 
 
 ### BIG TABLE
@@ -286,39 +332,271 @@ with open('results.csv', mode='w') as csv_file:
 # make_ranked_bar_chart(names, results, "Top-1 Accuracy", "Imagenet Classification", labels=labels)
 #
 #
-data = pandas.read_csv("results.csv")
-for task in ALL_TASKS:
-    sns.set_theme()
-    plt.figure(figsize=(20, 10))
-    data = pandas.read_csv("results.csv")
-    results = data.sort_values(task, ascending=False).reset_index()
-    g = sns.barplot(x=task, y="Encoder", hue="Method", data=results, dodge=False)
-    sign = 1.0 if results[task][0] > 0 else -1.0
-    for _, data in results.iterrows():
-        g.text(data[task] - (sign * 0.02), data.name + 0.12, round(data[task], 4), color='white', ha="center", size=10, weight='bold')
-    plt.title("%s Test Results" % task)
-    plt.xlabel("Test Performance")
-    plt.savefig("graphs/%s-test-results.png" % task, dpi=100)
-    # plt.show()
+# data = pandas.read_csv("results.csv")
+# sns.set_theme()
+# colors = sns.color_palette()
+# palette = {method: colors[i] for i, method in enumerate(set(data["Method"]))}
+# for task in ALL_TASKS:
+#     plt.figure(figsize=(20, 10))
+#     data = pandas.read_csv("results.csv")
+#     results = data.sort_values(task, ascending=False).reset_index()
+#     g = sns.barplot(x=task, y="Encoder", hue="Method", data=results, dodge=False, palette=palette)
+#     sign = 1.0 if results[task][0] > 0 else -1.0
+#     for _, data in results.iterrows():
+#         g.text(data[task] - (sign * 0.02), data.name + 0.12, round(data[task], 4), color='white', ha="center", size=10, weight='bold')
+#     plt.title("%s Test Results" % task)
+#     plt.xlabel("Test Performance")
+#     plt.savefig("graphs/%s-test-results.png" % task, dpi=100)
+#     plt.clf()
 
 #### Generating Pearson and Spearman Correlations
+# data = pandas.read_csv("results.csv")
+# tasks = ["Imagenet", "CalTech-101", "Pets", "Pets-Detection", "dtd", "CIFAR-100", "SUN397", "Eurosat",
+#          "CLEVERNumObjects", "THORDepth", "NYUDepth", "NYUWalkable"]
+# n = len(tasks)
+# spearman = np.zeros((n,n))
+# pearson = np.zeros((n,n))
+# spearman_pval = np.zeros((n,n))
+# pearson_pval = np.zeros((n,n))
+# for i in range(n):
+#     for j in range(n):
+#         values_i = data[tasks[i]]
+#         values_j = data[tasks[j]]
+#         s, sp = scipy.stats.spearmanr(values_i, values_j)
+#         p, pp = scipy.stats.pearsonr(values_i, values_j)
+#         spearman[i][j] = s
+#         pearson[i][j] = p
+#         spearman_pval[i][j] = sp
+#         pearson_pval[i][j] = pp
+#
+# plt.figure(figsize=(20, 20))
+# title = "Spearman Correlation on Performance Between Tasks IN POV"
+# plt.title(title)
+# ax = sns.heatmap(spearman, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/"+title.replace(" ", "_")+"-1.png")
+# plt.clf()
+# # title = "Spearman Correlation p-values on Performance Between Tasks IN POV"
+# plt.title(title)
+# ax = sns.heatmap(spearman_pval, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+# plt.clf()
+# title = "Pearson Correlation on Performance Between Tasks IN POV"
+# plt.title(title)
+# ax = sns.heatmap(pearson, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+# plt.clf()
+# title = "Pearson Correlation p-values on Performance Between Tasks IN POV"
+# plt.title(title)
+# ax = sns.heatmap(pearson_pval, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+# plt.clf()
+#
+# #### Generating Pearson and Spearman Correlations on Encoders Trained for 200 epochs
+# data = pandas.read_csv("results.csv")
+# data = data.set_index("Encoder", drop=False)
+# data = data.filter(regex="(MoCov2*|SWAV*)", axis=0)
+# n = len(ALL_TASKS)
+# spearman = np.zeros((n,n))
+# pearson = np.zeros((n,n))
+# spearman_pval = np.zeros((n,n))
+# pearson_pval = np.zeros((n,n))
+# for i in range(n):
+#     for j in range(n):
+#         values_i = data[ALL_TASKS[i]]
+#         values_i -= np.min(values_i)
+#         values_i /= np.max(values_i)
+#         values_j = data[ALL_TASKS[j]]
+#         values_j -= np.min(values_j)
+#         values_j /= np.max(values_j)
+#         s, sp = scipy.stats.spearmanr(values_i, values_j)
+#         p, pp = scipy.stats.pearsonr(values_i, values_j)
+#         spearman[i][j] = s
+#         pearson[i][j] = p
+#         spearman_pval[i][j] = sp
+#         pearson_pval[i][j] = pp
+#
+# plt.figure(figsize=(20, 20))
+# title = "Normalized Spearman Correlation on Performance Between Tasks"
+# plt.title(title)
+# ax = sns.heatmap(spearman, annot=True)
+# ax.set_yticklabels(ALL_TASKS, rotation=0)
+# ax.set_xticklabels(ALL_TASKS, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+# plt.clf()
+# title = "Normalized Spearman Correlation p-values on Performance Between Tasks"
+# plt.title(title)
+# ax = sns.heatmap(spearman_pval, annot=True)
+# ax.set_yticklabels(ALL_TASKS, rotation=0)
+# ax.set_xticklabels(ALL_TASKS, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+# plt.clf()
+# title = "Normalized Pearson Correlation on Performance Between Tasks on Encoders Trained for 200 Epochs"
+# plt.title(title)
+# ax = sns.heatmap(pearson, annot=True)
+# ax.set_yticklabels(ALL_TASKS, rotation=0)
+# ax.set_xticklabels(ALL_TASKS, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+# plt.clf()
+# title = "Normalized Pearson Correlation p-values on Performance Between Tasks on Encoders Trained for 200 Epochs"
+# plt.title(title)
+# ax = sns.heatmap(pearson_pval, annot=True)
+# ax.set_yticklabels(ALL_TASKS, rotation=0)
+# ax.set_xticklabels(ALL_TASKS, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+# plt.clf()
+
+# data = pandas.read_csv("results.csv")
+# sns.set_theme()
+# colors = sns.color_palette()
+# palette = {method: colors[i] for i, method in enumerate(set(data["Method"]))}
+# for task in ["Embedding", "Pixel"]:
+#     data = pandas.read_csv("results.csv")
+#     normalized_scores = get_normalized_summed_scores(data)
+#     data = pandas.DataFrame(normalized_scores)
+#     plt.figure(figsize=(20, 10))
+#     results = data.sort_values(task, ascending=False).reset_index()
+#     g = sns.barplot(x=task, y="Encoder", hue="Method", data=results, dodge=False, palette=palette)
+#     sign = 1.0 if results[task][0] > 0 else -1.0
+#     for _, data in results.iterrows():
+#         g.text(data[task] - (sign * 0.02), data.name + 0.12, round(data[task], 4), color='white', ha="center", size=10, weight='bold')
+#     plt.title("%s Test Results" % task)
+#     plt.xlabel("Test Performance")
+#     plt.savefig("graphs/%s-groupped-test-results.png" % task, dpi=100)
+#     plt.clf()
+
+
+# ### Generate average moco performance vs average swav performance
 data = pandas.read_csv("results.csv")
-n = len(ALL_TASKS)
-spearman = np.zeros((n,n))
-pearson = np.zeros((n,n))
-spearman_pval = np.zeros((n,n))
-pearson_pval = np.zeros((n,n))
-for i in range(n):
-    for j in range(n):
-        values_i = data[ALL_TASKS[i]]
-        values_j = data[ALL_TASKS[j]]
-        s, sp = scipy.stats.spearmanr(values_i, values_j)
-        p, pp = scipy.stats.pearsonr(values_i, values_j)
-        spearman[i][j] = s
-        pearson[i][j] = p
-        spearman_pval[i][j] = sp
-        pearson_pval[i][j] = pp
-ax = sns.heatmap(spearman, annot=True)
-ax.set_yticklabels(ALL_TASKS, rotation=0)
-ax.set_xticklabels(ALL_TASKS, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# normalized_scores = get_normalized_summed_scores(data)
+# data = pandas.DataFrame(normalized_scores)
+data = data.set_index("Encoder")
+values = []
+for task in ALL_TASKS:
+    mocos_vals = []
+    swav_vals = []
+    for encoder in ALL_EXPERIMENTS:
+        encoder = encoder.replace("Imagenet", "IN")
+        if "MoCov2" in encoder:
+            mocos_vals.append(data[task][encoder])
+        if "SWAV" in encoder:
+            swav_vals.append(data[task][encoder])
+    values.append({"Method": "MoCov2", "task": task, "score": np.mean(mocos_vals)})
+    values.append({"Method": "SWAV", "task": task, "score": np.mean(swav_vals)})
+values = pandas.DataFrame(values)
+sns.set_theme()
+# normalized_scores = get_normalized_summed_scores(data)
+# data = pandas.DataFrame(normalized_scores)
+plt.figure(figsize=(20, 10))
+# results = data.sort_values(task, ascending=False).reset_index()
+g = sns.barplot(x="score", y="task", hue="Method", data=values)
+# sign = 1.0 if results[task][0] > 0 else -1.0
+# for _, data in results.iterrows():
+#     g.text(data[task] - (sign * 0.02), data.name + 0.12, round(data[task], 4), color='white', ha="center", size=10, weight='bold')
+plt.title("MoCo vs SWAV Test Results" )
+plt.xlabel("Test Performance")
 plt.show()
+# plt.savefig("graphs/%s-groupped-test-results.png" % task, dpi=100)
+plt.clf()
+
+# data = pandas.read_csv("results.csv")
+# # normalized_scores = get_normalized_summed_scores(data)
+# # data = pandas.DataFrame(normalized_scores)
+# data = data.set_index("Encoder")
+# values = []
+# for task in ALL_TASKS:
+#     half_vals = []
+#     quarter_vals = []
+#     unbalanced_vals = []
+#     log_vals = []
+#     for encoder in ALL_EXPERIMENTS:
+#         encoder = encoder.replace("Imagenet", "IN")
+#         # if "Half" in encoder:
+#         #     half_vals.append(data[task][encoder])
+#         if "Quarter" in encoder:
+#             quarter_vals.append(data[task][encoder])
+#         # if "Unbalanced" in encoder:
+#         #     unbalanced_vals.append(data[task][encoder])
+#         if "Log" in encoder:
+#             log_vals.append(data[task][encoder])
+#     # values.append({"Dataset": "Half", "task": task, "score": np.mean(half_vals)})
+#     values.append({"Dataset": "Quarter", "task": task, "score": np.mean(quarter_vals)})
+#     # values.append({"Dataset": "Unbalanced", "task": task, "score": np.mean(unbalanced_vals)})
+#     values.append({"Dataset": "Log", "task": task, "score": np.mean(log_vals)})
+# values = pandas.DataFrame(values)
+# sns.set_theme()
+# # normalized_scores = get_normalized_summed_scores(data)
+# # data = pandas.DataFrame(normalized_scores)
+# plt.figure(figsize=(20, 10))
+# # results = data.sort_values(task, ascending=False).reset_index()
+# g = sns.barplot(x="score", y="task", hue="Dataset", data=values)
+# # sign = 1.0 if results[task][0] > 0 else -1.0
+# # for _, data in results.iterrows():
+# #     g.text(data[task] - (sign * 0.02), data.name + 0.12, round(data[task], 4), color='white', ha="center", size=10, weight='bold')
+# plt.title("Test Results of Encoders Trained on Quarter and Log ImageNet" )
+# plt.xlabel("Test Performance")
+# plt.show()
+# # plt.savefig("graphs/%s-groupped-test-results.png" % task, dpi=100)
+# plt.clf()
+
+#### Generating Pearson and Spearman Correlations for IN Tasks
+# data = pandas.read_csv("results.csv")
+# data = data.set_index("Encoder", drop=False)
+# data = data.loc[PLACES_EXPERIMENTS + TASKONOMY_EXPERIMENTS + COMBO_EXPERIMENTS + KINETICS_EXPERIMENTS]
+# tasks = ["Imagenet", "CalTech-101", "Pets", "CIFAR-100", "Pets-Detection", "dtd", "SUN397", "CLEVERNumObjects",
+#           "NYUDepth", "NYUWalkable", "Eurosat", "THORDepth"]
+# n = len(tasks)
+# spearman = np.zeros((n,n))
+# pearson = np.zeros((n,n))
+# spearman_pval = np.zeros((n,n))
+# pearson_pval = np.zeros((n,n))
+# for i in range(n):
+#     for j in range(n):
+#         values_i = data[tasks[i]]
+#         values_j = data[tasks[j]]
+#         s, sp = scipy.stats.spearmanr(values_i, values_j)
+#         p, pp = scipy.stats.pearsonr(values_i, values_j)
+#         spearman[i][j] = s
+#         pearson[i][j] = p
+#         spearman_pval[i][j] = sp
+#         pearson_pval[i][j] = pp
+#
+# plt.figure(figsize=(20, 20))
+# title = "Spearman Correlation on Performance Between Tasks with non IN Encoders"
+# plt.title(title)
+# ax = sns.heatmap(spearman, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/"+title.replace(" ", "_")+"-1.png")
+# plt.clf()
+# title = "Spearman Correlation p-values on Performance Between Tasks with non IN Encoders"
+# plt.title(title)
+# ax = sns.heatmap(spearman_pval, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+# plt.clf()
+# title = "Pearson Correlation on Performance Between Tasks  with non IN Encoders"
+# plt.title(title)
+# ax = sns.heatmap(pearson, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+# plt.clf()
+# title = "Pearson Correlation p-values on Performance Between Tasks with non IN Encoders"
+# plt.title(title)
+# ax = sns.heatmap(pearson_pval, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+# plt.clf()
+
+
+
