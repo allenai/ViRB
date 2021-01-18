@@ -22,7 +22,8 @@ class ThorNumStepsEncodableDataset(EncodableDataset):
         self.data.sort()
         with open('data/thor_num_steps/%s_labels.txt' % ('train' if train else 'val')) as f:
             lines = f.readlines()
-            self.labels = torch.LongTensor(list(int(line.split(" ")[1]) for line in lines))
+            label_table = {line.split(" ")[0]: int(line.split(" ")[1]) for line in lines}
+        self.labels = torch.LongTensor([label_table[img[20:-8]] for img in self.data])
         self.preprocessor = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
