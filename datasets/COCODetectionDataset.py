@@ -48,7 +48,7 @@ class COCODetectionDataset:
         anns = self.labels.loadAnns(annIds)
         label = torch.zeros((img_data['height'], img_data['width']), dtype=torch.int)
         for ann in anns:
-            label[self.labels.annToMask(ann)] = 1.0 * ann['category_id']
+            label[self.labels.annToMask(ann)] = 1.0 * (ann['category_id'] - 1)
         img = Image.open(self.img_root+img_data["file_name"]).convert('RGB')
         return self.img_preprocessor(img), self.label_preprocessor(label).long().squeeze()
 

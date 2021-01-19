@@ -20,6 +20,12 @@ def iou(out, labels):
                 [labels.size(0), torch.max(labels), labels.size(1), labels.size(2)],
                 dtype=torch.long
             )
+            print("\n\n")
+            print("Layer wise label mask shape:", layer_wise_label_mask.shape)
+            print("Labels shape:", labels.shape)
+            print("\n\n")
+            import time
+            time.sleep(10)
             layer_wise_label_mask[labels] = 1
             prediction = torch.zeros_like(out)
             prediction[torch.max(torch.softmax(out, dim=1), dim=1)] = 1
