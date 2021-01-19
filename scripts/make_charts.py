@@ -141,6 +141,7 @@ ALL_TASKS = [
     "NYUDepth",
     "NYUWalkable",
     "THORDepth",
+    "THORNumSteps"
     # "TaskonomyInpainting",
     # "TaskonomyEdges"
 ]
@@ -269,40 +270,40 @@ def get_normalized_summed_scores(data):
 # plt.show()
 
 #### Converting the output to csv format
-# experiment_results = {name.replace("Imagenet", "IN"): {} for name in ALL_EXPERIMENTS}
-# for task in ALL_TASKS:
-#     if task in REVERSED_SUCCESS_TASKS:
-#         res = get_best_result(ALL_EXPERIMENTS, task, include_names=True, c=-1.0)
-#     else:
-#         res = get_best_result(ALL_EXPERIMENTS, task, include_names=True)
-#     rankings, _ = zip(*sorted(res, key=lambda x: x[1], reverse=True))
-#     for name, number in res:
-#         sn = name.replace("Imagenet", "IN")
-#         experiment_results[sn][task] = number
-#         experiment_results[sn][task+"-rank"] = rankings.index(name)+1
-#
-# with open('results.csv', mode='w') as csv_file:
-#     fieldnames = ["Encoder", "Method"] + ALL_TASKS + [task+"-rank" for task in ALL_TASKS]
-#     writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-#     writer.writeheader()
-#     for name, results in experiment_results.items():
-#         if "MoCo" in name:
-#             method = "MoCo"
-#         elif "SWAV" in name:
-#             method = "SWAV"
-#         elif "PIRL" in name:
-#             method = "PIRL"
-#         elif "SimCLR" in name:
-#             method = "SimCLR"
-#         elif "Supervised" in name:
-#             method = "Supervised"
-#         elif "Random" in name:
-#             method = "Random"
-#         else:
-#             method = "Other"
-#         row = {"Encoder": name, "Method": method}
-#         row.update(results)
-#         writer.writerow(row)
+experiment_results = {name.replace("Imagenet", "IN"): {} for name in ALL_EXPERIMENTS}
+for task in ALL_TASKS:
+    if task in REVERSED_SUCCESS_TASKS:
+        res = get_best_result(ALL_EXPERIMENTS, task, include_names=True, c=-1.0)
+    else:
+        res = get_best_result(ALL_EXPERIMENTS, task, include_names=True)
+    rankings, _ = zip(*sorted(res, key=lambda x: x[1], reverse=True))
+    for name, number in res:
+        sn = name.replace("Imagenet", "IN")
+        experiment_results[sn][task] = number
+        experiment_results[sn][task+"-rank"] = rankings.index(name)+1
+
+with open('results.csv', mode='w') as csv_file:
+    fieldnames = ["Encoder", "Method"] + ALL_TASKS + [task+"-rank" for task in ALL_TASKS]
+    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+    writer.writeheader()
+    for name, results in experiment_results.items():
+        if "MoCo" in name:
+            method = "MoCo"
+        elif "SWAV" in name:
+            method = "SWAV"
+        elif "PIRL" in name:
+            method = "PIRL"
+        elif "SimCLR" in name:
+            method = "SimCLR"
+        elif "Supervised" in name:
+            method = "Supervised"
+        elif "Random" in name:
+            method = "Random"
+        else:
+            method = "Other"
+        row = {"Encoder": name, "Method": method}
+        row.update(results)
+        writer.writerow(row)
 
 
 ### BIG TABLE
@@ -350,55 +351,55 @@ def get_normalized_summed_scores(data):
 #     plt.clf()
 
 #### Generating Pearson and Spearman Correlations
-# data = pandas.read_csv("results.csv")
-# tasks = ["Imagenet", "CalTech-101", "Pets", "Pets-Detection", "dtd", "CIFAR-100", "SUN397", "Eurosat",
-#          "CLEVERNumObjects", "THORDepth", "NYUDepth", "NYUWalkable"]
-# n = len(tasks)
-# spearman = np.zeros((n,n))
-# pearson = np.zeros((n,n))
-# spearman_pval = np.zeros((n,n))
-# pearson_pval = np.zeros((n,n))
-# for i in range(n):
-#     for j in range(n):
-#         values_i = data[tasks[i]]
-#         values_j = data[tasks[j]]
-#         s, sp = scipy.stats.spearmanr(values_i, values_j)
-#         p, pp = scipy.stats.pearsonr(values_i, values_j)
-#         spearman[i][j] = s
-#         pearson[i][j] = p
-#         spearman_pval[i][j] = sp
-#         pearson_pval[i][j] = pp
-#
-# plt.figure(figsize=(20, 20))
-# title = "Spearman Correlation on Performance Between Tasks IN POV"
-# plt.title(title)
-# ax = sns.heatmap(spearman, annot=True)
-# ax.set_yticklabels(tasks, rotation=0)
-# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
-# plt.savefig("graphs/"+title.replace(" ", "_")+"-1.png")
-# plt.clf()
-# # title = "Spearman Correlation p-values on Performance Between Tasks IN POV"
-# plt.title(title)
-# ax = sns.heatmap(spearman_pval, annot=True)
-# ax.set_yticklabels(tasks, rotation=0)
-# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
-# plt.savefig("graphs/"+title.replace(" ", "_")+".png")
-# plt.clf()
-# title = "Pearson Correlation on Performance Between Tasks IN POV"
-# plt.title(title)
-# ax = sns.heatmap(pearson, annot=True)
-# ax.set_yticklabels(tasks, rotation=0)
-# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
-# plt.savefig("graphs/"+title.replace(" ", "_")+".png")
-# plt.clf()
-# title = "Pearson Correlation p-values on Performance Between Tasks IN POV"
-# plt.title(title)
-# ax = sns.heatmap(pearson_pval, annot=True)
-# ax.set_yticklabels(tasks, rotation=0)
-# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
-# plt.savefig("graphs/"+title.replace(" ", "_")+".png")
-# plt.clf()
-#
+data = pandas.read_csv("results.csv")
+tasks = ["Imagenet", "CalTech-101", "Pets", "Pets-Detection", "dtd", "CIFAR-100", "SUN397", "Eurosat",
+         "CLEVERNumObjects", "THORNumSteps", "THORDepth", "NYUDepth", "NYUWalkable"]
+n = len(tasks)
+spearman = np.zeros((n,n))
+pearson = np.zeros((n,n))
+spearman_pval = np.zeros((n,n))
+pearson_pval = np.zeros((n,n))
+for i in range(n):
+    for j in range(n):
+        values_i = data[tasks[i]]
+        values_j = data[tasks[j]]
+        s, sp = scipy.stats.spearmanr(values_i, values_j)
+        p, pp = scipy.stats.pearsonr(values_i, values_j)
+        spearman[i][j] = s
+        pearson[i][j] = p
+        spearman_pval[i][j] = sp
+        pearson_pval[i][j] = pp
+
+plt.figure(figsize=(20, 20))
+title = "Spearman Correlation on Performance Between Tasks IN POV"
+plt.title(title)
+ax = sns.heatmap(spearman, annot=True)
+ax.set_yticklabels(tasks, rotation=0)
+ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+plt.savefig("graphs/"+title.replace(" ", "_")+"-1.png")
+plt.clf()
+title = "Spearman Correlation p-values on Performance Between Tasks IN POV"
+plt.title(title)
+ax = sns.heatmap(spearman_pval, annot=True)
+ax.set_yticklabels(tasks, rotation=0)
+ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+plt.clf()
+title = "Pearson Correlation on Performance Between Tasks IN POV"
+plt.title(title)
+ax = sns.heatmap(pearson, annot=True)
+ax.set_yticklabels(tasks, rotation=0)
+ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+plt.clf()
+title = "Pearson Correlation p-values on Performance Between Tasks IN POV"
+plt.title(title)
+ax = sns.heatmap(pearson_pval, annot=True)
+ax.set_yticklabels(tasks, rotation=0)
+ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+plt.clf()
+
 # #### Generating Pearson and Spearman Correlations on Encoders Trained for 200 epochs
 # data = pandas.read_csv("results.csv")
 # data = data.set_index("Encoder", drop=False)
@@ -474,37 +475,37 @@ def get_normalized_summed_scores(data):
 
 
 # ### Generate average moco performance vs average swav performance
-data = pandas.read_csv("results.csv")
-# normalized_scores = get_normalized_summed_scores(data)
-# data = pandas.DataFrame(normalized_scores)
-data = data.set_index("Encoder")
-values = []
-for task in ALL_TASKS:
-    mocos_vals = []
-    swav_vals = []
-    for encoder in ALL_EXPERIMENTS:
-        encoder = encoder.replace("Imagenet", "IN")
-        if "MoCov2" in encoder:
-            mocos_vals.append(data[task][encoder])
-        if "SWAV" in encoder:
-            swav_vals.append(data[task][encoder])
-    values.append({"Method": "MoCov2", "task": task, "score": np.mean(mocos_vals)})
-    values.append({"Method": "SWAV", "task": task, "score": np.mean(swav_vals)})
-values = pandas.DataFrame(values)
-sns.set_theme()
-# normalized_scores = get_normalized_summed_scores(data)
-# data = pandas.DataFrame(normalized_scores)
-plt.figure(figsize=(20, 10))
-# results = data.sort_values(task, ascending=False).reset_index()
-g = sns.barplot(x="score", y="task", hue="Method", data=values)
-# sign = 1.0 if results[task][0] > 0 else -1.0
-# for _, data in results.iterrows():
-#     g.text(data[task] - (sign * 0.02), data.name + 0.12, round(data[task], 4), color='white', ha="center", size=10, weight='bold')
-plt.title("MoCo vs SWAV Test Results" )
-plt.xlabel("Test Performance")
-plt.show()
-# plt.savefig("graphs/%s-groupped-test-results.png" % task, dpi=100)
-plt.clf()
+# data = pandas.read_csv("results.csv")
+# # normalized_scores = get_normalized_summed_scores(data)
+# # data = pandas.DataFrame(normalized_scores)
+# data = data.set_index("Encoder")
+# values = []
+# for task in ALL_TASKS:
+#     mocos_vals = []
+#     swav_vals = []
+#     for encoder in ALL_EXPERIMENTS:
+#         encoder = encoder.replace("Imagenet", "IN")
+#         if "MoCov2" in encoder:
+#             mocos_vals.append(data[task][encoder])
+#         if "SWAV" in encoder:
+#             swav_vals.append(data[task][encoder])
+#     values.append({"Method": "MoCov2", "task": task, "score": np.mean(mocos_vals)})
+#     values.append({"Method": "SWAV", "task": task, "score": np.mean(swav_vals)})
+# values = pandas.DataFrame(values)
+# sns.set_theme()
+# # normalized_scores = get_normalized_summed_scores(data)
+# # data = pandas.DataFrame(normalized_scores)
+# plt.figure(figsize=(20, 10))
+# # results = data.sort_values(task, ascending=False).reset_index()
+# g = sns.barplot(x="score", y="task", hue="Method", data=values)
+# # sign = 1.0 if results[task][0] > 0 else -1.0
+# # for _, data in results.iterrows():
+# #     g.text(data[task] - (sign * 0.02), data.name + 0.12, round(data[task], 4), color='white', ha="center", size=10, weight='bold')
+# plt.title("MoCo vs SWAV Test Results" )
+# plt.xlabel("Test Performance")
+# plt.show()
+# # plt.savefig("graphs/%s-groupped-test-results.png" % task, dpi=100)
+# plt.clf()
 
 # data = pandas.read_csv("results.csv")
 # # normalized_scores = get_normalized_summed_scores(data)

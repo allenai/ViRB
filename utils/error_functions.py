@@ -15,15 +15,19 @@ def binary_pixel_wise_prediction_loss(out, labels):
 
 def iou(out, labels):
     with torch.no_grad():
-        if out.size(1) > 1:
-            layer_wise_label_mask = torch.zeros([labels.size(0), torch.max(labels), labels.size(1), labels.size(2)])
+        if len(out.shape) == 4 and out.shapeout.size(1) > 1:
+            layer_wise_label_mask = torch.zeros(
+                [labels.size(0), torch.max(labels), labels.size(1), labels.size(2)],
+                dtype=torch.long
+            )
             layer_wise_label_mask[labels] = 1
+            prediction = torch.zeros_like(out)
+            prediction[torch.max(torch.softmax(out, dim=1), dim=1)] = 1
         else:
             layer_wise_label_mask = labels
+            prediction = torch.round(torch.sigmoid(out))
 
-        out = torch.round(torch.sigmoid(out))
-
-        intersection = torch.logical_and(out, layer_wise_label_mask).sum(-1).sum(-1)
-        union = torch.logical_or(out, layer_wise_label_mask).sum(-1).sum(-1)
+        intersection = torch.logical_and(prediction, layer_wise_label_mask).sum(-1).sum(-1)
+        union = torch.logical_or(prediction, layer_wise_label_mask).sum(-1).sum(-1)
 
         return torch.mean((intersection + 1e-8) / (union + 1e-8))
