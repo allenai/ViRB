@@ -121,23 +121,23 @@
 ##      optimizer: "sgd"
 ##      lr: 0.001
 #  num_epochs: 100
-
-THORNumSteps:
-  task: "THORNumSteps"
-  training_configs:
-    adam-0.0001:
-      optimizer: "adam"
-      lr: 0.0001
-    adam-0.001:
-      optimizer: "adam"
-      lr: 0.001
-    sgd-0.01:
-      optimizer: "sgd"
-      lr: 0.01
-    sgd-0.001:
-      optimizer: "sgd"
-      lr: 0.001
-  num_epochs: 100
+#
+#THORNumSteps:
+#  task: "THORNumSteps"
+#  training_configs:
+#    adam-0.0001:
+#      optimizer: "adam"
+#      lr: 0.0001
+#    adam-0.001:
+#      optimizer: "adam"
+#      lr: 0.001
+#    sgd-0.01:
+#      optimizer: "sgd"
+#      lr: 0.01
+#    sgd-0.001:
+#      optimizer: "sgd"
+#      lr: 0.001
+#  num_epochs: 100
 
 #
 #Pets-Detection:
@@ -244,3 +244,16 @@ THORNumSteps:
 ##      optimizer: "sgd"
 ##      lr: 0.001
 #  num_epochs: 10
+
+COCODetection:
+  task: "COCODetection"
+  pre_encode: false
+  training_configs:
+    adam-0.0003:
+      optimizer: "adam"
+      lr: 0.0003
+#    sgd-0.01-l1:
+#      optimizer: "sgd"
+#      lr: 0.001
+  num_epochs: 100
+

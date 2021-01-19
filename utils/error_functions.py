@@ -15,9 +15,9 @@ def binary_pixel_wise_prediction_loss(out, labels):
 
 def iou(out, labels):
     with torch.no_grad():
-        if labels.size(1) > 1:
+        if out.size(1) > 1:
             layer_wise_label_mask = torch.zeros([labels.size(0), torch.max(labels), labels.size(1), labels.size(2)])
-            layer_wise_label_mask[out] = 1
+            layer_wise_label_mask[labels] = 1
         else:
             layer_wise_label_mask = labels
 

@@ -35,7 +35,8 @@ CLASSIFICATION_TASKS = [
 BINARY_PIXEL_WISE_CLASSIFICATION = [
     "Flowers-Detection",
     "Pets-Detection",
-    "NYUWalkable"
+    "NYUWalkable",
+    "COCODetection"
 ]
 PIXEL_WISE_REGRESSION = [
     "THORDepth",
@@ -96,12 +97,18 @@ def get_dataset_class(config):
     if config["task"] == "THORNumSteps":
         from datasets.ThorNumStepsEncodbleDataset import ThorNumStepsEncodableDataset
         return ThorNumStepsEncodableDataset
+    if config["task"] == "COCODetection":
+        from datasets.COCODetectionDataset import COCODetectionDataset
+        return COCODetectionDataset
 
 
 def get_task_head(config, dataset):
     if config["task"] == "TaskonomyInpainting":
         from models.PixelWisePredictionHead import PixelWisePredictionHead
         return PixelWisePredictionHead(3)
+    if config["task"] == "COCODetection":
+        from models.PixelWisePredictionHead import PixelWisePredictionHead
+        return PixelWisePredictionHead(dataset.num_classes())
     if config["task"] in PIXEL_WISE_REGRESSION:
         from models.PixelWisePredictionHead import PixelWisePredictionHead
         return PixelWisePredictionHead(1)
@@ -140,6 +147,8 @@ def get_loss_function(config):
     if config["task"] == "TaskonomyEdges":
         from utils.loss_functions import weighted_l1_loss
         return weighted_l1_loss
+    if config["task"] == "COCODetection":
+        return torch.nn.CrossEntropyLoss()
     if config["task"] in PIXEL_WISE_REGRESSION:
         return torch.nn.L1Loss()
     if config["task"] in CLASSIFICATION_TASKS:
