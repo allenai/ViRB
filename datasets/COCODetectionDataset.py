@@ -24,7 +24,7 @@ class COCODetectionDataset:
         annFile = 'data/coco/annotations/instances_%s2017.json' % ('train' if train else 'val')
         # Supress printing of the COCO constructor
         with open(os.devnull, 'w') as devnull:
-            with contextlib.redire  ct_stdout(devnull):
+            with contextlib.redirect_stdout(devnull):
                 self.labels = COCO(annFile)
         self.imgs = self.labels.loadImgs(self.labels.getImgIds())
         self.img_preprocessor = transforms.Compose([
