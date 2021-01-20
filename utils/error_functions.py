@@ -31,7 +31,7 @@ def iou(out, labels):
                 cat = cat.item()
                 intersection = torch.logical_and(prediction == cat, labels == cat).sum(-1).sum(-1)
                 union = torch.logical_or(prediction == cat, labels == cat).sum(-1).sum(-1)
-                ious.append(torch.mean((intersection + 1e-8) / (union + 1e-8)))
+                ious.append(torch.mean((intersection + 1e-8) / (union + 1e-8)).item())
             return np.mean(ious)
 
         else:
