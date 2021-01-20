@@ -16,17 +16,12 @@ def binary_pixel_wise_prediction_loss(out, labels):
 def iou(out, labels):
     with torch.no_grad():
         if len(out.shape) == 4 and out.size(1) > 1:
-            layer_wise_label_mask = torch.zeros(
-                [labels.size(0), torch.max(labels), labels.size(1), labels.size(2)],
-                dtype=torch.long
-            )
-            print("\n\n")
-            print("Layer wise label mask shape:", layer_wise_label_mask.shape)
-            print("Labels shape:", labels.shape)
-            print("\n\n")
-            import time
-            time.sleep(10)
-            layer_wise_label_mask[labels] = 1
+            # layer_wise_label_mask = torch.zeros(
+            #     [labels.size(0), torch.max(labels), labels.size(1), labels.size(2)],
+            #     dtype=torch.long
+            # )
+            # layer_wise_label_mask[labels] = 1
+            layer_wise_label_mask = torch.stack([labels == x for x in range(labels.max() + 1)], dim=1).long()
             prediction = torch.zeros_like(out)
             prediction[torch.max(torch.softmax(out, dim=1), dim=1)] = 1
         else:
