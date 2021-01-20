@@ -155,6 +155,7 @@ EMBEDDING_TASKS = [
     "dtd",
     "CLEVERNumObjects",
     "Imagenet",
+    "THORNumSteps"
 ]
 PIXEL_TASKS = [
     "Pets-Detection",
@@ -200,11 +201,14 @@ def get_all_results(experiments, run, c=1.0):
         for f in datapoint_files:
             optimizer = f.replace("out/%s/%s-" % (e, run), "").replace("/results.json", "").split("-")
             with open(f) as fp:
-                datapoints.append({
-                    "optimizer": optimizer[0],
-                    "lr": float(optimizer[1]),
-                    "result": c * float(json.load(fp)["test_accuracy"])
-                })
+                try:
+                    datapoints.append({
+                        "optimizer": optimizer[0],
+                        "lr": float(optimizer[1]),
+                        "result": c * float(json.load(fp)["test_accuracy"])
+                    })
+                except:
+                    print("Problem with parsing")
         res[e] = datapoints
     return res
 
@@ -579,17 +583,28 @@ def get_normalized_summed_scores(data):
 # plt.savefig("graphs/"+title.replace(" ", "_")+".png")
 # plt.clf()
 
+for task in EMBEDDING_TASKS:
+    title="%s adam vs sgd" % task
+    res = get_all_results(ALL_EXPERIMENTS, task)
+    all_results = []
+    plt.figure(figsize=(20, 10))
+    plt.title(title)
+    for encoder, encoder_results in res.items():
+        if len(encoder_results) > 1:
+            best_run_with_optimizer = {"sgd": [], "adam":[]}
+            for run in encoder_results:
+                best_run_with_optimizer[run["optimizer"]].append({
+                    "encoder": encoder+"-"+run["optimizer"],
+                    "optimizer": run["optimizer"],
+                    "lr": run["lr"],
+                    "score": run["result"]
+                })
+            for _, runs in best_run_with_optimizer.items():
+                runs.sort(key=lambda x: x["score"])
+                all_results.append(runs[-1])
 
-res = get_all_results(ALL_EXPERIMENTS, "SUN397")
-all_results = []
-for encoder, encoder_results in res.items():
-    for run in encoder_results:
-        all_results.append({
-            "encoder": encoder,
-            "optimizer": "-".join([run["optimizer"], str(run["lr"])]),
-            "lr": run["lr"],
-            "score": run["result"]
-        })
-data = pandas.DataFrame(all_results)
-g = sns.barplot(x="score", y="encoder", hue="optimizer", data=data)
-plt.show()
+    data = pandas.DataFrame(all_results)
+    data = data.sort_values("score")
+    g = sns.barplot(x="score", y="encoder", hue="optimizer", data=data, dodge=False)
+    plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+    plt.clf()
