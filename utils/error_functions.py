@@ -29,6 +29,8 @@ def iou(out, labels):
             _, prediction = torch.max(torch.softmax(out, dim=1), dim=1)
             for cat in torch.unique(labels):
                 cat = cat.item()
+                if cat == 0:
+                    continue
                 intersection = torch.logical_and(prediction == cat, labels == cat).sum(-1).sum(-1)
                 union = torch.logical_or(prediction == cat, labels == cat).sum(-1).sum(-1)
                 ious.append(torch.mean((intersection + 1e-8) / (union + 1e-8)).item())
