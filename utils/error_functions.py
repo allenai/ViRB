@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 
 
 def classification_error(out, labels):
@@ -21,14 +22,23 @@ def iou(out, labels):
             #     dtype=torch.long
             # )
             # layer_wise_label_mask[labels] = 1
-            layer_wise_label_mask = torch.stack([labels == x for x in range(labels.max() + 1)], dim=1).long()
-            prediction = torch.zeros_like(out)
-            prediction[torch.max(torch.softmax(out, dim=1), dim=1)] = 1
+            # layer_wise_label_mask = torch.stack([labels == x for x in range(labels.max() + 1)], dim=1).long()
+            # prediction = torch.zeros_like(out)
+            # prediction[torch.max(torch.softmax(out, dim=1), dim=1)] = 1
+            ious = []
+            _, prediction = torch.max(torch.softmax(out, dim=1), dim=1)
+            for cat in torch.unique(labels):
+                cat = cat.item()
+                intersection = torch.logical_and(prediction == cat, labels == cat).sum(-1).sum(-1)
+                union = torch.logical_or(prediction == cat, labels == cat).sum(-1).sum(-1)
+                ious.append(torch.mean((intersection + 1e-8) / (union + 1e-8)))
+            return np.mean(ious)
+
         else:
             layer_wise_label_mask = labels
             prediction = torch.round(torch.sigmoid(out))
 
-        intersection = torch.logical_and(prediction, layer_wise_label_mask).sum(-1).sum(-1)
-        union = torch.logical_or(prediction, layer_wise_label_mask).sum(-1).sum(-1)
+            intersection = torch.logical_and(prediction, layer_wise_label_mask).sum(-1).sum(-1)
+            union = torch.logical_or(prediction, layer_wise_label_mask).sum(-1).sum(-1)
 
-        return torch.mean((intersection + 1e-8) / (union + 1e-8))
+            return torch.mean((intersection + 1e-8) / (union + 1e-8))
