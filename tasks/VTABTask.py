@@ -90,16 +90,15 @@ class VTABTask:
                 writer.add_scalar("TestAccuracy/"+self.task, test_accuracy, e)
                 if "scheduler" in config and config["scheduler"] is not None:
                     config["scheduler"].step()
-            test_loss, test_accuracy = self.test(config["model"])
-            data = {
-                "train_loss": train_loss,
-                "train_accuracy": train_accuracy,
-                "test_loss": test_loss,
-                "test_accuracy": test_accuracy
-            }
-            with open(out_dir+"/results.json", "w") as f:
-                json.dump(data, f)
-            torch.save(config["model"].task_head.state_dict(), out_dir+"/model_head.pt")
+                data = {
+                    "train_loss": train_loss,
+                    "train_accuracy": train_accuracy,
+                    "test_loss": test_loss,
+                    "test_accuracy": test_accuracy
+                }
+                with open(out_dir+"/results.json", "w") as f:
+                    json.dump(data, f)
+                torch.save(config["model"].task_head.state_dict(), out_dir+"/model_head.pt")
             # if not config["model"].train_encoder and config["model"].pca_embeddings() is not None:
             #     principle_directions = self.train_dataloader.get_principal_directions()
             #     cpu_principle_directions = {name: pd.detach().cpu() for name, pd in principle_directions.items()}
