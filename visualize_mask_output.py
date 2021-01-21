@@ -78,10 +78,10 @@ for img, label in test_dataloader:
             out = out.squeeze()
             label = label.squeeze()
         if sys.argv[1] in ["coco"]:
-            _, prediction = torch.max(out[:, 1:, :, :], dim=1)
-            mask = torch.round(torch.sigmoid(out[:, 1, :, :]))
-            out = prediction * mask
-            # _, out = torch.max(out, dim=1)
+            # _, prediction = torch.max(out[:, 1:, :, :], dim=1)
+            # mask = torch.round(torch.sigmoid(out[:, 0, :, :]))
+            # out = prediction * mask
+            _, out = torch.max(out, dim=1)
     # plt.figure(0)
     # plt.imshow(out[0].detach().numpy())
     # plt.figure(1)
