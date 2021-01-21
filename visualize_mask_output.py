@@ -11,6 +11,7 @@ from datasets.NyuDepthEncodbleDataset import NyuDepthEncodableDataset
 from datasets.NyuWalkableEncodbleDataset import NyuWalkableEncodableDataset
 from datasets.TaskonomyInpaintingEncodbleDataset import TaskonomyInpaintingEncodableDataset
 from datasets.TaskonomyEdgesEncodbleDataset import TaskonomyEdgesEncodableDataset
+from datasets.COCODetectionDataset import COCODetectionDataset
 from datasets.EncodableDataset import EncodableDataset
 from datasets.EncodableDataloader import EncodableDataloader
 from models.PixelWisePredictionHead import PixelWisePredictionHead
@@ -42,9 +43,13 @@ elif sys.argv[1] == "taskonomy-edges":
     dataset = TaskonomyEdgesEncodableDataset(train=False)
     head = PixelWisePredictionHead(1)
     head.load_state_dict(torch.load(sys.argv[3], map_location=torch.device('cpu')))
+elif sys.argv[1] == "coco":
+    dataset = COCODetectionDataset(train=False)
+    head = PixelWisePredictionHead(dataset.num_classes())
+    head.load_state_dict(torch.load(sys.argv[3], map_location=torch.device('cpu')))
 else:
     print("Usage python visualize_mask_output.py "
-          "<pets | nyu-walkable | nyu-depth | thor-depth | taskonomy-inpainting | taskonomy-edges> "
+          "<pets | nyu-walkable | nyu-depth | thor-depth | taskonomy-inpainting | taskonomy-edges | coco> "
           "<ENCODER_WEIGHTS_PATH> "
           "<TASK_HEAD_WEIGHTS_PATH>")
     exit()
@@ -61,9 +66,9 @@ test_dataloader = torch.utils.data.DataLoader(dataset, batch_size=32, shuffle=Fa
 
 for img, label in test_dataloader:
     rgb_imgs = img.clone()
+    rgb_imgs = inv_normalize(rgb_imgs)
     with torch.no_grad():
         out = model(img)
-        print(torch.nn.functional.l1_loss(out, label))
         if sys.argv[1] in ["pets", "nyu-walkable"]:
             out = torch.round(torch.sigmoid(out))
         if sys.argv[1] in ["taskonomy-inpainting"]:
@@ -72,17 +77,21 @@ for img, label in test_dataloader:
         if sys.argv[1] in ["taskonomy-edges"]:
             out = out.squeeze()
             label = label.squeeze()
-    plt.figure(0)
-    plt.imshow(out[4])
-    plt.figure(1)
-    plt.imshow(label[4])
+        if sys.argv[1] in ["coco"]:
+            _, prediction = torch.max(out[:, 1:, :, :], dim=1)
+            mask = torch.round(torch.sigmoid(out[:, 1, :, :]))
+            out = prediction * mask
+            # _, out = torch.max(out, dim=1)
+    # plt.figure(0)
+    # plt.imshow(out[0].detach().numpy())
+    # plt.figure(1)
+    # plt.imshow(label[0].detach().numpy())
 
     # plt.figure(8)
     # plt.imshow(out[8])
     # plt.imshow(label[8])
 
-    plt.show()
-    exit()
+    # plt.style.use('seaborn-dark-palette')
     fig, axs = plt.subplots(nrows=5, ncols=3, figsize=(3, 10))
     axs[0, 0].set_title('Prediction')
     axs[0, 0].imshow(out[0])
@@ -90,9 +99,6 @@ for img, label in test_dataloader:
     axs[0, 1].imshow(label[0])
     axs[0, 2].set_title('Image')
     axs[0, 2].imshow(rgb_imgs[0].detach().numpy().transpose((1, 2, 0)))
-    print(np.mean(np.abs(out - label)))
-    print(np.min(out), np.max(out))
-    print(np.min(label), np.max(label))
     for i in range(1, 5):
         axs[i, 0].imshow(out[i])
         axs[i, 1].imshow(label[i])
