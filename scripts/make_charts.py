@@ -583,28 +583,83 @@ def get_normalized_summed_scores(data):
 # plt.savefig("graphs/"+title.replace(" ", "_")+".png")
 # plt.clf()
 
-for task in EMBEDDING_TASKS:
-    title="%s adam vs sgd" % task
-    res = get_all_results(ALL_EXPERIMENTS, task)
-    all_results = []
-    plt.figure(figsize=(20, 10))
-    plt.title(title)
-    for encoder, encoder_results in res.items():
-        if len(encoder_results) > 1:
-            best_run_with_optimizer = {"sgd": [], "adam":[]}
-            for run in encoder_results:
-                best_run_with_optimizer[run["optimizer"]].append({
-                    "encoder": encoder+"-"+run["optimizer"],
-                    "optimizer": run["optimizer"],
-                    "lr": run["lr"],
-                    "score": run["result"]
-                })
-            for _, runs in best_run_with_optimizer.items():
-                runs.sort(key=lambda x: x["score"])
-                all_results.append(runs[-1])
+####### Plot the embedding end task results using the adam and sgd optimizers
+# palette = {"sgd": "#38D9D9", "adam": "#DFEBEB"}
+# for task in EMBEDDING_TASKS:
+#     title="%s adam vs sgd" % task
+#     res = get_all_results(ALL_EXPERIMENTS, task)
+#     all_results = []
+#     plt.figure(figsize=(20, 10))
+#     plt.title(title)
+#     for encoder, encoder_results in res.items():
+#         if len(encoder_results) > 1:
+#             best_run_with_optimizer = {"sgd": [], "adam":[]}
+#             for run in encoder_results:
+#                 best_run_with_optimizer[run["optimizer"]].append({
+#                     "encoder": encoder+"-"+run["optimizer"],
+#                     "optimizer": run["optimizer"],
+#                     "lr": run["lr"],
+#                     "score": run["result"]
+#                 })
+#             for _, runs in best_run_with_optimizer.items():
+#                 runs.sort(key=lambda x: x["score"])
+#                 all_results.append(runs[-1])
+#
+#     data = pandas.DataFrame(all_results)
+#     data = data.sort_values("score")
+#     g = sns.barplot(x="score", y="encoder", hue="optimizer", data=data, dodge=False, palette=palette)
+#     plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+#     plt.clf()
 
-    data = pandas.DataFrame(all_results)
-    data = data.sort_values("score")
-    g = sns.barplot(x="score", y="encoder", hue="optimizer", data=data, dodge=False)
-    plt.savefig("graphs/"+title.replace(" ", "_")+".png")
-    plt.clf()
+#### Plot the number of times that each encoder ranks as first
+# all_scores = {}
+# for task in EMBEDDING_TASKS:
+#     res = get_all_results(MOCOV2_200_EXPERIMENT+SWAV_200_EXPERIMENTS+["Supervised"], task)
+#     all_results_for_task = []
+#     for encoder, encoder_results in res.items():
+#         if len(encoder_results) > 1:
+#             best_run_with_optimizer = {"sgd": [], "adam": []}
+#             for run in encoder_results:
+#                 best_run_with_optimizer[run["optimizer"]].append({
+#                     "encoder": encoder,
+#                     "optimizer": run["optimizer"],
+#                     "lr": run["lr"],
+#                     "score": run["result"]
+#                 })
+#             best_run_with_optimizer["all"] = best_run_with_optimizer["sgd"] + best_run_with_optimizer["adam"]
+#             for _, runs in best_run_with_optimizer.items():
+#                 runs.sort(key=lambda x: x["score"])
+#                 all_results_for_task.append(runs[-1])
+#     all_results_for_task.sort(key=lambda x: x["score"], reverse=True)
+#     sgd_results_for_task = [r for r in all_results_for_task if r["optimizer"] == "sgd"]
+#     adam_results_for_task = [r for r in all_results_for_task if r["optimizer"] == "adam"]
+#     all_scores[task] = {"sgd": sgd_results_for_task, "adam": adam_results_for_task, "all": all_results_for_task}
+#
+# num_first_place_table = {exp: 0 for exp in ALL_EXPERIMENTS}
+# sgd_num_first_place_table = {exp: 0 for exp in ALL_EXPERIMENTS}
+# adam_num_first_place_table = {exp: 0 for exp in ALL_EXPERIMENTS}
+# for task, scores in all_scores.items():
+#     num_first_place_table[scores["all"][0]["encoder"]] += 1
+#     sgd_num_first_place_table[scores["sgd"][0]["encoder"]] += 1
+#     adam_num_first_place_table[scores["adam"][0]["encoder"]] += 1
+#
+# num_first_list = []
+# for enc, count in num_first_place_table.items():
+#     if count > 0:
+#         num_first_list.append({"encoder": enc, "count": count, "optimizer": "any"})
+# for enc, count in sgd_num_first_place_table.items():
+#     if count > 0:
+#         num_first_list.append({"encoder": enc, "count": count, "optimizer": "sgd"})
+# for enc, count in adam_num_first_place_table.items():
+#     if count > 0:
+#         num_first_list.append({"encoder": enc, "count": count, "optimizer": "adam"})
+#
+# title = "Number of first place rankings per encoder with any optimizer vs sgd for 200 epoch encoders"
+# data = pandas.DataFrame(num_first_list)
+# data = data.sort_values("count")
+# plt.figure(figsize=(20, 10))
+# plt.title(title)
+# g = sns.barplot(y="count", x="encoder", hue="optimizer", data=data, dodge=True)
+# plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+# plt.show()
+# plt.clf()
