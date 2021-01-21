@@ -255,5 +255,5 @@ COCODetection:
 #    sgd-0.01-l1:
 #      optimizer: "sgd"
 #      lr: 0.001
-  num_epochs: 10
+  num_epochs: 3
 
