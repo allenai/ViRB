@@ -7,7 +7,7 @@ def weighted_l1_loss(out, labels):
 
 
 def sparse_label_loss(out, label):
-    prediction_loss = F.binary_cross_entropy(out[:,0,:,:], (label != 0).long())
+    prediction_loss = F.binary_cross_entropy_with_logits(out[:,0,:,:], (label != 0).float())
     prediction_mask = torch.round(torch.sigmoid(out[:,0,:,:]))
     prediction = out * prediction_mask
     classification_loss = F.cross_entropy(prediction, label, ignore_index=0)
