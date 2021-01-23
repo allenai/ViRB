@@ -20,20 +20,16 @@ class COCODetectionDataset:
 
     def __init__(self, train=True):
         super().__init__()
-        self.img_root = 'data/coco/%s2017/' % ('train' if train else 'val')
-        annFile = 'data/coco/annotations/instances_%s2017.json' % ('train' if train else 'val')
-        # Supress printing of the COCO constructor
-        with open(os.devnull, 'w') as devnull:
-            with contextlib.redirect_stdout(devnull):
-                self.labels = COCO(annFile)
-        self.imgs = self.labels.loadImgs(self.labels.getImgIds())
+        self.imgs = glob.glob('data/coco/%s2017/*.jpg' % ('train' if train else 'val'))
+        self.imgs.sort()
+        self.labels = glob.glob('data/coco/annotations/panoptic_%s2017/*.png' % ('train' if train else 'val'))
+        self.labels.sort
         self.img_preprocessor = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
         self.label_preprocessor = transforms.Compose([
-            transforms.ToPILImage(),
             transforms.Resize((224, 224)),
             transforms.ToTensor()
         ])
@@ -43,22 +39,15 @@ class COCODetectionDataset:
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        img_data = self.imgs[idx]
-        annIds = self.labels.getAnnIds(imgIds=img_data['id'])
-        anns = self.labels.loadAnns(annIds)
-        label = torch.zeros((img_data['height'], img_data['width']), dtype=torch.int)
-        for ann in anns:
-            label[self.labels.annToMask(ann)] = 1.0 * (ann['category_id'])
-        img = Image.open(self.img_root+img_data["file_name"]).convert('RGB')
-        return self.img_preprocessor(img), self.label_preprocessor(label).long().squeeze()
+        img = Image.open(self.imgs[idx]).convert('RGB')
+        label = Image.open(self.labels[idx]).convert('I')
+        return self.img_preprocessor(img), self.label_preprocessor(label)
 
     def __len__(self):
         return len(self.imgs)
 
     def class_names(self):
-        cats = self.labels.loadCats(self.labels.getCatIds())
-        nms = [cat['name'] for cat in cats]
-        return nms
+        return ["apple"]
 
     def num_classes(self):
-        return max(self.labels.getCatIds()) + 1
+        return 90

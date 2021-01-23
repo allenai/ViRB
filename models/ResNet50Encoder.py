@@ -14,6 +14,11 @@ class ResNet50Encoder(nn.Module):
             self.model = torchvision.models.resnet50(pretrained=True)
 
     def forward(self, x):
+
+        original_batch_size = x.size(0)
+        if len(x.shape) == 5:
+            x = x.view(-1, x.size(2), x.size(3), x.size(4))
+
         res = {}
         x = self.model.conv1(x)
         x = self.model.bn1(x)
@@ -33,6 +38,11 @@ class ResNet50Encoder(nn.Module):
         x = self.model.avgpool(x)
         x = torch.flatten(x, 1)
         res["embedding"] = x
+
+        if original_batch_size != x.size(0):
+            for name, layer in res.items():
+                res[name] = layer.view(original_batch_size, -1, *layer.shape[1:])
+
         return res
 
     def outputs(self):

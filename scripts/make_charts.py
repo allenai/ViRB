@@ -24,7 +24,7 @@ ALL_EXPERIMENTS = [
     'MoCov2Combination',
     'MoCov2Taskonomy',
     'MoCov2Kinetics',
-    'MoCov2Places',
+    #'MoCov2Places',
     'MoCov2HalfImagenet',
     'MoCov2LogImagenet',
     'MoCov2UnbalancedImagenet',
@@ -33,7 +33,7 @@ ALL_EXPERIMENTS = [
     'SWAVCombination',
     'SWAVTaskonomy',
     'SWAVKinetics',
-    'SWAVPlaces',
+    #'SWAVPlaces',
     'SWAVHalfImagenet',
     'SWAVLogImagenet',
     'SWAVUnbalancedImagenet',
@@ -532,56 +532,56 @@ def get_normalized_summed_scores(data):
 # plt.clf()
 
 #### Generating Pearson and Spearman Correlations for IN Tasks
-# data = pandas.read_csv("results.csv")
-# data = data.set_index("Encoder", drop=False)
-# data = data.loc[PLACES_EXPERIMENTS + TASKONOMY_EXPERIMENTS + COMBO_EXPERIMENTS + KINETICS_EXPERIMENTS]
-# tasks = ["Imagenet", "CalTech-101", "Pets", "CIFAR-100", "Pets-Detection", "dtd", "SUN397", "CLEVERNumObjects",
-#           "NYUDepth", "NYUWalkable", "Eurosat", "THORDepth"]
-# n = len(tasks)
-# spearman = np.zeros((n,n))
-# pearson = np.zeros((n,n))
-# spearman_pval = np.zeros((n,n))
-# pearson_pval = np.zeros((n,n))
-# for i in range(n):
-#     for j in range(n):
-#         values_i = data[tasks[i]]
-#         values_j = data[tasks[j]]
-#         s, sp = scipy.stats.spearmanr(values_i, values_j)
-#         p, pp = scipy.stats.pearsonr(values_i, values_j)
-#         spearman[i][j] = s
-#         pearson[i][j] = p
-#         spearman_pval[i][j] = sp
-#         pearson_pval[i][j] = pp
-#
-# plt.figure(figsize=(20, 20))
-# title = "Spearman Correlation on Performance Between Tasks with non IN Encoders"
-# plt.title(title)
-# ax = sns.heatmap(spearman, annot=True)
-# ax.set_yticklabels(tasks, rotation=0)
-# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
-# plt.savefig("graphs/"+title.replace(" ", "_")+"-1.png")
-# plt.clf()
-# title = "Spearman Correlation p-values on Performance Between Tasks with non IN Encoders"
-# plt.title(title)
-# ax = sns.heatmap(spearman_pval, annot=True)
-# ax.set_yticklabels(tasks, rotation=0)
-# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
-# plt.savefig("graphs/"+title.replace(" ", "_")+".png")
-# plt.clf()
-# title = "Pearson Correlation on Performance Between Tasks  with non IN Encoders"
-# plt.title(title)
-# ax = sns.heatmap(pearson, annot=True)
-# ax.set_yticklabels(tasks, rotation=0)
-# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
-# plt.savefig("graphs/"+title.replace(" ", "_")+".png")
-# plt.clf()
-# title = "Pearson Correlation p-values on Performance Between Tasks with non IN Encoders"
-# plt.title(title)
-# ax = sns.heatmap(pearson_pval, annot=True)
-# ax.set_yticklabels(tasks, rotation=0)
-# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
-# plt.savefig("graphs/"+title.replace(" ", "_")+".png")
-# plt.clf()
+data = pandas.read_csv("results.csv")
+data = data.set_index("Encoder", drop=False)
+data = data.loc[ALL_EXPERIMENTS]
+tasks = ["Imagenet", "CalTech-101", "Pets", "CIFAR-100", "Pets-Detection", "dtd", "SUN397", "CLEVERNumObjects",
+          "NYUDepth", "NYUWalkable", "Eurosat", "THORDepth"]
+n = len(tasks)
+spearman = np.zeros((n,n))
+pearson = np.zeros((n,n))
+spearman_pval = np.zeros((n,n))
+pearson_pval = np.zeros((n,n))
+for i in range(n):
+    for j in range(n):
+        values_i = data[tasks[i]]
+        values_j = data[tasks[j]]
+        s, sp = scipy.stats.spearmanr(values_i, values_j)
+        p, pp = scipy.stats.pearsonr(values_i, values_j)
+        spearman[i][j] = s
+        pearson[i][j] = p
+        spearman_pval[i][j] = sp
+        pearson_pval[i][j] = pp
+
+plt.figure(figsize=(20, 20))
+title = "Spearman Correlation on Performance Between Tasks with non IN Encoders - No Places"
+plt.title(title)
+ax = sns.heatmap(spearman, annot=True)
+ax.set_yticklabels(tasks, rotation=0)
+ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+plt.savefig("graphs/"+title.replace(" ", "_")+"-1.png")
+plt.clf()
+title = "Spearman Correlation p-values on Performance Between Tasks with non IN Encoders - No Places"
+plt.title(title)
+ax = sns.heatmap(spearman_pval, annot=True)
+ax.set_yticklabels(tasks, rotation=0)
+ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+plt.clf()
+title = "Pearson Correlation on Performance Between Tasks  with non IN Encoders - No Places"
+plt.title(title)
+ax = sns.heatmap(pearson, annot=True)
+ax.set_yticklabels(tasks, rotation=0)
+ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+plt.clf()
+title = "Pearson Correlation p-values on Performance Between Tasks with non IN Encoders - No Places"
+plt.title(title)
+ax = sns.heatmap(pearson_pval, annot=True)
+ax.set_yticklabels(tasks, rotation=0)
+ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+plt.clf()
 
 ####### Plot the embedding end task results using the adam and sgd optimizers
 # palette = {"sgd": "#38D9D9", "adam": "#DFEBEB"}

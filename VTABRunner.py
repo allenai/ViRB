@@ -30,7 +30,8 @@ CLASSIFICATION_TASKS = [
     "CLEVERDist",
     "SUN397",
     "Imagenet",
-    "THORNumSteps"
+    "THORNumSteps",
+    "THORActionPrediction"
 ]
 BINARY_PIXEL_WISE_CLASSIFICATION = [
     "Flowers-Detection",
@@ -100,9 +101,19 @@ def get_dataset_class(config):
     if config["task"] == "COCODetection":
         from datasets.COCODetectionDataset import COCODetectionDataset
         return COCODetectionDataset
+    if config["task"] == "THORActionPrediction":
+        from datasets.ThorActionPredictionDataset import ThorActionPredictionDataset
+        return ThorActionPredictionDataset
 
 
 def get_task_head(config, dataset):
+    if config["task"] == "THORActionPrediction":
+        from models.MultiEmbeddingClassificationHead import MultiEmbeddingClassificationHead
+        return MultiEmbeddingClassificationHead(
+            config["encoder"].outputs()["embedding"][0],
+            dataset.num_classes(),
+            2
+        )
     if config["task"] == "TaskonomyInpainting":
         from models.PixelWisePredictionHead import PixelWisePredictionHead
         return PixelWisePredictionHead(3)
