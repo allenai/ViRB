@@ -12,7 +12,7 @@ class ThorActionPredictionDataset:
 
     def __init__(self, train=True):
         super().__init__()
-        path = 'data/thor_action_prediction/%s/*/*rgb_a.jpg' % ('train' if train else 'va')
+        path = 'data/thor_action_prediction/%s/*/*rgb_a.jpg' % ('train' if train else 'val')
         self.data = list([p[:-6] for p in glob.glob(path)])
         self.data.sort()
         with open('data/thor_action_prediction/%s_labels.txt' % ('train' if train else 'val')) as f:
