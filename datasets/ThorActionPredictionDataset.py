@@ -30,7 +30,7 @@ class ThorActionPredictionDataset:
         img_name = "data/thor_action_prediction/" + img_name
         imga = self.preprocessor(Image.open(img_name+"_rgb_a.jpg").convert('RGB'))
         imgb = self.preprocessor(Image.open(img_name+"_rgb_b.jpg").convert('RGB'))
-        return torch.stack((imga, imgb), dim=0), torch.LongTensor([ACTIONS[action]])
+        return torch.stack((imga, imgb), dim=0), ACTIONS[action]
 
     def __len__(self):
         return len(self.data)
