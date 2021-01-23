@@ -16,8 +16,9 @@ class MultiEmbeddingClassificationHead(nn.Module):
         self.head = nn.Linear(embedding_size * num_embeddings, output_size)
 
     def forward(self, x):
+        x = x["embedding"].float()
         x = x.view(x.size(0), -1)
-        return self.head(x["embedding"].float())
+        return self.head(x)
 
     def required_encoding(self):
         return ["embedding"]
