@@ -12,12 +12,9 @@ class ThorActionPredictionDataset:
 
     def __init__(self, train=True):
         super().__init__()
-        path = 'data/thor_action_prediction/%s/*/*rgb_a.jpg' % ('train' if train else 'val')
-        self.data = list([p[:-6] for p in glob.glob(path)])
-        self.data.sort()
         with open('data/thor_action_prediction/%s_labels.txt' % ('train' if train else 'val')) as f:
             lines = f.readlines()
-            self.labels = torch.LongTensor([ACTIONS[line.strip()] for line in lines])
+            self.data = [tuple(line.replace("\n", "").split(" ")) for line in lines]
         self.preprocessor = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
@@ -29,12 +26,14 @@ class ThorActionPredictionDataset:
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        imga = self.preprocessor(Image.open(self.data[idx]+"_a.jpg").convert('RGB'))
-        imgb = self.preprocessor(Image.open(self.data[idx]+"_b.jpg").convert('RGB'))
-        return torch.stack((imga, imgb), dim=0), self.labels[idx]
+        img_name, action = self.data[idx]
+        img_name = "data/thor_action_prediction/" + img_name
+        imga = self.preprocessor(Image.open(img_name+"_rgb_a.jpg").convert('RGB'))
+        imgb = self.preprocessor(Image.open(img_name+"_rgb_b.jpg").convert('RGB'))
+        return torch.stack((imga, imgb), dim=0), action
 
     def __len__(self):
-        return len(self.labels)
+        return len(self.data)
 
     def class_names(self):
         return list(ACTIONS.keys())
