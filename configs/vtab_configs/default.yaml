@@ -261,7 +261,7 @@ THORActionPrediction:
 ##      optimizer: "sgd"
 ##      lr: 0.001
 #  num_epochs: 10
-
+#
 #COCODetection:
 #  task: "COCODetection"
 #  pre_encode: false

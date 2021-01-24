@@ -22,8 +22,8 @@ class COCODetectionDataset:
         super().__init__()
         self.imgs = glob.glob('data/coco/%s2017/*.jpg' % ('train' if train else 'val'))
         self.imgs.sort()
-        self.labels = glob.glob('data/coco/annotations/panoptic_%s2017/*.png' % ('train' if train else 'val'))
-        self.labels.sort
+        self.labels = glob.glob('data/coco/annotations/panoptic_labels_%s2017/*.png' % ('train' if train else 'val'))
+        self.labels.sort()
         self.img_preprocessor = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
@@ -41,7 +41,7 @@ class COCODetectionDataset:
 
         img = Image.open(self.imgs[idx]).convert('RGB')
         label = Image.open(self.labels[idx]).convert('I')
-        return self.img_preprocessor(img), self.label_preprocessor(label)
+        return self.img_preprocessor(img), self.label_preprocessor(label).long().squeeze()
 
     def __len__(self):
         return len(self.imgs)
@@ -50,4 +50,4 @@ class COCODetectionDataset:
         return ["apple"]
 
     def num_classes(self):
-        return 90
+        return 200
