@@ -4,6 +4,8 @@ import pickle
 from torchvision import transforms
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
 
 from datasets.EncodableDataloader import EncodableDataloader
 from models.ClassificationHead import ClassificationHead
@@ -42,6 +44,7 @@ else:
 
 model = VTABModel(ResNet50Encoder(weights=sys.argv[2]), head)
 model.eval()
+model = model.cuda()
 
 inv_normalize = transforms.Normalize(
     mean=[-0.485/0.229, -0.456/0.224, -0.406/0.255],
@@ -65,21 +68,22 @@ test_dataloader = EncodableDataloader(
     None,
     batch_size=50,
     shuffle=False,
-    device="cpu"
+    device="cuda:0"
 )
 names = dataset.class_names()
 correct_per_label = [0, 0, 0, 0, 0]
 total_per_label = [0, 0, 0, 0, 0]
+
+predictions = np.zeros((5, 5))
+
 for img, label in test_dataloader:
     with torch.no_grad():
         out = model.head_forward(img)
         error = classification_error(out, label)
         out = torch.argmax(out, dim=1)
+        out = out.nnumpy().cpu()
         for i, idx in enumerate(out):
-            idx = idx.item()
-            total_per_label[idx] += 1
-            if label[i] == idx:
-                correct_per_label[idx] += 1
+            predictions[label[i], idx.item()] += 1
     # fig, axs = plt.subplots(nrows=5, ncols=10, figsize=(5, 5))
     # print(error)
     # for i in range(50):
@@ -89,6 +93,10 @@ for img, label in test_dataloader:
     # plt.show()
     # break
 
-
-plt.hist(correct_per_label)
-plt.show()
+predictions = (predictions.T / np.array([2837, 2976, 2908, 3448, 2831])).T
+ACTIONS = ['MoveAhead', 'RotateLeft', 'RotateRight', 'LookUp', 'LookDown']
+plt.title("THOR True Action vs Predicted Action")
+ax = sns.heatmap(predictions, annot=True)
+ax.set_yticklabels(ACTIONS, rotation=0)
+ax.set_xticklabels(ACTIONS, rotation=30, rotation_mode="anchor", ha='right', va="center")
+plt.savefig("THOR_True_Action_vs_Predicted_Action.png")
