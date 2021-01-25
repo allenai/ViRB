@@ -81,7 +81,7 @@ for img, label in test_dataloader:
         out = model.head_forward(img)
         error = classification_error(out, label)
         out = torch.argmax(out, dim=1)
-        out = out.nnumpy().cpu()
+        out = out.numpy().cpu()
         for i, idx in enumerate(out):
             predictions[label[i], idx.item()] += 1
     # fig, axs = plt.subplots(nrows=5, ncols=10, figsize=(5, 5))
