@@ -159,7 +159,7 @@ def get_loss_function(config):
         from utils.loss_functions import weighted_l1_loss
         return weighted_l1_loss
     if config["task"] == "COCODetection":
-        return torch.nn.CrossEntropyLoss(ignore_index=0)
+        return torch.nn.CrossEntropyLoss()
     if config["task"] in PIXEL_WISE_REGRESSION:
         return torch.nn.L1Loss()
     if config["task"] in CLASSIFICATION_TASKS:
