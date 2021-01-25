@@ -50,4 +50,4 @@ class COCODetectionDataset:
         return ["apple"]
 
     def num_classes(self):
-        return 200
+        return 201
