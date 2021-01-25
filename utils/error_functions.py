@@ -26,9 +26,7 @@ def iou(out, labels):
             # prediction = torch.zeros_like(out)
             # prediction[torch.max(torch.softmax(out, dim=1), dim=1)] = 1
             ious = []
-            _, prediction = torch.max(out[:, 1:, :, :], dim=1)
-            mask = torch.round(torch.sigmoid(out[:, 0, :, :])).long()
-            prediction *= mask
+            prediction = torch.max(out, dim=1)
             for cat in torch.unique(labels):
                 if cat == 0:
                     continue
