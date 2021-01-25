@@ -96,7 +96,7 @@ for img, label in test_dataloader:
 predictions = (predictions.T / np.array([2837, 2976, 2908, 3448, 2831])).T
 ACTIONS = ['MoveAhead', 'RotateLeft', 'RotateRight', 'LookUp', 'LookDown']
 plt.title("THOR True Action vs Predicted Action")
-plt.figure(figsize=(20, 20))
+plt.figure(figsize=(10, 10))
 ax = sns.heatmap(predictions, annot=True)
 ax.set_yticklabels(ACTIONS, rotation=0)
 ax.set_xticklabels(ACTIONS, rotation=30, rotation_mode="anchor", ha='right', va="center")
