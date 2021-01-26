@@ -141,7 +141,8 @@ ALL_TASKS = [
     "NYUDepth",
     "NYUWalkable",
     "THORDepth",
-    "THORNumSteps"
+    "THORNumSteps",
+    "THORActionPrediction"
     # "TaskonomyInpainting",
     # "TaskonomyEdges"
 ]
@@ -254,40 +255,40 @@ def get_normalized_summed_scores(data):
 # plt.show()
 
 #### Converting the output to csv format
-# experiment_results = {name.replace("Imagenet", "IN"): {} for name in ALL_EXPERIMENTS}
-# for task in ALL_TASKS:
-#     if task in REVERSED_SUCCESS_TASKS:
-#         res = get_best_result(ALL_EXPERIMENTS, task, include_names=True, c=-1.0)
-#     else:
-#         res = get_best_result(ALL_EXPERIMENTS, task, include_names=True)
-#     rankings, _ = zip(*sorted(res, key=lambda x: x[1], reverse=True))
-#     for name, number in res:
-#         sn = name.replace("Imagenet", "IN")
-#         experiment_results[sn][task] = number
-#         experiment_results[sn][task+"-rank"] = rankings.index(name)+1
-#
-# with open('results.csv', mode='w') as csv_file:
-#     fieldnames = ["Encoder", "Method"] + ALL_TASKS + [task+"-rank" for task in ALL_TASKS]
-#     writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-#     writer.writeheader()
-#     for name, results in experiment_results.items():
-#         if "MoCo" in name:
-#             method = "MoCo"
-#         elif "SWAV" in name:
-#             method = "SWAV"
-#         elif "PIRL" in name:
-#             method = "PIRL"
-#         elif "SimCLR" in name:
-#             method = "SimCLR"
-#         elif "Supervised" in name:
-#             method = "Supervised"
-#         elif "Random" in name:
-#             method = "Random"
-#         else:
-#             method = "Other"
-#         row = {"Encoder": name, "Method": method}
-#         row.update(results)
-#         writer.writerow(row)
+experiment_results = {name.replace("Imagenet", "IN"): {} for name in ALL_EXPERIMENTS}
+for task in ALL_TASKS:
+    if task in REVERSED_SUCCESS_TASKS:
+        res = get_best_result(ALL_EXPERIMENTS, task, include_names=True, c=-1.0)
+    else:
+        res = get_best_result(ALL_EXPERIMENTS, task, include_names=True)
+    rankings, _ = zip(*sorted(res, key=lambda x: x[1], reverse=True))
+    for name, number in res:
+        sn = name.replace("Imagenet", "IN")
+        experiment_results[sn][task] = number
+        experiment_results[sn][task+"-rank"] = rankings.index(name)+1
+
+with open('results.csv', mode='w') as csv_file:
+    fieldnames = ["Encoder", "Method"] + ALL_TASKS + [task+"-rank" for task in ALL_TASKS]
+    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+    writer.writeheader()
+    for name, results in experiment_results.items():
+        if "MoCo" in name:
+            method = "MoCo"
+        elif "SWAV" in name:
+            method = "SWAV"
+        elif "PIRL" in name:
+            method = "PIRL"
+        elif "SimCLR" in name:
+            method = "SimCLR"
+        elif "Supervised" in name:
+            method = "Supervised"
+        elif "Random" in name:
+            method = "Random"
+        else:
+            method = "Other"
+        row = {"Encoder": name, "Method": method}
+        row.update(results)
+        writer.writerow(row)
 
 
 ### BIG TABLE
@@ -534,7 +535,7 @@ def get_normalized_summed_scores(data):
 #### Generating Pearson and Spearman Correlations for IN Tasks
 data = pandas.read_csv("results.csv")
 data = data.set_index("Encoder", drop=False)
-data = data.loc[ALL_EXPERIMENTS]
+#data = data.loc[ALL_EXPERIMENTS]
 tasks = ["Imagenet", "CalTech-101", "Pets", "CIFAR-100", "Pets-Detection", "dtd", "SUN397", "CLEVERNumObjects",
           "NYUDepth", "NYUWalkable", "Eurosat", "THORDepth"]
 n = len(tasks)
@@ -554,28 +555,28 @@ for i in range(n):
         pearson_pval[i][j] = pp
 
 plt.figure(figsize=(20, 20))
-title = "Spearman Correlation on Performance Between Tasks with non IN Encoders - No Places"
+title = "Spearman Correlation on Performance Between Tasks with non IN Encoders"
 plt.title(title)
 ax = sns.heatmap(spearman, annot=True)
 ax.set_yticklabels(tasks, rotation=0)
 ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
 plt.savefig("graphs/"+title.replace(" ", "_")+"-1.png")
 plt.clf()
-title = "Spearman Correlation p-values on Performance Between Tasks with non IN Encoders - No Places"
+title = "Spearman Correlation p-values on Performance Between Tasks with non IN Encoders"
 plt.title(title)
 ax = sns.heatmap(spearman_pval, annot=True)
 ax.set_yticklabels(tasks, rotation=0)
 ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
 plt.savefig("graphs/"+title.replace(" ", "_")+".png")
 plt.clf()
-title = "Pearson Correlation on Performance Between Tasks  with non IN Encoders - No Places"
+title = "Pearson Correlation on Performance Between Tasks  with non IN Encoders"
 plt.title(title)
 ax = sns.heatmap(pearson, annot=True)
 ax.set_yticklabels(tasks, rotation=0)
 ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
 plt.savefig("graphs/"+title.replace(" ", "_")+".png")
 plt.clf()
-title = "Pearson Correlation p-values on Performance Between Tasks with non IN Encoders - No Places"
+title = "Pearson Correlation p-values on Performance Between Tasks with non IN Encoders"
 plt.title(title)
 ax = sns.heatmap(pearson_pval, annot=True)
 ax.set_yticklabels(tasks, rotation=0)
