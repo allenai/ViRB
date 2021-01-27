@@ -37,7 +37,8 @@ ALL_EXPERIMENTS = [
     'SWAVHalfImagenet',
     'SWAVLogImagenet',
     'SWAVUnbalancedImagenet',
-    'SWAVQuarterImagenet'
+    'SWAVQuarterImagenet',
+    'MoCov2Imagenet_100'
 ]
 
 MOCOV2_EXPERIMENTS = [
@@ -50,6 +51,7 @@ MOCOV2_EXPERIMENTS = [
     'MoCov2HalfImagenet',
     'MoCov2LogImagenet',
     'MoCov2QuarterImagenet',
+    'MoCov2Imagenet_100'
 ]
 
 MOCOV2_200_EXPERIMENT = [
@@ -101,6 +103,9 @@ UNBALANCED_IMAGENET_EXPERIMENTS = [
     'MoCov2UnbalancedImagenet',
     'SWAVUnbalancedImagenet',
 ]
+IMAGENET_100_EPOCH_EXPERIMENTS = [
+    'MoCov2Imagenet_100'
+]
 
 QUARTER_IMAGENET_EXPERIMENTS = [
     'MoCov2QuarterImagenet',
@@ -109,6 +114,17 @@ QUARTER_IMAGENET_EXPERIMENTS = [
 LOG_IMAGENET_EXPERIMENTS = [
     'SWAVLogImagenet',
     'MoCov2LogImagenet',
+]
+HALF_IMAGENE_100_EXPERIMENTS = [
+    'SWAVHalfImagenet_100',
+    'MoCov2HalfImagenet_100',
+]
+UNBALANCED_IMAGENET_100_EXPERIMENTS = [
+    'MoCov2UnbalancedImagenet_100',
+    'SWAVUnbalancedImagenet_100',
+]
+IMAGENET_50_EPOCH_EXPERIMENTS = [
+    'MoCov2Imagenet_50'
 ]
 
 PLACES_EXPERIMENTS = [
@@ -129,7 +145,7 @@ COMBO_EXPERIMENTS = [
 ]
 
 ALL_TASKS = [
-    "Pets",
+    #"Pets",
     "SUN397",
     "CIFAR-100",
     "CalTech-101",
@@ -255,40 +271,40 @@ def get_normalized_summed_scores(data):
 # plt.show()
 
 #### Converting the output to csv format
-experiment_results = {name.replace("Imagenet", "IN"): {} for name in ALL_EXPERIMENTS}
-for task in ALL_TASKS:
-    if task in REVERSED_SUCCESS_TASKS:
-        res = get_best_result(ALL_EXPERIMENTS, task, include_names=True, c=-1.0)
-    else:
-        res = get_best_result(ALL_EXPERIMENTS, task, include_names=True)
-    rankings, _ = zip(*sorted(res, key=lambda x: x[1], reverse=True))
-    for name, number in res:
-        sn = name.replace("Imagenet", "IN")
-        experiment_results[sn][task] = number
-        experiment_results[sn][task+"-rank"] = rankings.index(name)+1
-
-with open('results.csv', mode='w') as csv_file:
-    fieldnames = ["Encoder", "Method"] + ALL_TASKS + [task+"-rank" for task in ALL_TASKS]
-    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-    writer.writeheader()
-    for name, results in experiment_results.items():
-        if "MoCo" in name:
-            method = "MoCo"
-        elif "SWAV" in name:
-            method = "SWAV"
-        elif "PIRL" in name:
-            method = "PIRL"
-        elif "SimCLR" in name:
-            method = "SimCLR"
-        elif "Supervised" in name:
-            method = "Supervised"
-        elif "Random" in name:
-            method = "Random"
-        else:
-            method = "Other"
-        row = {"Encoder": name, "Method": method}
-        row.update(results)
-        writer.writerow(row)
+# experiment_results = {name.replace("Imagenet", "IN"): {} for name in ALL_EXPERIMENTS}
+# for task in ALL_TASKS:
+#     if task in REVERSED_SUCCESS_TASKS:
+#         res = get_best_result(ALL_EXPERIMENTS, task, include_names=True, c=-1.0)
+#     else:
+#         res = get_best_result(ALL_EXPERIMENTS, task, include_names=True)
+#     rankings, _ = zip(*sorted(res, key=lambda x: x[1], reverse=True))
+#     for name, number in res:
+#         sn = name.replace("Imagenet", "IN")
+#         experiment_results[sn][task] = number
+#         experiment_results[sn][task+"-rank"] = rankings.index(name)+1
+#
+# with open('results.csv', mode='w') as csv_file:
+#     fieldnames = ["Encoder", "Method"] + ALL_TASKS + [task+"-rank" for task in ALL_TASKS]
+#     writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+#     writer.writeheader()
+#     for name, results in experiment_results.items():
+#         if "MoCo" in name:
+#             method = "MoCo"
+#         elif "SWAV" in name:
+#             method = "SWAV"
+#         elif "PIRL" in name:
+#             method = "PIRL"
+#         elif "SimCLR" in name:
+#             method = "SimCLR"
+#         elif "Supervised" in name:
+#             method = "Supervised"
+#         elif "Random" in name:
+#             method = "Random"
+#         else:
+#             method = "Other"
+#         row = {"Encoder": name, "Method": method}
+#         row.update(results)
+#         writer.writerow(row)
 
 
 ### BIG TABLE
@@ -492,97 +508,102 @@ with open('results.csv', mode='w') as csv_file:
 # # plt.savefig("graphs/%s-groupped-test-results.png" % task, dpi=100)
 # plt.clf()
 
-# data = pandas.read_csv("results.csv")
-# # normalized_scores = get_normalized_summed_scores(data)
-# # data = pandas.DataFrame(normalized_scores)
-# data = data.set_index("Encoder")
-# values = []
-# for task in ALL_TASKS:
-#     half_vals = []
-#     quarter_vals = []
-#     unbalanced_vals = []
-#     log_vals = []
-#     for encoder in ALL_EXPERIMENTS:
-#         encoder = encoder.replace("Imagenet", "IN")
-#         # if "Half" in encoder:
-#         #     half_vals.append(data[task][encoder])
-#         if "Quarter" in encoder:
-#             quarter_vals.append(data[task][encoder])
-#         # if "Unbalanced" in encoder:
-#         #     unbalanced_vals.append(data[task][encoder])
-#         if "Log" in encoder:
-#             log_vals.append(data[task][encoder])
-#     # values.append({"Dataset": "Half", "task": task, "score": np.mean(half_vals)})
-#     values.append({"Dataset": "Quarter", "task": task, "score": np.mean(quarter_vals)})
-#     # values.append({"Dataset": "Unbalanced", "task": task, "score": np.mean(unbalanced_vals)})
-#     values.append({"Dataset": "Log", "task": task, "score": np.mean(log_vals)})
-# values = pandas.DataFrame(values)
-# sns.set_theme()
-# # normalized_scores = get_normalized_summed_scores(data)
-# # data = pandas.DataFrame(normalized_scores)
-# plt.figure(figsize=(20, 10))
-# # results = data.sort_values(task, ascending=False).reset_index()
-# g = sns.barplot(x="score", y="task", hue="Dataset", data=values)
-# # sign = 1.0 if results[task][0] > 0 else -1.0
-# # for _, data in results.iterrows():
-# #     g.text(data[task] - (sign * 0.02), data.name + 0.12, round(data[task], 4), color='white', ha="center", size=10, weight='bold')
-# plt.title("Test Results of Encoders Trained on Quarter and Log ImageNet" )
-# plt.xlabel("Test Performance")
-# plt.show()
-# # plt.savefig("graphs/%s-groupped-test-results.png" % task, dpi=100)
-# plt.clf()
+
+values = []
+for task in ALL_TASKS:
+    # experiments = HALF_IMAGENE_EXPERIMENTS + UNBALANCED_IMAGENET_EXPERIMENTS + IMAGENET_100_EPOCH_EXPERIMENTS
+    experiments = QUARTER_IMAGENET_EXPERIMENTS + LOG_IMAGENET_EXPERIMENTS + IMAGENET_50_EPOCH_EXPERIMENTS + \
+                  HALF_IMAGENE_100_EXPERIMENTS + UNBALANCED_IMAGENET_100_EXPERIMENTS
+    if task in REVERSED_SUCCESS_TASKS:
+        continue
+    data = get_best_result(experiments, task, include_names=True, c=(-1.0 if task in REVERSED_SUCCESS_TASKS else 1.0))
+    for encoder, result in data:
+        encoder = encoder.replace("Imagenet", "IN")
+        if "Half" in encoder:
+            values.append({"Encoder": encoder, "Dataset": "Half", "task": task, "score": result})
+        if "Quarter" in encoder:
+            values.append({"Encoder": encoder, "Dataset": "Quarter", "task": task, "score": result})
+        if "Unbalanced" in encoder:
+            values.append({"Encoder": encoder, "Dataset": "Unbalanced", "task": task, "score": result})
+        if "Log" in encoder:
+            values.append({"Encoder": encoder, "Dataset": "Log", "task": task, "score": result})
+        if "_100" in encoder:
+            values.append({"Encoder": encoder, "Dataset": "_100", "task": task, "score": result})
+        if "_50" in encoder:
+            values.append({"Encoder": encoder, "Dataset": "_50", "task": task, "score": result})
+
+        # values.append({"Dataset": "Half", "task": task, "score": np.mean(half_vals)})
+        # values.append({"Dataset": "Quarter", "task": task, "score": np.mean(quarter_vals)})
+        # values.append({"Dataset": "Unbalanced", "task": task, "score": np.mean(unbalanced_vals)})
+        # values.append({"Dataset": "Log", "task": task, "score": np.mean(log_vals)})
+values = pandas.DataFrame(values)
+sns.set_theme()
+# normalized_scores = get_normalized_summed_scores(data)
+# data = pandas.DataFrame(normalized_scores)
+plt.figure(figsize=(20, 10))
+# results = data.sort_values(task, ascending=False).reset_index()
+print(values)
+g = sns.barplot(x="score", y="task", hue="Encoder", data=values, dodge=True)
+# sign = 1.0 if results[task][0] > 0 else -1.0
+# for _, data in results.iterrows():
+#     g.text(data[task] - (sign * 0.02), data.name + 0.12, round(data[task], 4), color='white', ha="center", size=10, weight='bold')
+plt.title("Test Results of Encoders Trained on QuarterIN, LogIN, UnbalancedIN_100 and HalfIN_100 and FullIN_50")
+plt.xlabel("Test Performance")
+plt.show()
+# plt.savefig("graphs/%s-groupped-test-results.png" % task, dpi=100)
+plt.clf()
 
 #### Generating Pearson and Spearman Correlations for IN Tasks
-data = pandas.read_csv("results.csv")
-data = data.set_index("Encoder", drop=False)
+# data = pandas.read_csv("results.csv")
+# data = data.set_index("Encoder", drop=False)
 #data = data.loc[ALL_EXPERIMENTS]
-tasks = ["Imagenet", "CalTech-101", "Pets", "CIFAR-100", "Pets-Detection", "dtd", "SUN397", "CLEVERNumObjects",
-          "NYUDepth", "NYUWalkable", "Eurosat", "THORDepth"]
-n = len(tasks)
-spearman = np.zeros((n,n))
-pearson = np.zeros((n,n))
-spearman_pval = np.zeros((n,n))
-pearson_pval = np.zeros((n,n))
-for i in range(n):
-    for j in range(n):
-        values_i = data[tasks[i]]
-        values_j = data[tasks[j]]
-        s, sp = scipy.stats.spearmanr(values_i, values_j)
-        p, pp = scipy.stats.pearsonr(values_i, values_j)
-        spearman[i][j] = s
-        pearson[i][j] = p
-        spearman_pval[i][j] = sp
-        pearson_pval[i][j] = pp
-
-plt.figure(figsize=(20, 20))
-title = "Spearman Correlation on Performance Between Tasks with non IN Encoders"
-plt.title(title)
-ax = sns.heatmap(spearman, annot=True)
-ax.set_yticklabels(tasks, rotation=0)
-ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
-plt.savefig("graphs/"+title.replace(" ", "_")+"-1.png")
-plt.clf()
-title = "Spearman Correlation p-values on Performance Between Tasks with non IN Encoders"
-plt.title(title)
-ax = sns.heatmap(spearman_pval, annot=True)
-ax.set_yticklabels(tasks, rotation=0)
-ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
-plt.savefig("graphs/"+title.replace(" ", "_")+".png")
-plt.clf()
-title = "Pearson Correlation on Performance Between Tasks  with non IN Encoders"
-plt.title(title)
-ax = sns.heatmap(pearson, annot=True)
-ax.set_yticklabels(tasks, rotation=0)
-ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
-plt.savefig("graphs/"+title.replace(" ", "_")+".png")
-plt.clf()
-title = "Pearson Correlation p-values on Performance Between Tasks with non IN Encoders"
-plt.title(title)
-ax = sns.heatmap(pearson_pval, annot=True)
-ax.set_yticklabels(tasks, rotation=0)
-ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
-plt.savefig("graphs/"+title.replace(" ", "_")+".png")
-plt.clf()
+# tasks = ["Imagenet", "CalTech-101", "Pets", "CIFAR-100", "Pets-Detection", "dtd", "SUN397", "CLEVERNumObjects",
+#           "NYUDepth", "NYUWalkable", "Eurosat", "THORDepth"]
+# n = len(tasks)
+# spearman = np.zeros((n,n))
+# pearson = np.zeros((n,n))
+# spearman_pval = np.zeros((n,n))
+# pearson_pval = np.zeros((n,n))
+# for i in range(n):
+#     for j in range(n):
+#         values_i = data[tasks[i]]
+#         values_j = data[tasks[j]]
+#         s, sp = scipy.stats.spearmanr(values_i, values_j)
+#         p, pp = scipy.stats.pearsonr(values_i, values_j)
+#         spearman[i][j] = s
+#         pearson[i][j] = p
+#         spearman_pval[i][j] = sp
+#         pearson_pval[i][j] = pp
+#
+# plt.figure(figsize=(20, 20))
+# title = "Spearman Correlation on Performance Between Tasks with non IN Encoders"
+# plt.title(title)
+# ax = sns.heatmap(spearman, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/"+title.replace(" ", "_")+"-1.png")
+# plt.clf()
+# title = "Spearman Correlation p-values on Performance Between Tasks with non IN Encoders"
+# plt.title(title)
+# ax = sns.heatmap(spearman_pval, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+# plt.clf()
+# title = "Pearson Correlation on Performance Between Tasks  with non IN Encoders"
+# plt.title(title)
+# ax = sns.heatmap(pearson, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+# plt.clf()
+# title = "Pearson Correlation p-values on Performance Between Tasks with non IN Encoders"
+# plt.title(title)
+# ax = sns.heatmap(pearson_pval, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/"+title.replace(" ", "_")+".png")
+# plt.clf()
 
 ####### Plot the embedding end task results using the adam and sgd optimizers
 # palette = {"sgd": "#38D9D9", "adam": "#DFEBEB"}

@@ -33,6 +33,6 @@
 #SWAVHalfImagenet_100: 'pretrained_weights/SWAVHalfImagenet_100.pt'
 #MoCov2UnbalancedImagenet_100: 'pretrained_weights/MoCov2UnbalancedImagenet_100.pt'
 #SWAVUnbalancedImagenet_100: 'pretrained_weights/SWAVUnbalancedImagenet_100.pt'
-#MoCov2Imagenet_100: 'pretrained_weights/MoCov2Imagenet_100.pt'
-#MoCov2Imagenet_50: 'pretrained_weights/MoCov2Imagenet_50.pt'
+MoCov2_100: 'pretrained_weights/MoCov2_100.pt'
+MoCov2_50: 'pretrained_weights/MoCov2_50.pt'
 SWAV_50: 'pretrained_weights/SWAV_50.pt'
