@@ -140,6 +140,9 @@ def get_task_head(config, dataset):
             raise Exception("A model needs to have an embedding output in order to be tested on classification tasks!")
         from models.ClassificationHead import ClassificationHead
         return ClassificationHead(config["encoder"].outputs()["embedding"][0], dataset.num_classes())
+    if config["task"] in SEMANTIC_SEGMENTATION:
+        from models.PixelWisePredictionHead import PixelWisePredictionHead
+        return PixelWisePredictionHead(dataset.num_classes())
 
 
 def get_optimizer(config, model):
