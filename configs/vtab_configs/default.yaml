@@ -261,20 +261,8 @@
 ##      lr: 0.001
 #  num_epochs: 10
 #
-#COCODetection:
-#  task: "COCODetection"
-#  pre_encode: false
-#  training_configs:
-#    adam-0.0003:
-#      optimizer: "adam"
-#      lr: 0.0003
-##    sgd-0.01-l1:
-##      optimizer: "sgd"
-##      lr: 0.001
-#  num_epochs: 25
-#
-CityscapesSemanticSegmentation:
-  task: "CityscapesSemanticSegmentation"
+COCODetection:
+  task: "COCODetection"
   pre_encode: false
   training_configs:
     adam-0.0003:
@@ -283,4 +271,16 @@ CityscapesSemanticSegmentation:
 #    sgd-0.01-l1:
 #      optimizer: "sgd"
 #      lr: 0.001
-  num_epochs: 100
+  num_epochs: 25
+
+#CityscapesSemanticSegmentation:
+#  task: "CityscapesSemanticSegmentation"
+#  pre_encode: false
+#  training_configs:
+#    adam-0.0003:
+#      optimizer: "adam"
+#      lr: 0.0003
+##    sgd-0.01-l1:
+##      optimizer: "sgd"
+##      lr: 0.001
+#  num_epochs: 100
