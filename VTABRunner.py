@@ -33,6 +33,9 @@ CLASSIFICATION_TASKS = [
     "THORNumSteps",
     "THORActionPrediction"
 ]
+SEMANTIC_SEGMENTATION = [
+    "CityscapesSemanticSegmentation"
+]
 BINARY_PIXEL_WISE_CLASSIFICATION = [
     "Flowers-Detection",
     "Pets-Detection",
@@ -104,6 +107,9 @@ def get_dataset_class(config):
     if config["task"] == "THORActionPrediction":
         from datasets.ThorActionPredictionDataset import ThorActionPredictionDataset
         return ThorActionPredictionDataset
+    if config["task"] == "CityscapesSemanticSegmentation":
+        from datasets.CityscapesSemanticSegmentationDataset import CityscapesSemanticSegmentationDataset
+        return CityscapesSemanticSegmentationDataset
 
 
 def get_task_head(config, dataset):
@@ -118,6 +124,9 @@ def get_task_head(config, dataset):
         from models.PixelWisePredictionHead import PixelWisePredictionHead
         return PixelWisePredictionHead(3)
     if config["task"] == "COCODetection":
+        from models.PixelWisePredictionHead import PixelWisePredictionHead
+        return PixelWisePredictionHead(dataset.num_classes())
+    if config["task"] in BINARY_PIXEL_WISE_CLASSIFICATION:
         from models.PixelWisePredictionHead import PixelWisePredictionHead
         return PixelWisePredictionHead(dataset.num_classes())
     if config["task"] in PIXEL_WISE_REGRESSION:
@@ -160,6 +169,8 @@ def get_loss_function(config):
         return weighted_l1_loss
     if config["task"] == "COCODetection":
         return torch.nn.CrossEntropyLoss(ignore_index=0)
+    if config["task"] in SEMANTIC_SEGMENTATION:
+        return torch.nn.CrossEntropyLoss()
     if config["task"] in PIXEL_WISE_REGRESSION:
         return torch.nn.L1Loss()
     if config["task"] in CLASSIFICATION_TASKS:
@@ -175,6 +186,9 @@ def get_error_function(config):
         from utils.error_functions import classification_error
         return classification_error
     if config["task"] in BINARY_PIXEL_WISE_CLASSIFICATION:
+        from utils.error_functions import iou
+        return iou
+    if config["task"] in SEMANTIC_SEGMENTATION:
         from utils.error_functions import iou
         return iou
 

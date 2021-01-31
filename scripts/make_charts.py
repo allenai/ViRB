@@ -277,12 +277,12 @@ for task in ALL_TASKS:
     std = np.std([r for _, r in res])
     for name, number in res:
         sn = name.replace("Imagenet", "IN")
-        experiment_results[sn][task] = number
+        experiment_results[sn][task] = number if task not in REVERSED_SUCCESS_TASKS else number + 1.1
         experiment_results[sn][task+"-rank"] = rankings.index(name)+1
         experiment_results[sn][task+"-normalized"] = (number - mean) / std
 
 with open('results.csv', mode='w') as csv_file:
-    fieldnames = ["Encoder", "Method", "Dataset", "Epochs", "Updates"] + ALL_TASKS + \
+    fieldnames = ["Encoder", "Method", "Dataset", "Epochs", "Updates", "DatasetSize"] + ALL_TASKS + \
                  [task+"-normalized" for task in ALL_TASKS] + [task+"-rank" for task in ALL_TASKS]
     writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
     writer.writeheader()
@@ -349,7 +349,8 @@ with open('results.csv', mode='w') as csv_file:
             "Method": method,
             "Dataset": dataset,
             "Epochs": epochs,
-            "Updates": epochs * dataset_size
+            "Updates": epochs * dataset_size,
+            "DatasetSize": dataset_size
         }
         row.update(results)
         writer.writerow(row)
@@ -1111,9 +1112,9 @@ with open('results.csv', mode='w') as csv_file:
 # plt.savefig("graphs/different_datasets/All_vs_Supervised.png", dpi=100)
 # plt.clf()
 
-data = pandas.read_csv("results.csv")
-sns.set_theme()
-colors = sns.color_palette()
+# data = pandas.read_csv("results.csv")
+# sns.set_theme()
+# colors = sns.color_palette()
 # for dataset in data.Dataset.unique():
 #     d = data[(data["Dataset"] == dataset) & (data["Epochs"] == 200) & (data["Updates"] == int(200*1e6))]
 #     d = d[(d["Encoder"] != "Supervised") & (d["Encoder"] != "Random") & (d["Encoder"] != "PIRL")]
@@ -1156,120 +1157,296 @@ colors = sns.color_palette()
 #     plt.savefig("graphs/in_subsets/%s_vs_Supervised.png" % dataset, dpi=100)
 #     plt.clf()
 
+#
+# d = data[(data["Updates"] == int(100*1e6)) & (data["Method"] == "MoCo")]
+# plt.figure(figsize=(20, 10))
+# ee = d.set_index("Encoder")
+# vals = []
+# for task in ALL_TASKS:
+#     for encoder in d["Encoder"]:
+#
+#         if task in EMBEDDING_SEMANTIC_TASKS:
+#             ttype = "Embedding-Semantic"
+#         elif task in EMBEDDING_STRUCTURAL_TASKS:
+#             ttype = "Embedding-Structural"
+#         elif task in PIXELWISE_SEMANTIC_TASKS:
+#             ttype = "Pixelwise-Semantic"
+#         elif task in PIXELWISE_STRUCTURAL_TASKS:
+#             ttype = "Pixelwise-Structural"
+#         else:
+#             ttype = "Other"
+#
+#         vals.append({
+#             "Encoder": encoder,
+#             "Task": task,
+#             "Method": ee.loc[encoder, "Method"],
+#             "Dataset": ee.loc[encoder, "Dataset"],
+#             "Score": ee.loc[encoder, task],
+#             "SupervisedScore": data.set_index("Encoder").loc["MoCov2_100", task],
+#             "TaskType": ttype
+#         })
+#
+# plt.title("Half Imagenet and Equivalent MoCo Enocders Performance")
+# df = pandas.DataFrame(vals)
+# g = sns.scatterplot(x="SupervisedScore", y="Score", hue="Dataset", data=df, style="TaskType", s=100)
+# sns.lineplot(x=[0.5,1], y=[0.5,1], ax=g, hue=["MoCov2_100", "MoCov2_100"], palette={"MoCov2_100": "Red"})
+# plt.xlabel("MoCov2_100 Performance")
+# plt.ylabel("Self Supervised Encoder Model Performance")
+# plt.savefig("graphs/Imagenet_Subsets/MoCov2HalfEquivalent_vs_Supervised.png", dpi=100)
+# plt.clf()
+#
+#
+# d = data[(data["Updates"] == int(50*1e6)) & (data["Method"] == "MoCo")]
+# plt.figure(figsize=(20, 10))
+# ee = d.set_index("Encoder")
+# vals = []
+# for task in ALL_TASKS:
+#     for encoder in d["Encoder"]:
+#
+#         if task in EMBEDDING_SEMANTIC_TASKS:
+#             ttype = "Embedding-Semantic"
+#         elif task in EMBEDDING_STRUCTURAL_TASKS:
+#             ttype = "Embedding-Structural"
+#         elif task in PIXELWISE_SEMANTIC_TASKS:
+#             ttype = "Pixelwise-Semantic"
+#         elif task in PIXELWISE_STRUCTURAL_TASKS:
+#             ttype = "Pixelwise-Structural"
+#         else:
+#             ttype = "Other"
+#
+#         vals.append({
+#             "Encoder": encoder,
+#             "Task": task,
+#             "Method": ee.loc[encoder, "Method"],
+#             "Dataset": ee.loc[encoder, "Dataset"],
+#             "Score": ee.loc[encoder, task],
+#             "SupervisedScore": data.set_index("Encoder").loc["MoCov2_50", task],
+#             "TaskType": ttype
+#         })
+#
+# plt.title("Quarter Imagenet and Equivalent MoCo Enocders Performance")
+# df = pandas.DataFrame(vals)
+# g = sns.scatterplot(x="SupervisedScore", y="Score", hue="Dataset", data=df, style="TaskType", s=100)
+# sns.lineplot(x=[0.5,1], y=[0.5,1], ax=g, hue=["MoCov2_50", "MoCov2_50"], palette={"MoCov2_50": "Red"})
+# plt.xlabel("MoCov2_50")
+# plt.ylabel("Self Supervised Encoder Model Performance")
+# plt.savefig("graphs/Imagenet_Subsets/MoCov2QuarterEquivalent_vs_Supervised.png", dpi=100)
+# plt.clf()
 
-d = data[(data["Updates"] == int(100*1e6)) & (data["Method"] == "MoCo")]
+
+# d = data[(data["Updates"] == int(100*1e6)) & (data["Method"] == "MoCo")]
+# plt.figure(figsize=(20, 10))
+# ee = d.set_index("Encoder")
+# vals = []
+# for task in [t for t in ALL_TASKS if t not in REVERSED_SUCCESS_TASKS]:
+#     for encoder in d["Encoder"]:
+#
+#         if task in EMBEDDING_SEMANTIC_TASKS:
+#             ttype = "Embedding-Semantic"
+#         elif task in EMBEDDING_STRUCTURAL_TASKS:
+#             ttype = "Embedding-Structural"
+#         elif task in PIXELWISE_SEMANTIC_TASKS:
+#             ttype = "Pixelwise-Semantic"
+#         elif task in PIXELWISE_STRUCTURAL_TASKS:
+#             ttype = "Pixelwise-Structural"
+#         else:
+#             ttype = "Other"
+#
+#         vals.append({
+#             "Encoder": encoder,
+#             "Task": task,
+#             "Method": ee.loc[encoder, "Method"],
+#             "Dataset": ee.loc[encoder, "Dataset"],
+#             "Score": ee.loc[encoder, task],
+#             "SupervisedScore": data.set_index("Encoder").loc["MoCov2_100", task],
+#             "TaskType": ttype
+#         })
+#
+# plt.title("Half Imagenet and Equivalent MoCo Enocders Performance")
+# df = pandas.DataFrame(vals)
+# g = sns.scatterplot(x="SupervisedScore", y="Score", hue="Dataset", data=df, s=100)
+# sns.lineplot(x=[0.5,1], y=[0.5,1], ax=g, hue=["MoCov2_100", "MoCov2_100"], palette={"MoCov2_100": "Red"})
+# plt.xlabel("MoCov2_100 Performance")
+# plt.ylabel("Self Supervised Encoder Model Performance")
+# plt.savefig("graphs/Imagenet_Subsets/MoCov2HalfEquivalent_vs_Supervised.png", dpi=100)
+# plt.clf()
+
+#
+# d = data[(data["Updates"] == int(50*1e6)) & (data["Method"] == "SWAV")]
+# plt.figure(figsize=(20, 10))
+# ee = d.set_index("Encoder")
+# vals = []
+# for task in ALL_TASKS:
+#     for encoder in d["Encoder"]:
+#
+#         if task in EMBEDDING_SEMANTIC_TASKS:
+#             ttype = "Embedding-Semantic"
+#         elif task in EMBEDDING_STRUCTURAL_TASKS:
+#             ttype = "Embedding-Structural"
+#         elif task in PIXELWISE_SEMANTIC_TASKS:
+#             ttype = "Pixelwise-Semantic"
+#         elif task in PIXELWISE_STRUCTURAL_TASKS:
+#             ttype = "Pixelwise-Structural"
+#         else:
+#             ttype = "Other"
+#
+#         vals.append({
+#             "Encoder": encoder,
+#             "Task": task,
+#             "Method": ee.loc[encoder, "Method"],
+#             "Dataset": ee.loc[encoder, "Dataset"],
+#             "Score": ee.loc[encoder, task],
+#             "SupervisedScore": data.set_index("Encoder").loc["SWAV_50", task],
+#             "TaskType": ttype
+#         })
+#
+# plt.title("Quarter Imagenet and Equivalent SWAV Enocders Performance")
+# df = pandas.DataFrame(vals)
+# g = sns.scatterplot(x="SupervisedScore", y="Score", hue="Dataset", data=df, style="TaskType", s=100)
+# sns.lineplot(x=[0.5,1], y=[0.5,1], ax=g, hue=["SWAV_50", "SWAV_50"], palette={"SWAV_50": "Red"})
+# plt.xlabel("MoCov2_50")
+# plt.ylabel("Self Supervised Encoder Model Performance")
+# plt.savefig("graphs/Imagenet_Subsets/SWAVQuarterEquivalent_vs_Supervised.png", dpi=100)
+# plt.clf()
+
+
+# data = pandas.read_csv("results.csv")
+# d = data[(data["Encoder"] == "SWAV_800") | (data["Encoder"] == "SWAV_200") |
+#          (data["Encoder"] == "SWAV_100") | (data["Encoder"] == "SWAV_50") |
+#          # (data["Encoder"] == "SWAVHalfIN") | (data["Encoder"] == "SWAVUnbalancedIN") |
+#          # (data["Encoder"] == "SWAVHalfIN_100") | (data["Encoder"] == "SWAVUnbalancedIN_100") |
+#          (data["Encoder"] == "MoCov2_800") | (data["Encoder"] == "MoCov2_200") |
+#          (data["Encoder"] == "MoCov2_100") | (data["Encoder"] == "MoCov2_50")
+#          # (data["Encoder"] == "MoCov2HalfIN") | (data["Encoder"] == "MoCov2nbalancedIN") |
+#          # (data["Encoder"] == "MoCov2HalfIN_100") | (data["Encoder"] == "MoCov2UnbalancedIN_100")
+# ]
+# plt.figure(figsize=(20, 10))
+# ee = d.set_index("Encoder")
+# vals = []
+# for task in ALL_TASKS:
+#     for encoder in d["Encoder"]:
+#
+#         if task in EMBEDDING_SEMANTIC_TASKS:
+#             ttype = "Embedding-Semantic"
+#         elif task in EMBEDDING_STRUCTURAL_TASKS:
+#             ttype = "Embedding-Structural"
+#         elif task in PIXELWISE_SEMANTIC_TASKS:
+#             ttype = "Pixelwise-Semantic"
+#         elif task in PIXELWISE_STRUCTURAL_TASKS:
+#             ttype = "Pixelwise-Structural"
+#         else:
+#             ttype = "Other"
+#
+#         vals.append({
+#             "Encoder": encoder,
+#             "Task": task,
+#             "Method": ee.loc[encoder, "Method"],
+#             "Dataset": ee.loc[encoder, "Dataset"],
+#             "Score": ee.loc[encoder, task+"-normalized"],
+#             "TaskType": ttype,
+#             "Updates": ee.loc[encoder, "Updates"] / 50000000,
+#         })
+#
+# plt.title("MoCo and SWAV Enocders with different amounts of training steps Performance")
+# df = pandas.DataFrame(vals)
+# g = sns.scatterplot(y="Task", x="Score", hue="Method", data=df, size="Updates", sizes={1:50, 2:100, 4:150, 8:200, 16:250})
+# plt.xlabel("Normalized Score")
+# plt.savefig("graphs/Imagenet_Subsets/INSubsetModels_Differnt_Number_of_Updates.png", dpi=100)
+# plt.clf()
+
+# data = pandas.read_csv("results.csv")
+# d = data[
+#          # (data["Encoder"] == "SWAV_800") | (data["Encoder"] == "SWAV_200") |
+#          # (data["Encoder"] == "SWAV_100") | (data["Encoder"] == "SWAV_50") |
+#          (data["Encoder"] == "SWAVHalfIN") | (data["Encoder"] == "SWAVUnbalancedIN") |
+#          (data["Encoder"] == "SWAVHalfIN_100") | (data["Encoder"] == "SWAVUnbalancedIN_100") |
+#          # (data["Encoder"] == "MoCov2_800") | (data["Encoder"] == "MoCov2_200") |
+#          # (data["Encoder"] == "MoCov2_100") | (data["Encoder"] == "MoCov2_50")
+#          (data["Encoder"] == "MoCov2HalfIN") | (data["Encoder"] == "MoCov2nbalancedIN") |
+#          (data["Encoder"] == "MoCov2HalfIN_100") | (data["Encoder"] == "MoCov2UnbalancedIN_100")
+# ]
+# plt.figure(figsize=(20, 10))
+# ee = d.set_index("Encoder")
+# vals = []
+# for task in ALL_TASKS:
+#     for encoder in ["SWAVHalfIN"]:
+#
+#         if task in EMBEDDING_SEMANTIC_TASKS:
+#             ttype = "Embedding-Semantic"
+#         elif task in EMBEDDING_STRUCTURAL_TASKS:
+#             ttype = "Embedding-Structural"
+#         elif task in PIXELWISE_SEMANTIC_TASKS:
+#             ttype = "Pixelwise-Semantic"
+#         elif task in PIXELWISE_STRUCTURAL_TASKS:
+#             ttype = "Pixelwise-Structural"
+#         else:
+#             ttype = "Other"
+#
+#         vals.append({
+#             "Encoder": encoder,
+#             "Task": task,
+#             "Method": ee.loc[encoder, "Method"],
+#             "Dataset": ee.loc[encoder, "Dataset"],
+#             "Score": ee.loc[encoder, task+"-normalized"],
+#             "TaskType": ttype,
+#             "Updates": ee.loc[encoder, "Updates"] / 50000000,
+#         })
+# for task in ALL_TASKS:
+#     for encoder in d["Encoder"]:
+#
+#         if task in EMBEDDING_SEMANTIC_TASKS:
+#             ttype = "Embedding-Semantic"
+#         elif task in EMBEDDING_STRUCTURAL_TASKS:
+#             ttype = "Embedding-Structural"
+#         elif task in PIXELWISE_SEMANTIC_TASKS:
+#             ttype = "Pixelwise-Semantic"
+#         elif task in PIXELWISE_STRUCTURAL_TASKS:
+#             ttype = "Pixelwise-Structural"
+#         else:
+#             ttype = "Other"
+#
+#         vals.append({
+#             "Encoder": encoder,
+#             "Task": task,
+#             "Method": ee.loc[encoder, "Method"],
+#             "Dataset": ee.loc[encoder, "Dataset"],
+#             "Score": ee.loc[encoder, task+"-normalized"],
+#             "TaskType": ttype,
+#             "Updates": ee.loc[encoder, "Updates"] / 50000000,
+#         })
+#
+# plt.title("MoCo and SWAV Enocders with different amounts of training steps Performance")
+# df = pandas.DataFrame(vals)
+# g = sns.scatterplot(y="Task", x="Score", hue="Method", data=df, size="Updates", sizes={1:50, 2:100, 4:150, 8:200, 16:250})
+# plt.show()
+# plt.savefig("graphs/Imagenet_Subsets/PerformanceImprovementWithMoreTraining.png", dpi=100)
+# plt.clf()
+#
+#
+#
+#
+#
+########## Plot The Performance of MoCo and SWAV Subset models based off the amount of training data
+data = pandas.read_csv("results.csv")
+data = data.set_index("Encoder")
+data = data.loc[["SWAV_200", "MoCov2_200", "SWAVHalfIN", "MoCov2HalfIN", "SWAVUnbalancedIN", "MoCov2UnbalancedIN",
+                 "SWAVQuarterIN", "MoCov2QuarterIN", "SWAVLogIN", "MoCov2LogIN"]]
 plt.figure(figsize=(20, 10))
-ee = d.set_index("Encoder")
-vals = []
-for task in [t for t in ALL_TASKS if t not in REVERSED_SUCCESS_TASKS]:
-    for encoder in d["Encoder"]:
-        if encoder == "SWAVKinetics" and task == "THORDepth":
-            continue
+sns.set_theme()
+colors = sns.color_palette()
+palette = {method: colors[i] for i, method in enumerate(set(data["DatasetSize"]))}
 
-        if task in EMBEDDING_SEMANTIC_TASKS:
-            ttype = "Embedding-Semantic"
-        elif task in EMBEDDING_STRUCTURAL_TASKS:
-            ttype = "Embedding-Structural"
-        elif task in PIXELWISE_SEMANTIC_TASKS:
-            ttype = "Pixelwise-Semantic"
-        elif task in PIXELWISE_STRUCTURAL_TASKS:
-            ttype = "Pixelwise-Structural"
-        else:
-            ttype = "Other"
-
-        vals.append({
-            "Encoder": encoder,
-            "Task": task,
-            "Method": ee.loc[encoder, "Method"],
-            "Dataset": ee.loc[encoder, "Dataset"],
-            "Score": ee.loc[encoder, task],
-            "SupervisedScore": data.set_index("Encoder").loc["Supervised", task],
-            "TaskType": ttype
-        })
-
-plt.title("Half Imagenet Enocders Performance and Equivalent vs. Supervised")
-df = pandas.DataFrame(vals)
-g = sns.scatterplot(x="SupervisedScore", y="Score", hue="Dataset", style="Method", data=df, s=100)
-sns.lineplot(x=[0.5,1], y=[0.5,1], ax=g, hue=["Supervised IN Results", "Supervised IN Results"], palette={"IN Results": "Red"})
-plt.xlabel("Supervised Performance")
-plt.ylabel("Self Supervised Encoder Model Performance")
-plt.savefig("graphs/Imagenet_Subsets/HalfEquivalent_vs_Supervised.png", dpi=100)
-plt.clf()
-
-d = data[(data["Updates"] == int(100*1e6))]
-plt.figure(figsize=(20, 10))
-ee = d.set_index("Encoder")
-vals = []
-for task in [t for t in ALL_TASKS if t not in REVERSED_SUCCESS_TASKS]:
-    for encoder in d["Encoder"]:
-        if encoder == "SWAVKinetics" and task == "THORDepth":
-            continue
-
-        if task in EMBEDDING_SEMANTIC_TASKS:
-            ttype = "Embedding-Semantic"
-        elif task in EMBEDDING_STRUCTURAL_TASKS:
-            ttype = "Embedding-Structural"
-        elif task in PIXELWISE_SEMANTIC_TASKS:
-            ttype = "Pixelwise-Semantic"
-        elif task in PIXELWISE_STRUCTURAL_TASKS:
-            ttype = "Pixelwise-Structural"
-        else:
-            ttype = "Other"
-
-        vals.append({
-            "Encoder": encoder,
-            "Task": task,
-            "Method": ee.loc[encoder, "Method"],
-            "Dataset": ee.loc[encoder, "Dataset"],
-            "Score": ee.loc[encoder, task],
-            "SupervisedScore": data.set_index("Encoder").loc["Supervised", task],
-            "TaskType": ttype
-        })
-
-plt.title("Half Imagenet Enocders Performance and Equivalent vs. Supervised")
-df = pandas.DataFrame(vals)
-g = sns.scatterplot(x="SupervisedScore", y="Score", hue="Dataset", style="Method", data=df, s=100)
-sns.lineplot(x=[0.5,1], y=[0.5,1], ax=g, hue=["Supervised IN Results", "Supervised IN Results"], palette={"IN Results": "Red"})
-plt.xlabel("Supervised Performance")
-plt.ylabel("Self Supervised Encoder Model Performance")
-plt.savefig("graphs/Imagenet_Subsets/HalfEquivalent_vs_Supervised.png", dpi=100)
-plt.clf()
-
-d = data[(data["Updates"] == int(50*1e6))]
-plt.figure(figsize=(20, 10))
-ee = d.set_index("Encoder")
-vals = []
-for task in [t for t in ALL_TASKS if t not in REVERSED_SUCCESS_TASKS]:
-    for encoder in d["Encoder"]:
-        if encoder == "SWAVKinetics" and task == "THORDepth":
-            continue
-
-        if task in EMBEDDING_SEMANTIC_TASKS:
-            ttype = "Embedding-Semantic"
-        elif task in EMBEDDING_STRUCTURAL_TASKS:
-            ttype = "Embedding-Structural"
-        elif task in PIXELWISE_SEMANTIC_TASKS:
-            ttype = "Pixelwise-Semantic"
-        elif task in PIXELWISE_STRUCTURAL_TASKS:
-            ttype = "Pixelwise-Structural"
-        else:
-            ttype = "Other"
-
-        vals.append({
-            "Encoder": encoder,
-            "Task": task,
-            "Method": ee.loc[encoder, "Method"],
-            "Dataset": ee.loc[encoder, "Dataset"],
-            "Score": ee.loc[encoder, task],
-            "SupervisedScore": data.set_index("Encoder").loc["Supervised", task],
-            "TaskType": ttype
-        })
-
-plt.title("Quarter Imagenet Enocders Performance and Equivalent vs. Supervised")
-df = pandas.DataFrame(vals)
-g = sns.scatterplot(x="SupervisedScore", y="Score", hue="Dataset", style="Method", data=df, s=100)
-sns.lineplot(x=[0.5,1], y=[0.5,1], ax=g, hue=["Supervised IN Results", "Supervised IN Results"], palette={"IN Results": "Red"})
-plt.xlabel("Supervised Performance")
-plt.ylabel("Self Supervised Encoder Model Performance")
-plt.savefig("graphs/Imagenet_Subsets/QuarterEquivalent_vs_Supervised.png", dpi=100)
-plt.clf()
+for task in ALL_TASKS:
+    data = pandas.read_csv("results.csv")
+    data = data.set_index("Encoder")
+    data = data.loc[["SWAV_200", "MoCov2_200", "SWAVHalfIN", "MoCov2HalfIN", "SWAVUnbalancedIN", "MoCov2UnbalancedIN",
+                     "SWAVQuarterIN", "MoCov2QuarterIN", "SWAVLogIN", "MoCov2LogIN"]]
+    task_data = data.reset_index()
+    g = sns.barplot(x=task, y="Encoder", data=task_data, dodge=False, hue="DatasetSize", palette=palette)
+    sign = 1.0 if task_data[task][1] >= 0 else -1.0
+    for _, data in task_data.iterrows():
+        g.text(data[task] - (sign * 0.04), data.name + 0.12, round(data[task], 4), color='white', ha="center", size=10, weight='bold')
+    plt.title("%s Test Results" % task)
+    plt.xlabel("Test Performance")
+    plt.savefig("graphs/Imagenet_Subsets/%s.png" % task, dpi=100)
+    plt.clf()

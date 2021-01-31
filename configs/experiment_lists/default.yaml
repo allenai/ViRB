@@ -1,7 +1,7 @@
 ####### Baselines
 #Random: 'pretrained_weights/Random.pt'
-#Supervised: 'pretrained_weights/Supervised.pt'
-####### Pre Trained
+Supervised: 'pretrained_weights/Supervised.pt'
+###### Pre Trained
 #SWAV_800: 'pretrained_weights/SWAV_800.pt'
 #MoCov2_800: 'pretrained_weights/MoCov2_800.pt'
 #MoCov1_200: 'pretrained_weights/MoCov1_200.pt'
@@ -36,4 +36,4 @@
 #MoCov2_100: 'pretrained_weights/MoCov2_100.pt'
 #MoCov2_50: 'pretrained_weights/MoCov2_50.pt'
 #SWAV_50: 'pretrained_weights/SWAV_50.pt'
-SWAV_100: 'pretrained_weights/SWAV_100.pt'
+#SWAV_100: 'pretrained_weights/SWAV_100.pt'
