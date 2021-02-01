@@ -66,7 +66,7 @@ class CityscapesSemanticSegmentationDataset:
             self.imgs = glob.glob('data/cityscapes/leftImg8bit/val/*/*.png')
             self.labels = glob.glob('data/cityscapes/gtFine/val/*/*gtFine_labelIds.png')
         self.imgs.sort()
-        self.labels.sort()
+        self.labels.sort(key=lambda x: x.replace("gtCoarse/", "").replace("gtFine", ""))
         if train:
             self.img_preprocessor = transforms.Compose([
                 transforms.Resize((224, 224)),
