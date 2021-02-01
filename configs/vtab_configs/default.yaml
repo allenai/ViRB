@@ -287,7 +287,7 @@
 
 Imagenetv2:
   task: "Imagenetv2"
-  task_head_weights_path: "out/%s/Imagenet*"
+  task_head_weights_path: "out/%s/Imagenet*/model_head.pt"
   training_configs:
     adam-0.0003:
       optimizer: "adam"
