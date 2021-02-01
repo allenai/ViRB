@@ -240,7 +240,7 @@ def run_VTAB_task(config, logging_queue):
         pre_encode=pre_encode,
         num_dataset_repeats=num_dataset_repeats,
     )
-    if config["task_head_weights_path"]:
+    if "task_head_weights_path" in config:
         path = config["task_head_weights_path"] % config["experiment_name"]
         test_configs = []
         for w in glob.glob(path):
