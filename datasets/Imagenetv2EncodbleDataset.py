@@ -20,9 +20,10 @@ class Imagenetv2EncodableDataset(EncodableDataset):
         super().__init__()
         path = 'data/imagenetv2/*/*.jpeg'
         self.data = list(glob.glob(path))
-        cats = list(set([path.split("/")[2] for path in self.data]))
-        cats.sort()
-        self.labels = torch.LongTensor([cats.index(path.split("/")[2]) for path in self.data])
+        # cats = list(set([path.split("/")[2] for path in self.data]))
+        # cats.sort()
+        # self.labels = torch.LongTensor([cats.index(path.split("/")[2]) for path in self.data])
+        self.labels = torch.LongTensor([int(path.split("/")[2]) for path in self.data])
         self.preprocessor = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),

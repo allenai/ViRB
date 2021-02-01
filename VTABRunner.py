@@ -245,7 +245,7 @@ def run_VTAB_task(config, logging_queue):
         test_configs = []
         for w in glob.glob(path):
             encoder = copy.deepcopy(config["encoder"])
-            conf_name = ""
+            conf_name = "-".join(w.split("/")[2].split("-")[1:])
             task_head = get_task_head(config, trainset)
             task_head.load_state_dict(torch.load(w, map_location=torch.device('cpu')))
             model = VTABModel(encoder, task_head, train_encoder=config["train_encoder"])
