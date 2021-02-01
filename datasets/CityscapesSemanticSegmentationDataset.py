@@ -57,9 +57,15 @@ class CityscapesSemanticSegmentationDataset:
 
     def __init__(self, train=True):
         super().__init__()
-        self.imgs = glob.glob('data/cityscapes/leftImg8bit/%s/*/*.png' % ('train' if train else 'val'))
+        if train:
+            self.imgs = glob.glob('data/cityscapes/leftImg8bit/train/*/*.png') + \
+                        glob.glob('data/cityscapes/leftImg8bit/train_extra/*/*.png')
+            self.labels = glob.glob('data/cityscapes/gtFine/train/*/*gtFine_labelIds.png') + \
+                          glob.glob('data/cityscapes/gtCoarse/train_extra/*/*gtCoarse_labelIds.png')
+        else:
+            self.imgs = glob.glob('data/cityscapes/leftImg8bit/val/*/*.png')
+            self.labels = glob.glob('data/cityscapes/gtFine/val/*/*gtFine_labelIds.png')
         self.imgs.sort()
-        self.labels = glob.glob('data/cityscapes/gtFine/%s/*/*gtFine_labelIds.png' % ('train' if train else 'val'))
         self.labels.sort()
         if train:
             self.img_preprocessor = transforms.Compose([
