@@ -8,6 +8,7 @@ import multiprocessing as mp
 from multiprocessing.pool import ThreadPool
 import threading
 import queue
+import glob
 import time
 import curses
 import traceback
@@ -30,6 +31,7 @@ CLASSIFICATION_TASKS = [
     "CLEVERDist",
     "SUN397",
     "Imagenet",
+    "Imagenetv2",
     "THORNumSteps",
     "THORActionPrediction"
 ]
@@ -110,6 +112,11 @@ def get_dataset_class(config):
     if config["task"] == "CityscapesSemanticSegmentation":
         from datasets.CityscapesSemanticSegmentationDataset import CityscapesSemanticSegmentationDataset
         return CityscapesSemanticSegmentationDataset
+    if config["task"] == "Imagenetv2":
+        from datasets.Imagenetv2EncodbleDataset import Imagenetv2EncodableDataset
+        return Imagenetv2EncodableDataset
+
+
 
 
 def get_task_head(config, dataset):
@@ -203,18 +210,19 @@ def run_VTAB_task(config, logging_queue):
     loss_function = get_loss_function(config)
     error_function = get_error_function(config)
     training_configs = []
-    for tc_name, tc in config["training_configs"].items():
-        encoder = copy.deepcopy(config["encoder"])
-        task_head = get_task_head(config, trainset)
-        model = VTABModel(encoder, task_head, train_encoder=config["train_encoder"])
-        optimizer = get_optimizer(tc, model)
-        scheduler = get_scheduler(tc, optimizer)
-        training_configs.append({
-            "name": tc_name,
-            "model": model,
-            "optimizer": optimizer,
-            "scheduler": scheduler
-        })
+    if "training_configs" in config:
+        for tc_name, tc in config["training_configs"].items():
+            encoder = copy.deepcopy(config["encoder"])
+            task_head = get_task_head(config, trainset)
+            model = VTABModel(encoder, task_head, train_encoder=config["train_encoder"])
+            optimizer = get_optimizer(tc, model)
+            scheduler = get_scheduler(tc, optimizer)
+            training_configs.append({
+                "name": tc_name,
+                "model": model,
+                "optimizer": optimizer,
+                "scheduler": scheduler
+            })
     pre_encode = config["pre_encode"] if "pre_encode" in config else None
     num_dataset_repeats = config["num_dataset_repeats"] if "num_dataset_repeats" in config else 1
     task = VTABTask(
@@ -232,7 +240,19 @@ def run_VTAB_task(config, logging_queue):
         pre_encode=pre_encode,
         num_dataset_repeats=num_dataset_repeats,
     )
-    results = task.run(config["num_epochs"])
+    if config["task_head_weights_path"]:
+        path = config["task_head_weights_path"] % config["experiment_name"]
+        test_configs = []
+        for w in glob.glob(path):
+            encoder = copy.deepcopy(config["encoder"])
+            conf_name = ""
+            task_head = get_task_head(config, trainset)
+            task_head.load_state_dict(torch.load(w, map_location=torch.device('cpu')))
+            model = VTABModel(encoder, task_head, train_encoder=config["train_encoder"])
+            test_configs.append({"model": model, "name": conf_name})
+        results = task.run_test(test_configs)
+    else:
+        results = task.run(config["num_epochs"])
     return results
 
 

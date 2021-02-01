@@ -105,6 +105,21 @@ class VTABTask:
             #     with open(out_dir+"/principle_directions.pkl", "wb") as f:
             #         pickle.dump(cpu_principle_directions, f)
 
+    def run_test(self, test_configs):
+        for config in test_configs:
+            out_dir = self.out_dir_root + "-" + config["name"]
+            config["model"].to(self.device)
+            os.makedirs(out_dir, exist_ok=True)
+
+            test_loss, test_accuracy = self.test(config["model"])
+            data = {
+                "test_loss": test_loss,
+                "test_accuracy": test_accuracy
+            }
+            with open(out_dir+"/results.json", "w") as f:
+                json.dump(data, f)
+
+
     def train_epoch(self, model, optimizer):
         model.train()
         train_losses = []
