@@ -48,7 +48,8 @@ PIXEL_WISE_REGRESSION = [
     "THORDepth",
     "NYUDepth",
     "TaskonomyEdges",
-    "TaskonomyInpainting"
+    "TaskonomyInpainting",
+    "TaskonomyDepth"
 ]
 
 GPU_IDS = ["cuda:%d" % i for i in range(torch.cuda.device_count())] if torch.cuda.device_count() > 0 else ["cpu"]
@@ -115,8 +116,9 @@ def get_dataset_class(config):
     if config["task"] == "Imagenetv2":
         from datasets.Imagenetv2EncodbleDataset import Imagenetv2EncodableDataset
         return Imagenetv2EncodableDataset
-
-
+    if config["task"] == "TaskonomyDepth":
+        from datasets.TaskonomyDepthEncodbleDataset import TaskonomyDepthEncodableDataset
+        return TaskonomyDepthEncodableDataset
 
 
 def get_task_head(config, dataset):
