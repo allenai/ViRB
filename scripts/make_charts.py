@@ -153,6 +153,7 @@ COMBO_EXPERIMENTS = [
 
 EMBEDDING_SEMANTIC_TASKS = [
     "Imagenet",
+    "Imagenetv2",
     "Pets",
     "CIFAR-100",
     "CalTech-101",
@@ -356,60 +357,15 @@ with open('results.csv', mode='w') as csv_file:
         writer.writerow(row)
 
 ### BIG TABLE
-# res = get_best_result(ALL_EXPERIMENTS, "Imagenet", include_names=True)
-# res.sort(key=lambda x: x[1])
-# names = []
-# results = []
-# labels = []
-# for name, value in res:
-#     names.append(name.replace("Imagenet", "IN"))
-#     results.append(round(value, 4))
-#     if "MoCo" in name:
-#         label = "MoCo"
-#     elif "SWAV" in name:
-#         label = "SWAV"
-#     elif "PIRL" in name:
-#         label = "PIRL"
-#     elif "SimCLR" in name:
-#         label = "SimCLR"
-#     elif "Supervised" in name:
-#         label = "Supervised"
-#     elif "Random" in name:
-#         label = "Random"
-#     else:
-#         label = "Other"
-#     labels.append(label)
-# make_ranked_bar_chart(names, results, "Top-1 Accuracy", "Imagenet Classification", labels=labels)
-#
 # data = pandas.read_csv("results.csv")
 # data = data.set_index("Encoder")
-# for task in ALL_TASKS:
-#     rand = data.loc['Random', task]
-#     for encoder in data.index:
-#         data.loc[encoder, task] = data.loc[encoder, task] - rand
-#     sup = data.loc['Supervised', task]
-#     for encoder in data.index:
-#         data.loc[encoder, task] = data.loc[encoder, task] / sup
-# data = data.drop("Random")
-# data = data.drop("SimCLR_1000")
 # sns.set_theme()
 # colors = sns.color_palette()
 # palette = {method: colors[i] for i, method in enumerate(set(data["Method"]))}
 # for task in ALL_TASKS:
 #     plt.figure(figsize=(20, 10))
 #     data = pandas.read_csv("results.csv")
-#     data = data.set_index("Encoder")
-#     for t in ALL_TASKS:
-#         # rand = data.loc['Random', t]
-#         # for encoder in data.index:
-#         #     data.loc[encoder, t] = data.loc[encoder, t] - rand
-#         sup = data.loc['Supervised', t]
-#         for encoder in data.index:
-#             data.loc[encoder, t] = data.loc[encoder, t] - sup
-#     #data = data.drop("Random")
-#     data = data.drop("SimCLR_1000")
-#     results = data.reset_index()
-#     results = results.sort_values(task, ascending=False).reset_index()
+#     results = data.sort_values(task, ascending=False).reset_index()
 #     g = sns.barplot(x=task, y="Encoder", hue="Method", data=results, dodge=False, palette=palette)
 #     sign = 1.0 if results[task][1] >= 0 else -1.0
 #     for _, data in results.iterrows():
@@ -417,7 +373,7 @@ with open('results.csv', mode='w') as csv_file:
 #     plt.title("%s Test Results" % task)
 #     plt.xlabel("Test Performance")
 #     #plt.show()
-#     plt.savefig("new_graphs/%s-test-results-subtracted.png" % task, dpi=100)
+#     plt.savefig("graphs/task_by_task/%s-test-results-subtracted.png" % task, dpi=100)
 #     plt.clf()
 
 # values = []
@@ -1111,9 +1067,9 @@ with open('results.csv', mode='w') as csv_file:
 # plt.ylabel("Self Supervised Encoder Model Performance")
 # plt.savefig("graphs/different_datasets/All_vs_Supervised.png", dpi=100)
 # plt.clf()
-
-# data = pandas.read_csv("results.csv")
-# sns.set_theme()
+#
+data = pandas.read_csv("results.csv")
+sns.set_theme()
 # colors = sns.color_palette()
 # for dataset in data.Dataset.unique():
 #     d = data[(data["Dataset"] == dataset) & (data["Epochs"] == 200) & (data["Updates"] == int(200*1e6))]
@@ -1154,9 +1110,9 @@ with open('results.csv', mode='w') as csv_file:
 #     sns.lineplot(x=[0.5,1], y=[0.5,1], ax=g, hue=["IN Results", "IN Results"], palette={"IN Results": "Red"})
 #     plt.xlabel("Supervised Performance")
 #     plt.ylabel("Models Trained on %s Dataset Model Performance" % dataset)
-#     plt.savefig("graphs/in_subsets/%s_vs_Supervised.png" % dataset, dpi=100)
+#     plt.savefig("graphs/Imagenet_Subsets/%s_vs_Supervised.png" % dataset, dpi=100)
 #     plt.clf()
-
+#
 #
 # d = data[(data["Updates"] == int(100*1e6)) & (data["Method"] == "MoCo")]
 # plt.figure(figsize=(20, 10))
@@ -1232,8 +1188,8 @@ with open('results.csv', mode='w') as csv_file:
 # plt.ylabel("Self Supervised Encoder Model Performance")
 # plt.savefig("graphs/Imagenet_Subsets/MoCov2QuarterEquivalent_vs_Supervised.png", dpi=100)
 # plt.clf()
-
-
+#
+#
 # d = data[(data["Updates"] == int(100*1e6)) & (data["Method"] == "MoCo")]
 # plt.figure(figsize=(20, 10))
 # ee = d.set_index("Encoder")
@@ -1270,7 +1226,45 @@ with open('results.csv', mode='w') as csv_file:
 # plt.ylabel("Self Supervised Encoder Model Performance")
 # plt.savefig("graphs/Imagenet_Subsets/MoCov2HalfEquivalent_vs_Supervised.png", dpi=100)
 # plt.clf()
-
+#
+#
+# d = data[(data["Updates"] == int(100*1e6)) & (data["Method"] == "SWAV")]
+# plt.figure(figsize=(20, 10))
+# ee = d.set_index("Encoder")
+# vals = []
+# for task in [t for t in ALL_TASKS if t not in REVERSED_SUCCESS_TASKS]:
+#     for encoder in d["Encoder"]:
+#
+#         if task in EMBEDDING_SEMANTIC_TASKS:
+#             ttype = "Embedding-Semantic"
+#         elif task in EMBEDDING_STRUCTURAL_TASKS:
+#             ttype = "Embedding-Structural"
+#         elif task in PIXELWISE_SEMANTIC_TASKS:
+#             ttype = "Pixelwise-Semantic"
+#         elif task in PIXELWISE_STRUCTURAL_TASKS:
+#             ttype = "Pixelwise-Structural"
+#         else:
+#             ttype = "Other"
+#
+#         vals.append({
+#             "Encoder": encoder,
+#             "Task": task,
+#             "Method": ee.loc[encoder, "Method"],
+#             "Dataset": ee.loc[encoder, "Dataset"],
+#             "Score": ee.loc[encoder, task],
+#             "SupervisedScore": data.set_index("Encoder").loc["SWAV_100", task],
+#             "TaskType": ttype
+#         })
+#
+# plt.title("Half Imagenet and Equivalent SWAV Enocders Performance")
+# df = pandas.DataFrame(vals)
+# g = sns.scatterplot(x="SupervisedScore", y="Score", hue="Dataset", data=df, s=100)
+# sns.lineplot(x=[0.5,1], y=[0.5,1], ax=g, hue=["SWAV_100", "SWAV_100"], palette={"SWAV_100": "Red"})
+# plt.xlabel("SWAV_100 Performance")
+# plt.ylabel("Self Supervised Encoder Model Performance")
+# plt.savefig("graphs/Imagenet_Subsets/SWAVHalfEquivalent_vs_Supervised.png", dpi=100)
+# plt.clf()
+#
 #
 # d = data[(data["Updates"] == int(50*1e6)) & (data["Method"] == "SWAV")]
 # plt.figure(figsize=(20, 10))
@@ -1308,8 +1302,8 @@ with open('results.csv', mode='w') as csv_file:
 # plt.ylabel("Self Supervised Encoder Model Performance")
 # plt.savefig("graphs/Imagenet_Subsets/SWAVQuarterEquivalent_vs_Supervised.png", dpi=100)
 # plt.clf()
-
-
+#
+# #
 # data = pandas.read_csv("results.csv")
 # d = data[(data["Encoder"] == "SWAV_800") | (data["Encoder"] == "SWAV_200") |
 #          (data["Encoder"] == "SWAV_100") | (data["Encoder"] == "SWAV_50") |
@@ -1427,26 +1421,185 @@ with open('results.csv', mode='w') as csv_file:
 #
 #
 ########## Plot The Performance of MoCo and SWAV Subset models based off the amount of training data
-data = pandas.read_csv("results.csv")
-data = data.set_index("Encoder")
-data = data.loc[["SWAV_200", "MoCov2_200", "SWAVHalfIN", "MoCov2HalfIN", "SWAVUnbalancedIN", "MoCov2UnbalancedIN",
-                 "SWAVQuarterIN", "MoCov2QuarterIN", "SWAVLogIN", "MoCov2LogIN"]]
-plt.figure(figsize=(20, 10))
-sns.set_theme()
-colors = sns.color_palette()
-palette = {method: colors[i] for i, method in enumerate(set(data["DatasetSize"]))}
+# data = pandas.read_csv("results.csv")
+# data = data.set_index("Encoder")
+# data = data.loc[["SWAV_200", "MoCov2_200", "SWAVHalfIN", "MoCov2HalfIN", "SWAVUnbalancedIN", "MoCov2UnbalancedIN",
+#                  "SWAVQuarterIN", "MoCov2QuarterIN", "SWAVLogIN", "MoCov2LogIN"]]
+# plt.figure(figsize=(20, 10))
+# sns.set_theme()
+# colors = sns.color_palette()
+# palette = {method: colors[i] for i, method in enumerate(set(data["DatasetSize"]))}
+#
+# for task in ALL_TASKS:
+#     data = pandas.read_csv("results.csv")
+#     data = data.set_index("Encoder")
+#     data = data.loc[["SWAV_200", "MoCov2_200", "SWAVHalfIN", "MoCov2HalfIN", "SWAVUnbalancedIN", "MoCov2UnbalancedIN",
+#                      "SWAVQuarterIN", "MoCov2QuarterIN", "SWAVLogIN", "MoCov2LogIN"]]
+#     task_data = data.reset_index()
+#     g = sns.barplot(x=task, y="Encoder", data=task_data, dodge=False, hue="DatasetSize", palette=palette)
+#     sign = 1.0 if task_data[task][1] >= 0 else -1.0
+#     for _, data in task_data.iterrows():
+#         g.text(data[task] - (sign * 0.04), data.name + 0.12, round(data[task], 4), color='white', ha="center", size=10, weight='bold')
+#     plt.title("%s Test Results" % task)
+#     plt.xlabel("Test Performance")
+#     plt.savefig("graphs/Imagenet_Subsets/%s.png" % task, dpi=100)
+#     plt.clf()
 
-for task in ALL_TASKS:
-    data = pandas.read_csv("results.csv")
-    data = data.set_index("Encoder")
-    data = data.loc[["SWAV_200", "MoCov2_200", "SWAVHalfIN", "MoCov2HalfIN", "SWAVUnbalancedIN", "MoCov2UnbalancedIN",
-                     "SWAVQuarterIN", "MoCov2QuarterIN", "SWAVLogIN", "MoCov2LogIN"]]
-    task_data = data.reset_index()
-    g = sns.barplot(x=task, y="Encoder", data=task_data, dodge=False, hue="DatasetSize", palette=palette)
-    sign = 1.0 if task_data[task][1] >= 0 else -1.0
-    for _, data in task_data.iterrows():
-        g.text(data[task] - (sign * 0.04), data.name + 0.12, round(data[task], 4), color='white', ha="center", size=10, weight='bold')
-    plt.title("%s Test Results" % task)
-    plt.xlabel("Test Performance")
-    plt.savefig("graphs/Imagenet_Subsets/%s.png" % task, dpi=100)
-    plt.clf()
+
+
+###### Make graph of performance difference between Imagenetv1 and Imagenet v2 test results
+# data = pandas.read_csv("results.csv")
+# data = data.set_index("Encoder")
+# values = []
+# plt.figure(figsize=(20, 10))
+# sns.set_theme()
+# for exp in ALL_EXPERIMENTS:
+#     exp = exp.replace("Imagenet", "IN")
+#     values.append({
+#         "Encoder": exp,
+#         "Score": -100 * (data.loc[exp]["Imagenet"] - data.loc[exp]["Imagenetv2"]) / data.loc[exp]["Imagenet"]
+#     })
+#     # values.append({"Encoder": exp, "Score": data[exp]["Imagenet"], "Task": "Imagenet v1 Test"})
+#     # values.append({"Encoder": exp, "Score": data[exp]["Imagenetv2"], "Task": "Imagenet v2 Test"})
+# data = pandas.DataFrame(values)
+# data = data.set_index("Encoder")
+# data = data.drop("PIRL")
+# data = data.drop("SimCLR_1000")
+# data = data.sort_values("Score", ascending=False).reset_index()
+# plt.title("INv1 vs INv2 Test Set Performance Difference")
+# ax = sns.barplot(y="Encoder", x="Score", data=data)
+# plt.xlabel("Percent difference between INv2 and INv2 test performance")
+# plt.savefig("graphs/inv1_vs_inv2/percent_difference.png")
+# plt.clf()
+#
+# data = pandas.read_csv("results.csv")
+# data = data.set_index("Encoder")
+# values = []
+# plt.figure(figsize=(20, 10))
+# sns.set_theme()
+# for exp in ALL_EXPERIMENTS:
+#     exp = exp.replace("Imagenet", "IN")
+#     values.append({
+#         "Encoder": exp,
+#         "INv1": data.loc[exp]["Imagenet"],
+#         "INv2": data.loc[exp]["Imagenetv2"]
+#     })
+# data = pandas.DataFrame(values)
+# data = data.set_index("Encoder")
+# data = data.drop("PIRL")
+# data = data.drop("SimCLR_1000")
+# data = data.drop("Random")
+# # data = data.sort_values("Score", ascending=False).reset_index()
+# plt.title("INv1 vs INv2 Test Set Performance Trend")
+# ax = sns.scatterplot(y="INv2", x="INv1", data=data, label="Model accuracy")
+# ax = sns.regplot(y="INv2", x="INv1", color="Red", label="Linear fit", scatter=False, data=data, ax=ax)
+# ax = sns.lineplot(x=[0.28, 0.78], y=[0.28, 0.78], color="Black", label="Ideal reproducibility ")
+# plt.xlabel("INv1 Test Set Performance")
+# plt.ylabel("INv2 Test Set Performance")
+# plt.savefig("graphs/inv1_vs_inv2/trend.png")
+# plt.clf()
+
+# data = pandas.read_csv("results.csv")
+# # Select Quarter and Half Equivalent models
+# data = data[(data["Updates"] == int(50*1e6))]
+# tasks = ["Imagenet", "CalTech-101", "Pets", "PetsDetection", "dtd", "CIFAR-100", "SUN397", "Eurosat",
+#          "CLEVERNumObjects", "THORNumSteps", "THORDepth", "NYUDepth", "NYUWalkable", "THORActionPrediction"]
+# n = len(tasks)
+# spearman = np.zeros((n,n))
+# pearson = np.zeros((n,n))
+# spearman_pval = np.zeros((n,n))
+# pearson_pval = np.zeros((n,n))
+# for i in range(n):
+#     for j in range(n):
+#         values_i = data[tasks[i]]
+#         values_j = data[tasks[j]]
+#         s, sp = scipy.stats.spearmanr(values_i, values_j)
+#         p, pp = scipy.stats.pearsonr(values_i, values_j)
+#         spearman[i][j] = s
+#         pearson[i][j] = p
+#         spearman_pval[i][j] = sp
+#         pearson_pval[i][j] = pp
+#
+# plt.figure(figsize=(20, 20))
+# title = "Spearman Correlation on Performance Between Tasks of Quarter IN Equivalent Models"
+# plt.title(title)
+# ax = sns.heatmap(spearman, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/Imagenet_Subsets/QuarterSpearman.png")
+# plt.clf()
+# title = "Spearman Correlation p-values on Performance Between Tasks of Quarter IN Equivalent Models"
+# plt.title(title)
+# ax = sns.heatmap(spearman_pval, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/Imagenet_Subsets/QuarterSpearman-pval.png")
+# plt.clf()
+# title = "Pearson Correlation on Performance Between Tasks of Quarter IN Equivalent Models"
+# plt.title(title)
+# ax = sns.heatmap(pearson, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/Imagenet_Subsets/QuarterPearson.png")
+# plt.clf()
+# title = "Pearson Correlation p-values on Performance Between Tasks of Quarter IN Equivalent Models"
+# plt.title(title)
+# ax = sns.heatmap(pearson_pval, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/Imagenet_Subsets/QuarterPearson-pval.png")
+# plt.clf()
+#
+#
+# data = pandas.read_csv("results.csv")
+# # Select Quarter and Half Equivalent models
+# data = data[(data["Updates"] == int(100*1e6))]
+# tasks = ["Imagenet", "CalTech-101", "Pets", "PetsDetection", "dtd", "CIFAR-100", "SUN397", "Eurosat",
+#          "CLEVERNumObjects", "THORNumSteps", "THORDepth", "NYUDepth", "NYUWalkable", "THORActionPrediction"]
+# n = len(tasks)
+# spearman = np.zeros((n,n))
+# pearson = np.zeros((n,n))
+# spearman_pval = np.zeros((n,n))
+# pearson_pval = np.zeros((n,n))
+# for i in range(n):
+#     for j in range(n):
+#         values_i = data[tasks[i]]
+#         values_j = data[tasks[j]]
+#         s, sp = scipy.stats.spearmanr(values_i, values_j)
+#         p, pp = scipy.stats.pearsonr(values_i, values_j)
+#         spearman[i][j] = s
+#         pearson[i][j] = p
+#         spearman_pval[i][j] = sp
+#         pearson_pval[i][j] = pp
+#
+# plt.figure(figsize=(20, 20))
+# title = "Spearman Correlation on Performance Between Tasks of Half IN Equivalent Models"
+# plt.title(title)
+# ax = sns.heatmap(spearman, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/Imagenet_Subsets/HalfSpearman.png")
+# plt.clf()
+# title = "Spearman Correlation p-values on Performance Between Tasks of Half IN Equivalent Models"
+# plt.title(title)
+# ax = sns.heatmap(spearman_pval, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/Imagenet_Subsets/HalfSpearman-pval.png")
+# plt.clf()
+# title = "Pearson Correlation on Performance Between Tasks of Half IN Equivalent Models"
+# plt.title(title)
+# ax = sns.heatmap(pearson, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/Imagenet_Subsets/HalfPearson.png")
+# plt.clf()
+# title = "Pearson Correlation p-values on Performance Between Tasks of Half IN Equivalent Models"
+# plt.title(title)
+# ax = sns.heatmap(pearson_pval, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/Imagenet_Subsets/HalfPearson-pval.png")
+# plt.clf()
+
+
