@@ -22,7 +22,7 @@ class TaskonomyDepthEncodableDataset(EncodableDataset):
         self.data = list(glob.glob(data_path))
         self.data.sort()
         label_path = 'data/taskonomy/train/depth_zbuffer/*/*.png'\
-            if train else 'data/taskonomy/test/edgdepth_zbufferes/*/*.png'
+            if train else 'data/taskonomy/test/depth_zbuffer/*/*.png'
         self.labels = list(glob.glob(label_path))
         self.labels.sort()
 
@@ -59,8 +59,9 @@ class TaskonomyDepthEncodableDataset(EncodableDataset):
         # mask = self.label_preprocessor(Image.open(label_path).convert('RGB'))
         mask = np.array(Image.open(label_path).resize((224, 224)))
         mask = torch.tensor(mask, dtype=torch.float)
-        mask -= mask.min()
+        mask[mask > 10000] = 10000
         mask /= mask.max()
+        mask -= mask.min()
         # mask = torch.round(mask)
         mask = mask.unsqueeze(0)
 
