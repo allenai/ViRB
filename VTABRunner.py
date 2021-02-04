@@ -150,8 +150,10 @@ def get_task_head(config, dataset):
         from models.ClassificationHead import ClassificationHead
         return ClassificationHead(config["encoder"].outputs()["embedding"][0], dataset.num_classes())
     if config["task"] in SEMANTIC_SEGMENTATION:
-        from models.PixelWisePredictionHead import PixelWisePredictionHead
-        return PixelWisePredictionHead(dataset.num_classes())
+        from models.DeepLabHead import DeepLabHead
+        return DeepLabHead(dataset.num_classes())
+        # from models.PixelWisePredictionHead import PixelWisePredictionHead
+        # return PixelWisePredictionHead(dataset.num_classes())
 
 
 def get_optimizer(config, model):
