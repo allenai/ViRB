@@ -58,10 +58,10 @@ class CityscapesSemanticSegmentationDataset:
     def __init__(self, train=True):
         super().__init__()
         if train:
-            self.imgs = glob.glob('data/cityscapes/leftImg8bit/train/*/*.png') + \
-                        glob.glob('data/cityscapes/leftImg8bit/train_extra/*/*.png')
-            self.labels = glob.glob('data/cityscapes/gtFine/train/*/*gtFine_labelIds.png') + \
-                          glob.glob('data/cityscapes/gtCoarse/train_extra/*/*gtCoarse_labelIds.png')
+            self.imgs = glob.glob('data/cityscapes/leftImg8bit/train/*/*.png')
+                        # glob.glob('data/cityscapes/leftImg8bit/train_extra/*/*.png')
+            self.labels = glob.glob('data/cityscapes/gtFine/train/*/*gtFine_labelIds.png')
+                          # glob.glob('data/cityscapes/gtCoarse/train_extra/*/*gtCoarse_labelIds.png')
         else:
             self.imgs = glob.glob('data/cityscapes/leftImg8bit/val/*/*.png')
             self.labels = glob.glob('data/cityscapes/gtFine/val/*/*gtFine_labelIds.png')
