@@ -100,7 +100,7 @@ class CityscapesSemanticSegmentationDataset:
             # Add random crop to image
             ogw, ogh = img.size
             cw = random.randint(200, ogw)
-            ch = random.uniform(0.5, 1.0) * cw  # random.randint(200, ogh)
+            ch = min(int(random.uniform(0.5, 1.0) * cw), ogh)  # random.randint(200, ogh)
             x = random.randint(0, ogw - cw)
             y = random.randint(0, ogh - ch)
             img = img.crop((x, y, x+cw, y+ch))
