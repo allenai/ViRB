@@ -10,6 +10,7 @@ import json
 from pycocotools.coco import COCO
 import os
 import contextlib
+import random
 from cityscapesscripts.helpers.labels import labels as cslabels
 
 
@@ -57,11 +58,12 @@ class CityscapesSemanticSegmentationDataset:
 
     def __init__(self, train=True):
         super().__init__()
+        self.train = train
         if train:
-            self.imgs = glob.glob('data/cityscapes/leftImg8bit/train/*/*.png') + \
-                        glob.glob('data/cityscapes/leftImg8bit/train_extra/*/*.png')
-            self.labels = glob.glob('data/cityscapes/gtFine/train/*/*gtFine_labelIds.png') + \
-                          glob.glob('data/cityscapes/gtCoarse/train_extra/*/*gtCoarse_labelIds.png')
+            self.imgs = glob.glob('data/cityscapes/leftImg8bit/train/*/*.png')  # + \
+                        # glob.glob('data/cityscapes/leftImg8bit/train_extra/*/*.png')
+            self.labels = glob.glob('data/cityscapes/gtFine/train/*/*gtFine_labelIds.png')  # + \
+                          # glob.glob('data/cityscapes/gtCoarse/train_extra/*/*gtCoarse_labelIds.png')
         else:
             self.imgs = glob.glob('data/cityscapes/leftImg8bit/val/*/*.png')
             self.labels = glob.glob('data/cityscapes/gtFine/val/*/*gtFine_labelIds.png')
@@ -91,8 +93,24 @@ class CityscapesSemanticSegmentationDataset:
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        img = self.img_preprocessor(Image.open(self.imgs[idx]).convert('RGB'))
-        label = self.label_preprocessor(Image.open(self.labels[idx]).convert('I')).long().squeeze()
+        if self.train:
+            img = Image.open(self.imgs[idx]).convert('RGB')
+            label = Image.open(self.labels[idx]).convert('I')
+
+            # Add random crop to image
+            ogw, ogh = img.size
+            cw = random.randint(200, ogw)
+            ch = random.uniform(0.5, 1.0) * cw  # random.randint(200, ogh)
+            x = random.randint(0, ogw - cw)
+            y = random.randint(0, ogh - ch)
+            img = img.crop((x, y, x+cw, y+ch))
+            label = label.crop((x, y, x+cw, y+ch))
+
+            img = self.img_preprocessor(img)
+            label = self.label_preprocessor(label).long().squeeze()
+        else:
+            img = self.img_preprocessor(Image.open(self.imgs[idx]).convert('RGB'))
+            label = self.label_preprocessor(Image.open(self.labels[idx]).convert('I')).long().squeeze()
         for cat in torch.unique(label):
             label[label == int(cat)] = mapping_20[int(cat)]
         return img, label
