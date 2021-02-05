@@ -39,14 +39,6 @@ class ResNet50Encoder(nn.Module):
         res["layer3"] = x
         x = self.model.layer3(x)
         res["layer4"] = x
-
-        # self.model.layer4[0].conv2 = nn.Sequential(
-        #     nn.Conv2d(1024, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False),
-        #     nn.BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-        # )
-        # for l in self.model.layer4:
-        #     l.downsample = None
-
         x = self.model.layer4(x)
         res["layer5"] = x
 

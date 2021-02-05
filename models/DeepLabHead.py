@@ -59,11 +59,20 @@ class DeepLabHead(nn.Module):
     def __init__(self, num_classes):
         super().__init__()
         self.aspp = ASPP(2048, 256, num_classes)
-        self.low_level_feature_reducer = nn.Conv2d(256, 32, 1)
+        self.low_level_feature_reducer = nn.Sequential(
+            nn.Conv2d(256, 16, 1),
+            nn.BatchNorm2d(16, momentum=0.0003),
+            nn.ReLU(),
+        )
         self.decoder = nn.Sequential(
             nn.Conv2d(256 + 32, 256, 3, padding=1),
+            nn.BatchNorm2d(256, momentum=0.0003),
             nn.ReLU(),
             nn.Conv2d(256, 256, 3),
+            nn.BatchNorm2d(256, momentum=0.0003),
+            nn.ReLU(),
+            nn.Conv2d(256, 256, 3),
+            nn.BatchNorm2d(256, momentum=0.0003),
             nn.ReLU(),
             nn.Conv2d(256, num_classes, 3, padding=1),
         )
