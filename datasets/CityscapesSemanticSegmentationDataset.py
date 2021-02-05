@@ -93,7 +93,7 @@ class CityscapesSemanticSegmentationDataset:
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        if self.train:
+        if self.train and random.uniform(0, 1) > 0.8:
             img = Image.open(self.imgs[idx]).convert('RGB')
             label = Image.open(self.labels[idx]).convert('I')
 
