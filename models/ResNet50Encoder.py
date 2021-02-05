@@ -9,6 +9,13 @@ class ResNet50Encoder(nn.Module):
         super().__init__()
         if weights:
             self.model = torchvision.models.resnet50(pretrained=False)
+            self.model.layer4[0].conv2 = nn.Conv2d(
+                512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False
+            )
+            self.model.layer4[0].downsample = nn.Sequential(
+                nn.Conv2d(1024, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False),
+                nn.BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            )
             self.load_state_dict(torch.load(weights, map_location="cpu"), strict=False)
         else:
             self.model = torchvision.models.resnet50(pretrained=True)
@@ -32,6 +39,14 @@ class ResNet50Encoder(nn.Module):
         res["layer3"] = x
         x = self.model.layer3(x)
         res["layer4"] = x
+
+        # self.model.layer4[0].conv2 = nn.Sequential(
+        #     nn.Conv2d(1024, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False),
+        #     nn.BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        # )
+        # for l in self.model.layer4:
+        #     l.downsample = None
+
         x = self.model.layer4(x)
         res["layer5"] = x
 
