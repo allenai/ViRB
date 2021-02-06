@@ -151,6 +151,7 @@ COMBO_EXPERIMENTS = [
     'SWAVCombination',
 ]
 
+### TASKS
 EMBEDDING_SEMANTIC_TASKS = [
     "Imagenet",
     "Imagenetv2",
@@ -168,11 +169,13 @@ EMBEDDING_STRUCTURAL_TASKS = [
 ]
 PIXELWISE_SEMANTIC_TASKS = [
     "PetsDetection",
+    "CityscapesSemanticSegmentation"
 ]
 PIXELWISE_STRUCTURAL_TASKS = [
     "NYUDepth",
     "NYUWalkable",
     "THORDepth",
+    "TaskonomyDepth"
 ]
 
 ALL_TASKS = EMBEDDING_SEMANTIC_TASKS + EMBEDDING_STRUCTURAL_TASKS + PIXELWISE_SEMANTIC_TASKS + PIXELWISE_STRUCTURAL_TASKS
@@ -184,6 +187,7 @@ REVERSED_SUCCESS_TASKS = [
     "TaskonomyEdges",
     "NYUDepth",
     "THORDepth",
+    "TaskonomyDepth"
 ]
 
 
@@ -266,95 +270,117 @@ def get_normalized_summed_scores(data):
 # plt.scatter(["4-128 (45 minutes)"]*len(encoded_4_128), encoded_4_128)
 # plt.show()
 
+
+
+
+
+
+
+
+
+
 #### Converting the output to csv format
-experiment_results = {name.replace("Imagenet", "IN"): {} for name in ALL_EXPERIMENTS}
-for task in ALL_TASKS:
-    if task in REVERSED_SUCCESS_TASKS:
-        res = get_best_result(ALL_EXPERIMENTS, task, include_names=True, c=-1.0)
-    else:
-        res = get_best_result(ALL_EXPERIMENTS, task, include_names=True)
-    rankings, _ = zip(*sorted(res, key=lambda x: x[1], reverse=True))
-    mean = [r for n, r in res if n == "Supervised"][0]
-    std = np.std([r for _, r in res])
-    for name, number in res:
-        sn = name.replace("Imagenet", "IN")
-        experiment_results[sn][task] = number if task not in REVERSED_SUCCESS_TASKS else number + 1.1
-        experiment_results[sn][task+"-rank"] = rankings.index(name)+1
-        experiment_results[sn][task+"-normalized"] = (number - mean) / std
-
-with open('results.csv', mode='w') as csv_file:
-    fieldnames = ["Encoder", "Method", "Dataset", "Epochs", "Updates", "DatasetSize"] + ALL_TASKS + \
-                 [task+"-normalized" for task in ALL_TASKS] + [task+"-rank" for task in ALL_TASKS]
-    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-    writer.writeheader()
-    for name, results in experiment_results.items():
-
-        if "MoCo" in name:
-            method = "MoCo"
-        elif "SWAV" in name:
-            method = "SWAV"
-        elif "PIRL" in name:
-            method = "PIRL"
-        elif "SimCLR" in name:
-            method = "SimCLR"
-        elif "Supervised" in name:
-            method = "Supervised"
-        elif "Random" in name:
-            method = "Random"
+def make_csv():
+    experiment_results = {name.replace("Imagenet", "IN"): {} for name in ALL_EXPERIMENTS}
+    for task in ALL_TASKS:
+        if task in REVERSED_SUCCESS_TASKS:
+            res = get_best_result(ALL_EXPERIMENTS, task, include_names=True, c=-1.0)
         else:
-            method = "Other"
+            res = get_best_result(ALL_EXPERIMENTS, task, include_names=True)
+        rankings, _ = zip(*sorted(res, key=lambda x: x[1], reverse=True))
+        mean = [r for n, r in res if n == "Supervised"][0]
+        std = np.std([r for _, r in res])
+        for name, number in res:
+            sn = name.replace("Imagenet", "IN")
+            experiment_results[sn][task] = number
+            experiment_results[sn][task+"-rank"] = rankings.index(name)+1
+            experiment_results[sn][task+"-normalized"] = (number - mean) / std
 
-        if "Taskonomy" in name:
-            dataset = "Taskonomy"
-        elif "Places" in name:
-            dataset = "Places"
-        elif "Kinetics" in name:
-            dataset = "Kinetics"
-        elif "Combination" in name:
-            dataset = "Combination"
-        elif "Half" in name:
-            dataset = "HalfImagenet"
-        elif "Quarter" in name:
-            dataset = "QuarterImagenet"
-        elif "Unbalanced" in name:
-            dataset = "UnbalancedImagenet"
-        elif "Log" in name:
-            dataset = "LogImagenet"
-        else:
-            dataset = "Imagenet"
+    with open('results.csv', mode='w') as csv_file:
+        fieldnames = ["Encoder", "Method", "Dataset", "Epochs", "Updates", "DatasetSize"] + ALL_TASKS + \
+                     [task+"-normalized" for task in ALL_TASKS] + [task+"-rank" for task in ALL_TASKS]
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader()
+        for name, results in experiment_results.items():
 
-        if "_1000" in name:
-            epochs = 1000
-        elif "_800" in name:
-            epochs = 800
-        elif "_100" in name:
-            epochs = 100
-        elif "_50" in name:
-            epochs = 50
-        else:
-            epochs = 200
+            if "MoCo" in name:
+                method = "MoCo"
+            elif "SWAV" in name:
+                method = "SWAV"
+            elif "PIRL" in name:
+                method = "PIRL"
+            elif "SimCLR" in name:
+                method = "SimCLR"
+            elif "Supervised" in name:
+                method = "Supervised"
+            elif "Random" in name:
+                method = "Random"
+            else:
+                method = "Other"
 
-        if "Half" in name:
-            dataset_size = 500000
-        elif "Unbalanced" in name:
-            dataset_size = 500000
-        elif "Quarter" in name:
-            dataset_size = 250000
-        elif "Log" in name:
-            dataset_size = 250000
-        else:
-            dataset_size = 1000000
+            if "Taskonomy" in name:
+                dataset = "Taskonomy"
+            elif "Places" in name:
+                dataset = "Places"
+            elif "Kinetics" in name:
+                dataset = "Kinetics"
+            elif "Combination" in name:
+                dataset = "Combination"
+            elif "Half" in name:
+                dataset = "HalfImagenet"
+            elif "Quarter" in name:
+                dataset = "QuarterImagenet"
+            elif "Unbalanced" in name:
+                dataset = "UnbalancedImagenet"
+            elif "Log" in name:
+                dataset = "LogImagenet"
+            else:
+                dataset = "Imagenet"
 
-        row = {
-            "Encoder": name,
-            "Method": method,
-            "Dataset": dataset,
-            "Epochs": epochs,
-            "Updates": epochs * dataset_size,
-            "DatasetSize": dataset_size
-        }
-        row.update(results)
-        writer.writerow(row)
+            if "_1000" in name:
+                epochs = 1000
+            elif "_800" in name:
+                epochs = 800
+            elif "_100" in name:
+                epochs = 100
+            elif "_50" in name:
+                epochs = 50
+            else:
+                epochs = 200
+
+            if "Half" in name:
+                dataset_size = 500000
+            elif "Unbalanced" in name:
+                dataset_size = 500000
+            elif "Quarter" in name:
+                dataset_size = 250000
+            elif "Log" in name:
+                dataset_size = 250000
+            else:
+                dataset_size = 1000000
+
+            row = {
+                "Encoder": name,
+                "Method": method,
+                "Dataset": dataset,
+                "Epochs": epochs,
+                "Updates": epochs * dataset_size,
+                "DatasetSize": dataset_size
+            }
+            row.update(results)
+            writer.writerow(row)
+
+
+
+
+
+
+
+
+
+
+
+
 
 ### BIG TABLE
 # data = pandas.read_csv("results.csv")
@@ -1444,10 +1470,10 @@ sns.set_theme()
 #     plt.xlabel("Test Performance")
 #     plt.savefig("graphs/Imagenet_Subsets/%s.png" % task, dpi=100)
 #     plt.clf()
-
-
-
-###### Make graph of performance difference between Imagenetv1 and Imagenet v2 test results
+#
+#
+#
+# ###### Make graph of performance difference between Imagenetv1 and Imagenet v2 test results
 # data = pandas.read_csv("results.csv")
 # data = data.set_index("Encoder")
 # values = []
@@ -1457,7 +1483,7 @@ sns.set_theme()
 #     exp = exp.replace("Imagenet", "IN")
 #     values.append({
 #         "Encoder": exp,
-#         "Score": -100 * (data.loc[exp]["Imagenet"] - data.loc[exp]["Imagenetv2"]) / data.loc[exp]["Imagenet"]
+#         "Score": -100 * (data.loc[exp]["Imagenet"] - data.loc[exp]["Imagenetv2"])
 #     })
 #     # values.append({"Encoder": exp, "Score": data[exp]["Imagenet"], "Task": "Imagenet v1 Test"})
 #     # values.append({"Encoder": exp, "Score": data[exp]["Imagenetv2"], "Task": "Imagenet v2 Test"})
@@ -1468,8 +1494,8 @@ sns.set_theme()
 # data = data.sort_values("Score", ascending=False).reset_index()
 # plt.title("INv1 vs INv2 Test Set Performance Difference")
 # ax = sns.barplot(y="Encoder", x="Score", data=data)
-# plt.xlabel("Percent difference between INv2 and INv2 test performance")
-# plt.savefig("graphs/inv1_vs_inv2/percent_difference.png")
+# plt.xlabel("Ansolute difference between INv1 and INv2 test performance")
+# plt.savefig("graphs/inv1_vs_inv2/absolute_difference.png")
 # plt.clf()
 #
 # data = pandas.read_csv("results.csv")
@@ -1602,4 +1628,18 @@ sns.set_theme()
 # plt.savefig("graphs/Imagenet_Subsets/HalfPearson-pval.png")
 # plt.clf()
 
+make_csv()
+data = pandas.read_csv("results.csv")
+data = data.set_index("Encoder")
+swav_is_better = {}
+for task in ALL_TASKS:
+    if task == "Imagenetv2":
+        continue
+    swav_is_better[task] = data.loc["Supervised"][task] < data.loc["SWAV_800"][task]
+
+k = len([val for val in swav_is_better.values() if val])
+n = len(swav_is_better)
+p = 0.5
+print("SWAV is better in %d/%d tasks" % (k, n))
+print("the p-value is:", scipy.stats.binom_test(k, n=n, p=p, alternative='greater'))
 

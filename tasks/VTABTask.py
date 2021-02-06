@@ -153,7 +153,7 @@ class VTABTask:
         return np.sum(train_losses) / num_samples, np.sum(train_errors) / num_samples
 
     def test(self, model):
-        model.eval()
+        # model.eval()
         test_losses = []
         test_errors = []
         num_samples = 0

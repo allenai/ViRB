@@ -65,10 +65,13 @@ class DeepLabHead(nn.Module):
         )
         self.decoder = nn.Sequential(
             nn.Conv2d(256 + 32, 256, 3, padding=1),
+            nn.BatchNorm2d(256, momentum=0.0003),
             nn.ReLU(),
             nn.Conv2d(256, 256, 3, padding=1),
+            nn.BatchNorm2d(256, momentum=0.0003),
             nn.ReLU(),
             nn.Conv2d(256, 256, 3, padding=1),
+            nn.BatchNorm2d(256, momentum=0.0003),
             nn.ReLU(),
             nn.Conv2d(256, num_classes, 3, padding=1),
         )
