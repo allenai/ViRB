@@ -186,7 +186,9 @@ def get_loss_function(config):
     if config["task"] == "COCODetection":
         return torch.nn.CrossEntropyLoss(ignore_index=0)
     if config["task"] in SEMANTIC_SEGMENTATION:
-        return torch.nn.CrossEntropyLoss()
+        from rmi import RMILoss
+        return RMILoss(with_logits=True)
+        # return torch.nn.CrossEntropyLoss()
     if config["task"] in PIXEL_WISE_REGRESSION:
         return torch.nn.L1Loss()
     if config["task"] in CLASSIFICATION_TASKS:
