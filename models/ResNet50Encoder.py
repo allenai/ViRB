@@ -1,6 +1,7 @@
 import torch
 import torchvision
 import torch.nn as nn
+import math
 
 
 class ResNet50Encoder(nn.Module):
@@ -8,14 +9,8 @@ class ResNet50Encoder(nn.Module):
     def __init__(self, weights=None):
         super().__init__()
         if weights:
-            self.model = torchvision.models.resnet50(pretrained=False)
-            self.model.layer4[0].conv2 = nn.Conv2d(
-                512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False
-            )
-            self.model.layer4[0].downsample = nn.Sequential(
-                nn.Conv2d(1024, 2048, kernel_size=(1, 1), stride=(1, 1), bias=False),
-                nn.BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-            )
+            # self.model = torchvision.models.resnet50(pretrained=False)
+            self.model = AtrousResNet(Bottleneck, [3, 4, 6, 3])
             self.load_state_dict(torch.load(weights, map_location="cpu"), strict=False)
         else:
             self.model = torchvision.models.resnet50(pretrained=True)
@@ -61,3 +56,112 @@ class ResNet50Encoder(nn.Module):
             "layer4": torch.Size([256, 14, 14]),
             "layer5": torch.Size([64, 7, 7])
         }
+
+
+class AtrousResNet(nn.Module):
+
+    def __init__(self, block, layers, num_groups=None, beta=False):
+        super(AtrousResNet, self).__init__()
+        self.num_groups = num_groups
+        self.inplanes = 64
+        self.conv = nn.Conv2d
+        if not beta:
+            self.conv1 = self.conv(3, 64, kernel_size=7, stride=2, padding=3,
+                                   bias=False)
+        else:
+            self.conv1 = nn.Sequential(
+                self.conv(3, 64, 3, stride=2, padding=1, bias=False),
+                self.conv(64, 64, 3, stride=1, padding=1, bias=False),
+                self.conv(64, 64, 3, stride=1, padding=1, bias=False))
+        self.bn1 = self._make_norm(64)
+        self.relu = nn.ReLU(inplace=True)
+        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        self.layer1 = self._make_layer(block, 64, layers[0])
+        self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
+        self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
+        self.layer4 = self._make_layer(block, 512, layers[3], stride=1,
+                                       dilation=2)
+
+        for m in self.modules():
+            if isinstance(m, self.conv):
+                n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
+                m.weight.data.normal_(0, math.sqrt(2. / n))
+            elif isinstance(m, nn.BatchNorm2d) or isinstance(m, nn.GroupNorm):
+                m.weight.data.fill_(1)
+                m.bias.data.zero_()
+
+    def _make_layer(self, block, planes, blocks, stride=1, dilation=1):
+        downsample = None
+        if stride != 1 or dilation != 1 or self.inplanes != planes * block.expansion:
+            downsample = nn.Sequential(
+                self.conv(self.inplanes, planes * block.expansion,
+                          kernel_size=1, stride=stride, dilation=max(1, dilation/2), bias=False),
+                self._make_norm(planes * block.expansion),
+            )
+
+        layers = []
+        layers.append(block(self.inplanes, planes, stride, downsample, dilation=max(1, dilation/2), conv=self.conv, norm=self._make_norm))
+        self.inplanes = planes * block.expansion
+        for i in range(1, blocks):
+            layers.append(block(self.inplanes, planes, dilation=dilation, conv=self.conv, norm=self._make_norm))
+
+        return nn.Sequential(*layers)
+
+    def _make_norm(self, planes, momentum=0.05):
+        return nn.BatchNorm2d(planes, momentum=momentum) if self.num_groups is None \
+            else nn.GroupNorm(self.num_groups, planes)
+
+    def forward(self, x):
+        size = (x.shape[2], x.shape[3])
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.relu(x)
+        x = self.maxpool(x)
+
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+        x = self.layer4(x)
+
+        x = self.aspp(x)
+        x = nn.Upsample(size, mode='bilinear', align_corners=True)(x)
+        return x
+
+
+class Bottleneck(nn.Module):
+    expansion = 4
+
+    def __init__(self, inplanes, planes, stride=1, downsample=None, dilation=1, conv=None, norm=None):
+        super(Bottleneck, self).__init__()
+        self.conv1 = conv(inplanes, planes, kernel_size=1, bias=False)
+        self.bn1 = norm(planes)
+        self.conv2 = conv(planes, planes, kernel_size=3, stride=stride,
+                               dilation=dilation, padding=dilation, bias=False)
+        self.bn2 = norm(planes)
+        self.conv3 = conv(planes, planes * self.expansion, kernel_size=1, bias=False)
+        self.bn3 = norm(planes * self.expansion)
+        self.relu = nn.ReLU(inplace=True)
+        self.downsample = downsample
+        self.stride = stride
+
+    def forward(self, x):
+        residual = x
+
+        out = self.conv1(x)
+        out = self.bn1(out)
+        out = self.relu(out)
+
+        out = self.conv2(out)
+        out = self.bn2(out)
+        out = self.relu(out)
+
+        out = self.conv3(out)
+        out = self.bn3(out)
+
+        if self.downsample is not None:
+            residual = self.downsample(x)
+
+        out += residual
+        out = self.relu(out)
+
+        return out
