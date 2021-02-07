@@ -37,9 +37,9 @@ class ResNet50Encoder(nn.Module):
         x = self.model.layer4(x)
         res["layer5"] = x
 
-        x = self.model.avgpool(x)
-        x = torch.flatten(x, 1)
-        res["embedding"] = x
+        # x = self.model.avgpool(x)
+        # x = torch.flatten(x, 1)
+        # res["embedding"] = x
 
         if original_batch_size != x.size(0):
             for name, layer in res.items():
