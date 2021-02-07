@@ -287,7 +287,7 @@ CityscapesSemanticSegmentation:
 #        type: "StepLR"
 #        step_size: 25
 #        gamma: 0.3
-  num_epochs: 25
+  num_epochs: 100
 
 #Imagenetv2:
 #  task: "Imagenetv2"
