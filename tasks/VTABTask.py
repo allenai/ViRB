@@ -23,7 +23,7 @@ class VTABTask:
             error,
             out_dir,
             logging_queue,
-            batch_size=8,
+            batch_size=16,
             num_workers=12,
             device="cpu",
             pre_encode=None,
