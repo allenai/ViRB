@@ -136,14 +136,11 @@ def get_task_head(config, dataset):
         from models.PixelWisePredictionHead import PixelWisePredictionHead
         return PixelWisePredictionHead(dataset.num_classes())
     if config["task"] in BINARY_PIXEL_WISE_CLASSIFICATION:
-        from models.PixelWisePredictionHead import PixelWisePredictionHead
-        return PixelWisePredictionHead(dataset.num_classes())
-    if config["task"] in PIXEL_WISE_REGRESSION:
-        # from models.PixelWisePredictionHead import PixelWisePredictionHead
-        # return PixelWisePredictionHead(1)
         from models.DeepLabHead import DeepLabHead
         return DeepLabHead(1)
-    if config["task"] in BINARY_PIXEL_WISE_CLASSIFICATION:
+        # from models.PixelWisePredictionHead import PixelWisePredictionHead
+        # return PixelWisePredictionHead(dataset.num_classes())
+    if config["task"] in PIXEL_WISE_REGRESSION:
         # from models.PixelWisePredictionHead import PixelWisePredictionHead
         # return PixelWisePredictionHead(1)
         from models.DeepLabHead import DeepLabHead
