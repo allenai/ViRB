@@ -58,8 +58,8 @@ class NyuWalkableEncodableDataset(EncodableDataset):
         if self.train:
             # Add random crop to image
             ogw, ogh = img.size
-            cw = 513
-            ch = 513
+            cw = 412
+            ch = 412
             x = random.randint(0, ogw - cw)
             y = random.randint(0, ogh - ch)
             img = img.crop((x, y, x+cw, y+ch))
