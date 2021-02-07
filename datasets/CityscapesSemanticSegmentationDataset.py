@@ -71,20 +71,20 @@ class CityscapesSemanticSegmentationDataset:
         self.labels.sort(key=lambda x: x.replace("gtCoarse/", "").replace("gtFine", ""))
         if train:
             self.img_preprocessor = transforms.Compose([
-                transforms.Resize((224, 224)),
-                transforms.ColorJitter(.4, .4, .4, .2),
-                transforms.RandomGrayscale(p=0.2),
+                # transforms.Resize((224, 224)),
+                # transforms.ColorJitter(.4, .4, .4, .2),
+                # transforms.RandomGrayscale(p=0.2),
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
         else:
             self.img_preprocessor = transforms.Compose([
-                transforms.Resize((224, 224)),
+                # transforms.Resize((224, 224)),
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
         self.label_preprocessor = transforms.Compose([
-            transforms.Resize((224, 224)),
+            # transforms.Resize((224, 224)),
             transforms.ToTensor()
         ])
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -93,14 +93,14 @@ class CityscapesSemanticSegmentationDataset:
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        if self.train and random.uniform(0, 1) > 0.2:
+        if self.train:
             img = Image.open(self.imgs[idx]).convert('RGB')
             label = Image.open(self.labels[idx]).convert('I')
 
             # Add random crop to image
             ogw, ogh = img.size
-            cw = random.randint(200, ogw)
-            ch = min(int(random.uniform(0.5, 1.0) * cw), ogh)  # random.randint(200, ogh)
+            cw = 769  # random.randint(200, ogw)
+            ch = 769  # min(int(random.uniform(0.5, 1.0) * cw), ogh)  # random.randint(200, ogh)
             x = random.randint(0, ogw - cw)
             y = random.randint(0, ogh - ch)
             img = img.crop((x, y, x+cw, y+ch))
