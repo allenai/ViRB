@@ -144,8 +144,10 @@ def get_task_head(config, dataset):
         from models.DeepLabHead import DeepLabHead
         return DeepLabHead(1)
     if config["task"] in BINARY_PIXEL_WISE_CLASSIFICATION:
-        from models.PixelWisePredictionHead import PixelWisePredictionHead
-        return PixelWisePredictionHead(1)
+        # from models.PixelWisePredictionHead import PixelWisePredictionHead
+        # return PixelWisePredictionHead(1)
+        from models.DeepLabHead import DeepLabHead
+        return DeepLabHead(1)
     if config["task"] in CLASSIFICATION_TASKS:
         if "embedding" not in config["encoder"].outputs():
             raise Exception("A model needs to have an embedding output in order to be tested on classification tasks!")
