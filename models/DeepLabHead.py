@@ -25,7 +25,7 @@ class DeepLabHead(nn.Module):
 
     def forward(self, x):
         l2_size = tuple(x["layer2"].shape[-2:])
-        label_size = (l2_size[0]*4, l2_size[1]*4)
+        label_size = tuple(x["img"].shape[-2:])
         x_aspp = self.aspp(x["layer5"])
         x_aspp = nn.Upsample(l2_size, mode='bilinear', align_corners=True)(x_aspp)
         x = torch.cat((self.low_level_feature_reducer(x["layer2"]), x_aspp), dim=1)
