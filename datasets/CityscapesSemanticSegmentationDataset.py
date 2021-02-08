@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import torchvision.transforms as transforms
 import glob
 from PIL import Image
+PIL import ImageOps
 import json
 from pycocotools.coco import COCO
 import os
@@ -104,7 +105,7 @@ class CityscapesSemanticSegmentationDataset:
 
             # Mirror the image half of the time
             if random.uniform(0, 1) > 0.5:
-                img = img.mirror()
+                img = ImageOps.mirror(img)
 
             # Add random crop to image
             cw = 513  # random.randint(200, ogw)
