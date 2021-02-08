@@ -100,7 +100,7 @@ class CityscapesSemanticSegmentationDataset:
 
             # Sclae the image
             scale = random.uniform(0.5, 2.0)
-            img = img.resize((ogw * scale, ogh * scale))
+            img = img.resize((int(ogw * scale), int(ogh * scale)))
 
             # Mirror the image half of the time
             if random.uniform(0, 1) > 0.5:
