@@ -44,8 +44,8 @@ class ResNet50Encoder(nn.Module):
         res["layer4"] = x
         x4 = self.model.layer4(x)
         x5 = self.model.layer5(x, x_cas=x4)
-        x6 = self.model.layer5(x, x_cas=x5)
-        x7 = self.model.layer5(x, x_cas=x6)
+        x6 = self.model.layer6(x, x_cas=x5)
+        x7 = self.model.layer7(x, x_cas=x6)
         x = x7
 
         res["layer5"] = x
@@ -130,7 +130,7 @@ class AtrousResNet(nn.Module):
         for i in range(1, blocks):
             layers.append(block(self.inplanes, planes, dilation=dilation, conv=self.conv, norm=self._make_norm))
 
-        return nn.Sequential(*layers)
+        return Block(layers)
 
     def _make_norm(self, planes, momentum=0.05):
         return nn.BatchNorm2d(planes, momentum=momentum) if self.num_groups is None \
@@ -153,6 +153,21 @@ class AtrousResNet(nn.Module):
         return x
 
 
+class Block(nn.Module):
+
+    def __init__(self, layers):
+        super().__init__()
+        self.downscale = layers[0]
+        self.rest = nn.Sequential(*layers[1:])
+
+    def forward(self, x, x_cas=None):
+        out = self.downscale(x)
+        if x_cas is not None:
+            out += x_cas
+        out = self.rest(out)
+        return out
+
+
 class Bottleneck(nn.Module):
     expansion = 4
 
@@ -169,15 +184,13 @@ class Bottleneck(nn.Module):
         self.downsample = downsample
         self.stride = stride
 
-    def forward(self, x, x_cas=None):
+    def forward(self, x):
         residual = x
 
         out = self.conv1(x)
         out = self.bn1(out)
         out = self.relu(out)
 
-        if x_cas is not None:
-            out += x_cas
 
         out = self.conv2(out)
         out = self.bn2(out)
