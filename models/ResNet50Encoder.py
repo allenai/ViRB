@@ -18,9 +18,9 @@ class ResNet50Encoder(nn.Module):
                     weight_dict[name.replace("layer4", "layer6")] = weight
                     weight_dict[name.replace("layer4", "layer7")] = weight
             self.load_state_dict(weight_dict, strict=False)
-            # self.model.layer5 = CascadeBlock(list(self.model.layer5))
-            # self.model.layer6 = CascadeBlock(list(self.model.layer6))
-            # self.model.layer7 = CascadeBlock(list(self.model.layer7))
+            self.model.layer5 = CascadeBlock(list(self.model.layer5))
+            self.model.layer6 = CascadeBlock(list(self.model.layer6))
+            self.model.layer7 = CascadeBlock(list(self.model.layer7))
         else:
             self.model = torchvision.models.resnet50(pretrained=True)
 
@@ -45,12 +45,12 @@ class ResNet50Encoder(nn.Module):
         x = self.model.layer3(x)
 
         res["layer4"] = x
-        x = self.model.layer4(x)
-        # x4 = self.model.layer4(x)
-        # x5 = self.model.layer5(x, x_cas=x4)
-        # x6 = self.model.layer6(x, x_cas=x5)
-        # x7 = self.model.layer7(x, x_cas=x6)
-        # x = x7
+        # x = self.model.layer4(x)
+        x4 = self.model.layer4(x)
+        x5 = self.model.layer5(x, x_cas=x4)
+        x6 = self.model.layer6(x, x_cas=x5)
+        x7 = self.model.layer7(x, x_cas=x6)
+        x = x7
 
         res["layer5"] = x
 
