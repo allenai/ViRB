@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import torchvision.transforms as transforms
 import glob
 from PIL import Image
-PIL import ImageOps
+from PIL import ImageOps
 import json
 from pycocotools.coco import COCO
 import os
