@@ -123,12 +123,12 @@ class AtrousResNet(nn.Module):
         if stride != 1 or dilation != 1 or self.inplanes != planes * block.expansion:
             downsample = nn.Sequential(
                 self.conv(self.inplanes, planes * block.expansion,
-                          kernel_size=1, stride=stride, dilation=max(1, dilation/2), bias=False),
+                          kernel_size=1, stride=stride, dilation=max(1, dilation//2), bias=False),
                 self._make_norm(planes * block.expansion),
             )
 
         layers = []
-        layers.append(block(self.inplanes, planes, stride, downsample, dilation=max(1, dilation/2), conv=self.conv, norm=self._make_norm))
+        layers.append(block(self.inplanes, planes, stride, downsample, dilation=max(1, dilation//2), conv=self.conv, norm=self._make_norm))
         self.inplanes = planes * block.expansion
         for i in range(1, blocks):
             layers.append(block(self.inplanes, planes, dilation=dilation, conv=self.conv, norm=self._make_norm))
