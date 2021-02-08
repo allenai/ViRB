@@ -10,8 +10,14 @@ class ResNet50Encoder(nn.Module):
         super().__init__()
         if weights:
             # self.model = torchvision.models.resnet50(pretrained=False)
-            self.model = AtrousResNet(Bottleneck, [3, 4, 6, 3])
-            self.load_state_dict(torch.load(weights, map_location="cpu"), strict=False)
+            self.model = AtrousResNet(Bottleneck, [3, 4, 6, 3, 3, 3, 3])
+            weight_dict = torch.load(weights, map_location="cpu")
+            for name, weight in list(weight_dict.items()):
+                if 'layer4' in name:
+                    weight_dict[name.replace("layer4", "layer5")] = weight
+                    weight_dict[name.replace("layer4", "layer6")] = weight
+                    weight_dict[name.replace("layer4", "layer7")] = weight
+            self.load_state_dict(weight_dict, strict=False)
         else:
             self.model = torchvision.models.resnet50(pretrained=True)
 
@@ -34,9 +40,17 @@ class ResNet50Encoder(nn.Module):
         x = self.model.layer2(x)
         res["layer3"] = x
         x = self.model.layer3(x)
+
         res["layer4"] = x
-        x = self.model.layer4(x)
+        x4 = self.model.layer4(x)
+        x5 = self.model.layer5(x, x_cas=x4)
+        x6 = self.model.layer5(x, x_cas=x5)
+        x7 = self.model.layer5(x, x_cas=x6)
+        x = x7
+
         res["layer5"] = x
+
+
 
         # x = self.model.avgpool(x)
         # x = torch.flatten(x, 1)
@@ -80,8 +94,18 @@ class AtrousResNet(nn.Module):
         self.layer1 = self._make_layer(block, 64, layers[0])
         self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
+        l4_inplanes = self.inplanes
         self.layer4 = self._make_layer(block, 512, layers[3], stride=1,
                                        dilation=2)
+        self.inplanes = l4_inplanes
+        self.layer5 = self._make_layer(block, 512, layers[4], stride=1,
+                                       dilation=4)
+        self.inplanes = l4_inplanes
+        self.layer6 = self._make_layer(block, 512, layers[5], stride=1,
+                                       dilation=8)
+        self.inplanes = l4_inplanes
+        self.layer7 = self._make_layer(block, 512, layers[6], stride=1,
+                                       dilation=16)
 
         for m in self.modules():
             if isinstance(m, self.conv):
@@ -145,12 +169,15 @@ class Bottleneck(nn.Module):
         self.downsample = downsample
         self.stride = stride
 
-    def forward(self, x):
+    def forward(self, x, x_cas=None):
         residual = x
 
         out = self.conv1(x)
         out = self.bn1(out)
         out = self.relu(out)
+
+        if x_cas is not None:
+            out += x_cas
 
         out = self.conv2(out)
         out = self.bn2(out)

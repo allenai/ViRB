@@ -96,9 +96,17 @@ class CityscapesSemanticSegmentationDataset:
         if self.train:
             img = Image.open(self.imgs[idx]).convert('RGB')
             label = Image.open(self.labels[idx]).convert('I')
+            ogw, ogh = img.size
+
+            # Sclae the image
+            scale = random.uniform(0.5, 2.0)
+            img = img.resize((ogw * scale, ogh * scale))
+
+            # Mirror the image half of the time
+            if random.uniform(0, 1) > 0.5:
+                img = img.mirror()
 
             # Add random crop to image
-            ogw, ogh = img.size
             cw = 513  # random.randint(200, ogw)
             ch = 513  # min(int(random.uniform(0.5, 1.0) * cw), ogh)  # random.randint(200, ogh)
             x = random.randint(0, ogw - cw)
