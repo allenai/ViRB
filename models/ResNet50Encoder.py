@@ -18,6 +18,9 @@ class ResNet50Encoder(nn.Module):
                     weight_dict[name.replace("layer4", "layer6")] = weight
                     weight_dict[name.replace("layer4", "layer7")] = weight
             self.load_state_dict(weight_dict, strict=False)
+            self.model.layer5 = CascadeBlock(list(self.model.layer5))
+            self.model.layer6 = CascadeBlock(list(self.model.layer6))
+            self.model.layer7 = CascadeBlock(list(self.model.layer7))
         else:
             self.model = torchvision.models.resnet50(pretrained=True)
 
@@ -130,7 +133,7 @@ class AtrousResNet(nn.Module):
         for i in range(1, blocks):
             layers.append(block(self.inplanes, planes, dilation=dilation, conv=self.conv, norm=self._make_norm))
 
-        return Block(layers)
+        return nn.Sequential(*layers)
 
     def _make_norm(self, planes, momentum=0.05):
         return nn.BatchNorm2d(planes, momentum=momentum) if self.num_groups is None \
@@ -153,7 +156,7 @@ class AtrousResNet(nn.Module):
         return x
 
 
-class Block(nn.Module):
+class CascadeBlock(nn.Module):
 
     def __init__(self, layers):
         super().__init__()
