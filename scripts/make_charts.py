@@ -1628,18 +1628,35 @@ sns.set_theme()
 # plt.savefig("graphs/Imagenet_Subsets/HalfPearson-pval.png")
 # plt.clf()
 
-make_csv()
-data = pandas.read_csv("results.csv")
-data = data.set_index("Encoder")
-swav_is_better = {}
-for task in ALL_TASKS:
-    if task == "Imagenetv2":
-        continue
-    swav_is_better[task] = data.loc["Supervised"][task] < data.loc["SWAV_800"][task]
+# make_csv()
+# data = pandas.read_csv("results.csv")
+# data = data.set_index("Encoder")
+# swav_is_better = {}
+# for task in ALL_TASKS:
+#     if task == "Imagenetv2":
+#         continue
+#     swav_is_better[task] = data.loc["Supervised"][task] < data.loc["SWAV_800"][task]
+#
+# k = len([val for val in swav_is_better.values() if val])
+# n = len(swav_is_better)
+# p = 0.5
+# print("SWAV is better in %d/%d tasks" % (k, n))
+# print("the p-value is:", scipy.stats.binom_test(k, n=n, p=p, alternative='greater'))
+#
 
-k = len([val for val in swav_is_better.values() if val])
-n = len(swav_is_better)
-p = 0.5
-print("SWAV is better in %d/%d tasks" % (k, n))
-print("the p-value is:", scipy.stats.binom_test(k, n=n, p=p, alternative='greater'))
-
+data = [
+    {"Encoder": "SWAV_800", "CityscapesSemanticSegmentation": 0.6589},
+    {"Encoder": "SWAV_200", "CityscapesSemanticSegmentation": 0.6321},
+    {"Encoder": "MoCov2_800", "CityscapesSemanticSegmentation": 0.629},
+    {"Encoder": "MoCov2_200", "CityscapesSemanticSegmentation": 0.622},
+    {"Encoder": "Supervised", "CityscapesSemanticSegmentation": 0.6103},
+    {"Encoder": "SWAVPlaces", "CityscapesSemanticSegmentation": 0.6101},
+    {"Encoder": "SWAVTaskonomy", "CityscapesSemanticSegmentation": 0.609},
+    {"Encoder": "SWAVCombination", "CityscapesSemanticSegmentation": 0.5901},
+    {"Encoder": "MoCov2Places", "CityscapesSemanticSegmentation": 0.571},
+    {"Encoder": "MoCov2Taskonomy", "CityscapesSemanticSegmentation": 0.5682},
+    {"Encoder": "MoCov2Combination", "CityscapesSemanticSegmentation": 0.5601},
+]
+data = pandas.DataFrame(data)
+sns.barplot(y="Encoder", x="CityscapesSemanticSegmentation", data=data)
+plt.show()

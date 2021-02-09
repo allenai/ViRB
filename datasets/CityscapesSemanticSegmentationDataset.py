@@ -99,15 +99,15 @@ class CityscapesSemanticSegmentationDataset:
             label = Image.open(self.labels[idx]).convert('I')
             ogw, ogh = img.size
 
-            # Sclae the image
-            scale = random.uniform(0.5, 2.0)
-            img = img.resize((int(ogw * scale), int(ogh * scale)))
-            label = label.resize((int(ogw * scale), int(ogh * scale)), resample=Image.NEAREST)
-
-            # Mirror the image half of the time
-            if random.uniform(0, 1) > 0.5:
-                img = ImageOps.mirror(img)
-                label = ImageOps.mirror(label)
+            # # Sclae the image
+            # scale = random.uniform(0.5, 2.0)
+            # img = img.resize((int(ogw * scale), int(ogh * scale)))
+            # label = label.resize((int(ogw * scale), int(ogh * scale)), resample=Image.NEAREST)
+            #
+            # # Mirror the image half of the time
+            # if random.uniform(0, 1) > 0.5:
+            #     img = ImageOps.mirror(img)
+            #     label = ImageOps.mirror(label)
 
             # Add random crop to image
             cw = 513  # random.randint(200, ogw)
