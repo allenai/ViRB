@@ -83,18 +83,18 @@ class AtrousResNet(nn.Module):
         self.layer1 = self._make_layer(block, 64, layers[0])
         self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
-        l4_inplanes = self.inplanes
+        # l4_inplanes = self.inplanes
         self.layer4 = self._make_layer(block, 512, layers[3], stride=1,
                                        dilation=2)
-        self.inplanes = l4_inplanes
-        self.layer5 = self._make_layer(block, 512, layers[4], stride=1,
-                                       dilation=4)
-        self.inplanes = l4_inplanes
-        self.layer6 = self._make_layer(block, 512, layers[5], stride=1,
-                                       dilation=8)
-        self.inplanes = l4_inplanes
-        self.layer7 = self._make_layer(block, 512, layers[6], stride=1,
-                                       dilation=16)
+        # self.inplanes = l4_inplanes
+        # self.layer5 = self._make_layer(block, 512, layers[4], stride=1,
+        #                                dilation=4)
+        # self.inplanes = l4_inplanes
+        # self.layer6 = self._make_layer(block, 512, layers[5], stride=1,
+        #                                dilation=8)
+        # self.inplanes = l4_inplanes
+        # self.layer7 = self._make_layer(block, 512, layers[6], stride=1,
+        #                                dilation=16)
 
         for m in self.modules():
             if isinstance(m, self.conv):
