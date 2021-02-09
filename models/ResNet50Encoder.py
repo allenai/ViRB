@@ -10,17 +10,9 @@ class ResNet50Encoder(nn.Module):
         super().__init__()
         if weights:
             # self.model = torchvision.models.resnet50(pretrained=False)
-            self.model = AtrousResNet(Bottleneck, [3, 4, 6, 3, 3, 3, 3])
+            self.model = AtrousResNet(Bottleneck, [3, 4, 6, 3])
             weight_dict = torch.load(weights, map_location="cpu")
-            for name, weight in list(weight_dict.items()):
-                if 'layer4' in name:
-                    weight_dict[name.replace("layer4", "layer5")] = weight
-                    weight_dict[name.replace("layer4", "layer6")] = weight
-                    weight_dict[name.replace("layer4", "layer7")] = weight
             self.load_state_dict(weight_dict, strict=False)
-            self.model.layer5 = CascadeBlock(list(self.model.layer5))
-            self.model.layer6 = CascadeBlock(list(self.model.layer6))
-            self.model.layer7 = CascadeBlock(list(self.model.layer7))
         else:
             self.model = torchvision.models.resnet50(pretrained=True)
 
@@ -45,12 +37,7 @@ class ResNet50Encoder(nn.Module):
         x = self.model.layer3(x)
 
         res["layer4"] = x
-        # x = self.model.layer4(x)
-        x4 = self.model.layer4(x)
-        x5 = self.model.layer5(x, x_cas=x4)
-        x6 = self.model.layer6(x, x_cas=x5)
-        x7 = self.model.layer7(x, x_cas=x6)
-        x = x7
+        x = self.model.layer4(x)
 
         res["layer5"] = x
 
@@ -153,21 +140,6 @@ class AtrousResNet(nn.Module):
         x = self.aspp(x)
         x = nn.Upsample(size, mode='bilinear', align_corners=True)(x)
         return x
-
-
-class CascadeBlock(nn.Module):
-
-    def __init__(self, layers):
-        super().__init__()
-        self.downscale = layers[0]
-        self.rest = nn.Sequential(*layers[1:])
-
-    def forward(self, x, x_cas=None):
-        out = self.downscale(x)
-        if x_cas is not None:
-            out += x_cas
-        out = self.rest(out)
-        return out
 
 
 class Bottleneck(nn.Module):
