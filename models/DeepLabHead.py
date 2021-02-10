@@ -147,7 +147,7 @@ class CascadeBlock(nn.Module):
                                     conv=self.conv, norm=self._make_norm)
         inplanes = planes * block.expansion
         self.conv = nn.Sequential(
-            block(inplanes, planes, dilation=dilation, conv=self.conv, norm=self._make_norm),
+            block(inplanes, planes, dilation=dilation*2, conv=self.conv, norm=self._make_norm),
             block(inplanes, planes, dilation=dilation, conv=self.conv, norm=self._make_norm)
         )
 
