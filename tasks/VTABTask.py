@@ -119,8 +119,7 @@ class VTABTask:
             with open(out_dir+"/results.json", "w") as f:
                 json.dump(data, f)
 
-
-    def train_epoch(self, model, optimizer):
+    def train_epoch(self, model, optimizer, scheduler=None):
         model.train()
         train_losses = []
         train_errors = []
@@ -138,6 +137,8 @@ class VTABTask:
                 optimizer.step()
                 train_error = self.error(out, label)
                 train_errors.append(train_error.item() * num_samples_in_batch)
+                if scheduler is not None:
+                    scheduler.step()
             return np.sum(train_losses) / num_samples, np.sum(train_errors) / num_samples
         for x, label in self.train_dataloader:
             num_samples_in_batch = x[list(x.keys())[0]].size(0)
@@ -150,6 +151,8 @@ class VTABTask:
             optimizer.step()
             train_error = self.error(out, label)
             train_errors.append(train_error.item() * num_samples_in_batch)
+            if scheduler is not None:
+                scheduler.step()
         return np.sum(train_losses) / num_samples, np.sum(train_errors) / num_samples
 
     def test(self, model):
