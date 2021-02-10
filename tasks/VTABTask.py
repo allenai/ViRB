@@ -23,7 +23,7 @@ class VTABTask:
             error,
             out_dir,
             logging_queue,
-            batch_size=16,
+            batch_size=32,
             num_workers=12,
             device="cpu",
             pre_encode=None,
@@ -83,12 +83,16 @@ class VTABTask:
                     # "Training %s on %s with config %s" % (self.name, self.task, config["name"]),
                     # self.logging_queue, self.device
             ):
-                train_loss, train_accuracy = self.train_epoch(config["model"], config["optimizer"])
+                train_loss, train_accuracy = self.train_epoch(
+                    config["model"], config["optimizer"],
+                    scheduler=config["scheduler"] if "scheduler" in config and
+                                                     config["scheduler_unit"] == "batch" else None
+                )
                 test_loss, test_accuracy = self.test(config["model"])
                 writer.add_scalar("TrainLoss/"+self.task, train_loss, e)
                 writer.add_scalar("TrainAccuracy/" + self.task, train_accuracy, e)
                 writer.add_scalar("TestAccuracy/"+self.task, test_accuracy, e)
-                if "scheduler" in config and config["scheduler"] is not None:
+                if "scheduler" in config and config["scheduler_unit"] == "epoch" and config["scheduler"] is not None:
                     config["scheduler"].step()
                 data = {
                     "train_loss": train_loss,

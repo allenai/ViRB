@@ -167,15 +167,23 @@ def get_optimizer(config, model):
             return torch.optim.SGD(model.parameters(), lr=config["lr"])
 
 
-def get_scheduler(config, optimizer):
+def get_scheduler(config, full_config, optimizer, trainset):
     if "scheduler" not in config:
-        return None
+        return None, None
     if config["scheduler"]["type"] == "StepLR":
         return torch.optim.lr_scheduler.StepLR(
             optimizer,
             config["scheduler"]["step_size"],
             gamma=config["scheduler"]["gamma"]
-        )
+        ), "epochs"
+    if config["scheduler"]["type"] == "Poly":
+        num_epochs = full_config["num_epochs"]
+        batches_per_epoch = len(trainset) // full_config["batch_size"]
+        num_batches = num_epochs * batches_per_epoch
+        return torch.optim.lr_scheduler.LambdaLR(
+            optimizer,
+            lambda x: (1 - (x/num_batches))**config["scheduler"]["exponent"]
+        ), "batches"
 
 
 def get_loss_function(config):
@@ -221,12 +229,13 @@ def run_VTAB_task(config, logging_queue):
             task_head = get_task_head(config, trainset)
             model = VTABModel(encoder, task_head, train_encoder=config["train_encoder"])
             optimizer = get_optimizer(tc, model)
-            scheduler = get_scheduler(tc, optimizer)
+            scheduler, scheduler_unit = get_scheduler(tc, config, optimizer, trainset)
             training_configs.append({
                 "name": tc_name,
                 "model": model,
                 "optimizer": optimizer,
-                "scheduler": scheduler
+                "scheduler": scheduler,
+                "scheduler_unit": scheduler_unit
             })
     pre_encode = config["pre_encode"] if "pre_encode" in config else None
     num_dataset_repeats = config["num_dataset_repeats"] if "num_dataset_repeats" in config else 1
@@ -244,6 +253,7 @@ def run_VTAB_task(config, logging_queue):
         device=config["device_id"],
         pre_encode=pre_encode,
         num_dataset_repeats=num_dataset_repeats,
+        batch_size=config["batch_size"] if "batch_size" in config else None
     )
     if "task_head_weights_path" in config:
         path = config["task_head_weights_path"] % config["experiment_name"]
