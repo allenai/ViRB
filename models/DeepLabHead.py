@@ -41,8 +41,8 @@ class DeepLabHead(nn.Module):
         self.block5.load_state_dict(renamed_weights)
         self.block6 = CascadeBlock(Bottleneck, 512, 1024, 3, stride=1, dilation=8)
         self.block6.load_state_dict(renamed_weights)
-        self.block7 = CascadeBlock(Bottleneck, 512, 1024, 3, stride=1, dilation=16)
-        self.block7.load_state_dict(renamed_weights)
+        # self.block7 = CascadeBlock(Bottleneck, 512, 1024, 3, stride=1, dilation=16)
+        # self.block7.load_state_dict(renamed_weights)
 
     def forward(self, x):
         l2_size = tuple(x["layer2"].shape[-2:])
@@ -52,7 +52,7 @@ class DeepLabHead(nn.Module):
         x_backbone = self.block4(x["layer4"])
         x_backbone = self.block5(x["layer4"], backbone=x_backbone)
         x_backbone = self.block6(x["layer4"], backbone=x_backbone)
-        x_backbone = self.block7(x["layer4"], backbone=x_backbone)
+        # x_backbone = self.block7(x["layer4"], backbone=x_backbone)
 
         x_aspp = self.aspp(x_backbone)
         x_aspp = nn.Upsample(l2_size, mode='bilinear', align_corners=True)(x_aspp)
@@ -122,20 +122,35 @@ class CascadeBlock(nn.Module):
     def __init__(self, block, planes, inplanes, blocks, stride=1, dilation=1):
         super(CascadeBlock, self).__init__()
         self.conv = nn.Conv2d
-        downsample = None
-        if stride != 1 or dilation != 1 or inplanes != planes * block.expansion:
-            downsample = nn.Sequential(
-                self.conv(inplanes, planes * block.expansion,
-                          kernel_size=1, stride=stride, dilation=max(1, dilation // 2), bias=False),
-                self._make_norm(planes * block.expansion),
-            )
-        layers = []
-        self.upsample_layer = block(inplanes, planes, stride, downsample, dilation=max(1, dilation // 2),
-                                conv=self.conv, norm=self._make_norm)
+        # downsample = None
+        # if stride != 1 or dilation != 1 or inplanes != planes * block.expansion:
+        #     downsample = nn.Sequential(
+        #         self.conv(inplanes, planes * block.expansion,
+        #                   kernel_size=1, stride=stride, dilation=max(1, dilation // 2), bias=False),
+        #         self._make_norm(planes * block.expansion),
+        #     )
+        #
+        # layers = []
+        # self.upsample_layer = block(inplanes, planes, stride, downsample, dilation=max(1, dilation // 2),
+        #                         conv=self.conv, norm=self._make_norm)
+        # inplanes = planes * block.expansion
+        # for i in range(1, blocks):
+        #     layers.append(block(inplanes, planes, dilation=dilation, conv=self.conv, norm=self._make_norm))
+        # self.conv = nn.Sequential(*layers)
+
+        downsample = nn.Sequential(
+            self.conv(inplanes, planes*block.expansion, kernel_size=1, stride=stride,
+                      dilation=dilation, bias=False),
+            self._make_norm(planes * block.expansion),
+        )
+        self.upsample_layer = block(inplanes, planes, stride, downsample, dilation=dilation,
+                                    conv=self.conv, norm=self._make_norm)
         inplanes = planes * block.expansion
-        for i in range(1, blocks):
-            layers.append(block(inplanes, planes, dilation=dilation, conv=self.conv, norm=self._make_norm))
-        self.conv = nn.Sequential(*layers)
+        self.conv = nn.Sequential(
+            block(inplanes, planes, dilation=dilation*2, conv=self.conv, norm=self._make_norm),
+            block(inplanes, planes, dilation=dilation, conv=self.conv, norm=self._make_norm)
+        )
+
 
     def forward(self, x, backbone=None):
         out = self.upsample_layer(x)
