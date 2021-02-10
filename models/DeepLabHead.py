@@ -2,12 +2,14 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from models.ResNet50Encoder import Bottleneck
+
 
 class DeepLabHead(nn.Module):
 
-    def __init__(self, num_classes):
+    def __init__(self, num_classes, encoder):
         super().__init__()
-        self.aspp = ASPP(2048, 256, num_classes)
+        self.aspp = ASPP(2048, 256)
         self.low_level_feature_reducer = nn.Sequential(
             nn.Conv2d(256, 48, 1),
             nn.BatchNorm2d(48, momentum=0.0003),
@@ -22,11 +24,34 @@ class DeepLabHead(nn.Module):
             nn.ReLU(),
             nn.Conv2d(256, num_classes, 3, padding=1),
         )
+        block4_weights = encoder.model.layer4.state_dict()
+        renamed_weights = {}
+        for name, weight in block4_weights.items():
+            if name[:2] == "0.":
+                name = "upsample_layer." + name[2:]
+            elif name[:2] == "1.":
+                name = "conv.0." + name[2:]
+            elif name[:2] == "2.":
+                name = "conv.1." + name[2:]
+            renamed_weights[name] = weight
+
+        self.block5 = CascadeBlock(Bottleneck, 512, 1024, 3, stride=1, dilation=4)
+        self.block5.load_state_dict(renamed_weights)
+        self.block6 = CascadeBlock(Bottleneck, 512, 1024, 3, stride=1, dilation=8)
+        self.block6.load_state_dict(renamed_weights)
+        self.block7 = CascadeBlock(Bottleneck, 512, 1024, 3, stride=1, dilation=16)
+        self.block7.load_state_dict(renamed_weights)
 
     def forward(self, x):
         l2_size = tuple(x["layer2"].shape[-2:])
         label_size = tuple(x["img"].shape[-2:])
-        x_aspp = self.aspp(x["layer5"])
+
+        #x_backbone = x["layer5"]
+        x_backbone = self.block5(x["layer5"], x["layer4"])
+        x_backbone = self.block5(x_backbone, x["layer4"])
+        x_backbone = self.block5(x_backbone, x["layer4"])
+
+        x_aspp = self.aspp(x_backbone)
         x_aspp = nn.Upsample(l2_size, mode='bilinear', align_corners=True)(x_aspp)
         x = torch.cat((self.low_level_feature_reducer(x["layer2"]), x_aspp), dim=1)
         x = self.decoder(x)
@@ -36,11 +61,10 @@ class DeepLabHead(nn.Module):
 
 class ASPP(nn.Module):
 
-    def __init__(self, C, depth, num_classes, conv=nn.Conv2d, norm=nn.BatchNorm2d, momentum=0.0003, mult=1):
+    def __init__(self, C, depth, conv=nn.Conv2d, norm=nn.BatchNorm2d, momentum=0.0003, mult=1):
         super(ASPP, self).__init__()
         self._C = C
         self._depth = depth
-        self._num_classes = num_classes
 
         self.global_pooling = nn.AdaptiveAvgPool2d(1)
         self.relu = nn.ReLU(inplace=True)
@@ -63,7 +87,6 @@ class ASPP(nn.Module):
         self.conv2 = conv(depth * 5, depth, kernel_size=1, stride=1,
                                bias=False)
         self.bn2 = norm(depth, momentum)
-        self.conv3 = nn.Conv2d(depth, num_classes, kernel_size=1, stride=1)
 
     def forward(self, x):
         x1 = self.aspp1(x)
@@ -88,7 +111,34 @@ class ASPP(nn.Module):
         x = self.conv2(x)
         x = self.bn2(x)
         x = self.relu(x)
-        # x = self.conv3(x)
-
         return x
 
+
+class CascadeBlock(nn.Module):
+
+    def __init__(self, block, planes, inplanes, blocks, stride=1, dilation=1):
+        super(CascadeBlock, self).__init__()
+        self.conv = nn.Conv2d
+        downsample = None
+        if stride != 1 or dilation != 1 or inplanes != planes * block.expansion:
+            downsample = nn.Sequential(
+                self.conv(inplanes, planes * block.expansion,
+                          kernel_size=1, stride=stride, dilation=max(1, dilation // 2), bias=False),
+                self._make_norm(planes * block.expansion),
+            )
+        layers = []
+        self.upsample_layer = block(inplanes, planes, stride, downsample, dilation=max(1, dilation // 2),
+                                conv=self.conv, norm=self._make_norm)
+        inplanes = planes * block.expansion
+        for i in range(1, blocks):
+            layers.append(block(inplanes, planes, dilation=dilation, conv=self.conv, norm=self._make_norm))
+        self.conv = nn.Sequential(*layers)
+
+    def forward(self, x, block3):
+        x = self.upsample_layer(x)
+        x += block3
+        x = self.conv(x)
+        return x
+
+    def _make_norm(self, planes, momentum=0.05):
+        return nn.BatchNorm2d(planes, momentum=momentum)
