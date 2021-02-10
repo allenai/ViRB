@@ -48,8 +48,8 @@ class DeepLabHead(nn.Module):
 
         #x_backbone = x["layer5"]
         x_backbone = self.block5(x["layer5"], x["layer4"])
-        x_backbone = self.block5(x_backbone, x["layer4"])
-        x_backbone = self.block5(x_backbone, x["layer4"])
+        x_backbone = self.block6(x_backbone, x["layer4"])
+        x_backbone = self.block7(x_backbone, x["layer4"])
 
         x_aspp = self.aspp(x_backbone)
         x_aspp = nn.Upsample(l2_size, mode='bilinear', align_corners=True)(x_aspp)
@@ -135,10 +135,10 @@ class CascadeBlock(nn.Module):
         self.conv = nn.Sequential(*layers)
 
     def forward(self, x, block3):
-        x = self.upsample_layer(x)
-        x += block3
-        x = self.conv(x)
-        return x
+        out = self.upsample_layer(block3)
+        out += x
+        out = self.conv(out)
+        return out
 
     def _make_norm(self, planes, momentum=0.05):
         return nn.BatchNorm2d(planes, momentum=momentum)
