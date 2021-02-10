@@ -136,7 +136,7 @@ class CascadeBlock(nn.Module):
 
     def forward(self, x, block3):
         out = self.upsample_layer(block3)
-        out += x
+        out = out + x
         out = self.conv(out)
         return out
 
