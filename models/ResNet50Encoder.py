@@ -9,8 +9,8 @@ class ResNet50Encoder(nn.Module):
     def __init__(self, weights=None):
         super().__init__()
         if weights:
-            # self.model = torchvision.models.resnet50(pretrained=False)
-            self.model = AtrousResNet(Bottleneck, [3, 4, 6, 3])
+            self.model = torchvision.models.resnet50(pretrained=False)
+            # self.model = AtrousResNet(Bottleneck, [3, 4, 6, 3])
             weight_dict = torch.load(weights, map_location="cpu")
             self.load_state_dict(weight_dict, strict=False)
         else:
@@ -41,9 +41,9 @@ class ResNet50Encoder(nn.Module):
 
         res["layer5"] = x
 
-        # x = self.model.avgpool(x)
-        # x = torch.flatten(x, 1)
-        # res["embedding"] = x
+        x = self.model.avgpool(x)
+        x = torch.flatten(x, 1)
+        res["embedding"] = x
 
         if original_batch_size != x.size(0):
             for name, layer in res.items():

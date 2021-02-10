@@ -35,6 +35,8 @@ class DeepLabHead(nn.Module):
                 name = "conv.1." + name[2:]
             renamed_weights[name] = weight
 
+        self.block4 = CascadeBlock(Bottleneck, 512, 1024, 3, stride=1, dilation=2)
+        self.block4.load_state_dict(renamed_weights)
         self.block5 = CascadeBlock(Bottleneck, 512, 1024, 3, stride=1, dilation=4)
         self.block5.load_state_dict(renamed_weights)
         self.block6 = CascadeBlock(Bottleneck, 512, 1024, 3, stride=1, dilation=8)
@@ -47,9 +49,10 @@ class DeepLabHead(nn.Module):
         label_size = tuple(x["img"].shape[-2:])
 
         #x_backbone = x["layer5"]
-        x_backbone = self.block5(x["layer5"], x["layer4"])
-        x_backbone = self.block6(x_backbone, x["layer4"])
-        x_backbone = self.block7(x_backbone, x["layer4"])
+        x_backbone = self.block4(x["layer4"])
+        x_backbone = self.block5(x["layer4"], backbone=x_backbone)
+        x_backbone = self.block6(x["layer4"], backbone=x_backbone)
+        x_backbone = self.block7(x["layer4"], backbone=x_backbone)
 
         x_aspp = self.aspp(x_backbone)
         x_aspp = nn.Upsample(l2_size, mode='bilinear', align_corners=True)(x_aspp)
@@ -134,9 +137,10 @@ class CascadeBlock(nn.Module):
             layers.append(block(inplanes, planes, dilation=dilation, conv=self.conv, norm=self._make_norm))
         self.conv = nn.Sequential(*layers)
 
-    def forward(self, x, block3):
-        out = self.upsample_layer(block3)
-        out = out + x
+    def forward(self, x, backbone=None):
+        out = self.upsample_layer(x)
+        if backbone is not None:
+            out = out + backbone
         out = self.conv(out)
         return out
 
