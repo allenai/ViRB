@@ -14,7 +14,7 @@ class KineticsActionPredictionDataset:
             json_data = json.load(f)
         self.cats = list(set(d["annotations"]["label"] for d in json_data.values()))
         self.cats.sort()
-        self.root = 'data/kinetics400/%s' % 'validate' if train else 'validate'
+        self.root = 'data/kinetics400/%s' % ('validate' if train else 'validate')
         self.data = []
         for img, data in json_data.items():
             imgs = glob.glob("%s/%s/%s_*" % (self.root, img[:2], img))
