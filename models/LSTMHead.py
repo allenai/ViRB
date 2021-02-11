@@ -27,3 +27,6 @@ class LSTMHead(nn.Module):
     def forward(self, x):
         x = self.head(x)
         return x
+
+    def required_encoding(self):
+        return ["embedding"]
