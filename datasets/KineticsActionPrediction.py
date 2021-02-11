@@ -37,7 +37,7 @@ class KineticsActionPredictionDataset:
         imgs = []
         for img_name in img_names:
             imgs.append(self.preprocessor(Image.open(img_name).convert('RGB')))
-        return torch.stack(imgs, dim=0), action
+        return torch.stack(imgs, dim=0), torch.tensor(action).long()
 
     def __len__(self):
         return len(self.data)
