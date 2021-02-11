@@ -168,7 +168,7 @@ def get_task_head(config, dataset):
             dataset.num_classes(),
             6
         )
-
+    
 
 def get_optimizer(config, model):
     if config["optimizer"].lower() == "adam":
