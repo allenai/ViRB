@@ -17,7 +17,7 @@ class KineticsActionPredictionDataset:
         self.root = 'data/kinetics400/%s' % 'train' if train else 'val'
         self.data = []
         for img, data in json_data.items():
-            imgs = glob.glob("%s/*/%s_*" % (self.root, img))
+            imgs = glob.glob("%s/%s/%s_*" % (self.root, img[:2], img))
             if len(imgs) >= 6:
                 imgs = imgs[:6]
                 imgs.sort()
