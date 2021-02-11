@@ -12,16 +12,16 @@ class KineticsActionPredictionDataset:
         super().__init__()
         with open('data/kinetics400/annotations/%s.json' % ('train' if train else 'val')) as f:
             json_data = json.load(f)
-        self.cats = list(set(d["annotations"]["label"] for d in json_data))
+        self.cats = list(set(d["annotations"]["label"] for d in json_data.values()))
         self.cats.sort()
         self.root = 'data/kinetics400/%s' % 'train' if train else 'val'
         self.data = []
-        for img, ann in json_data.items():
+        for img, data in json_data.items():
             imgs = len(glob.glob("%s/*/%s_*" % (self.root, img)))
             if imgs >= 6:
                 imgs = imgs[:6]
                 imgs.sort()
-                self.data.append((imgs, self.cats.index(ann["label"])))
+                self.data.append((imgs, self.cats.index(data["annotations"]["label"])))
         self.preprocessor = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
