@@ -35,6 +35,9 @@ CLASSIFICATION_TASKS = [
     "THORNumSteps",
     "THORActionPrediction"
 ]
+RNN_CLASSIFICATION_TASKS = [
+    "KineticsActionPrediction"
+]
 SEMANTIC_SEGMENTATION = [
     "CityscapesSemanticSegmentation"
 ]
@@ -119,6 +122,9 @@ def get_dataset_class(config):
     if config["task"] == "TaskonomyDepth":
         from datasets.TaskonomyDepthEncodbleDataset import TaskonomyDepthEncodableDataset
         return TaskonomyDepthEncodableDataset
+    if config["task"] == "KineticsActionPrediction":
+        from datasets.KineticsActionPrediction import KineticsActionPredictionDataset
+        return KineticsActionPredictionDataset
 
 
 def get_task_head(config, dataset):
@@ -155,6 +161,9 @@ def get_task_head(config, dataset):
         return DeepLabHead(dataset.num_classes(), config["encoder"])
         # from models.PixelWisePredictionHead import PixelWisePredictionHead
         # return PixelWisePredictionHead(dataset.num_classes())
+    if config["task"] in RNN_CLASSIFICATION_TASKS:
+        from models.LSTMHead import LSTMHead
+        return LSTMHead(dataset.num_classes())
 
 
 def get_optimizer(config, model):
@@ -198,6 +207,8 @@ def get_loss_function(config):
         return torch.nn.L1Loss()
     if config["task"] in CLASSIFICATION_TASKS:
         return torch.nn.CrossEntropyLoss()
+    if config["task"] in RNN_CLASSIFICATION_TASKS:
+        return torch.nn.CrossEntropyLoss()
     if config["task"] in BINARY_PIXEL_WISE_CLASSIFICATION:
         return torch.nn.BCEWithLogitsLoss()
 
@@ -206,6 +217,9 @@ def get_error_function(config):
     if config["task"] in PIXEL_WISE_REGRESSION:
         return torch.nn.L1Loss()
     if config["task"] in CLASSIFICATION_TASKS:
+        from utils.error_functions import classification_error
+        return classification_error
+    if config["task"] in RNN_CLASSIFICATION_TASKS:
         from utils.error_functions import classification_error
         return classification_error
     if config["task"] in BINARY_PIXEL_WISE_CLASSIFICATION:
