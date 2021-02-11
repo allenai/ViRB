@@ -321,3 +321,4 @@ KineticsActionPrediction:
       optimizer: "adam"
       lr: 0.0003
   num_epochs: 100
+  batch_size: 32
