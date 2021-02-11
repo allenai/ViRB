@@ -162,8 +162,12 @@ def get_task_head(config, dataset):
         # from models.PixelWisePredictionHead import PixelWisePredictionHead
         # return PixelWisePredictionHead(dataset.num_classes())
     if config["task"] in RNN_CLASSIFICATION_TASKS:
-        from models.LSTMHead import LSTMHead
-        return LSTMHead(dataset.num_classes())
+        from models.MultiEmbeddingClassificationHead import MultiEmbeddingClassificationHead
+        return MultiEmbeddingClassificationHead(
+            config["encoder"].outputs()["embedding"][0],
+            dataset.num_classes(),
+            6
+        )
 
 
 def get_optimizer(config, model):
