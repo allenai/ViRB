@@ -194,6 +194,7 @@ def get_scheduler(config, full_config, optimizer, trainset):
             optimizer,
             config["lr"],
             epochs=full_config["num_epochs"],
+            steps_per_epoch=1,
             anneal_strategy='linear'
         ), "epochs"
     if config["scheduler"]["type"] == "Poly":
