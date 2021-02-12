@@ -189,6 +189,13 @@ def get_scheduler(config, full_config, optimizer, trainset):
             config["scheduler"]["step_size"],
             gamma=config["scheduler"]["gamma"]
         ), "epochs"
+    if config["scheduler"]["type"] == "Linear":
+        return torch.optim.lr_scheduler.OneCycleLR(
+            optimizer,
+            config["lr"],
+            epochs=full_config["num_epochs"],
+            anneal_strategy='linear'
+        ), "epochs"
     if config["scheduler"]["type"] == "Poly":
         num_epochs = full_config["num_epochs"]
         batches_per_epoch = len(trainset) // full_config["batch_size"]

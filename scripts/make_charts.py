@@ -161,6 +161,7 @@ EMBEDDING_SEMANTIC_TASKS = [
     "Eurosat",
     "dtd",
     "SUN397",
+    "KineticsActionPrediction"
 ]
 EMBEDDING_STRUCTURAL_TASKS = [
     "CLEVERNumObjects",
@@ -383,24 +384,25 @@ def make_csv():
 
 
 ### BIG TABLE
-# data = pandas.read_csv("results.csv")
-# data = data.set_index("Encoder")
-# sns.set_theme()
-# colors = sns.color_palette()
-# palette = {method: colors[i] for i, method in enumerate(set(data["Method"]))}
-# for task in ALL_TASKS:
-#     plt.figure(figsize=(20, 10))
-#     data = pandas.read_csv("results.csv")
-#     results = data.sort_values(task, ascending=False).reset_index()
-#     g = sns.barplot(x=task, y="Encoder", hue="Method", data=results, dodge=False, palette=palette)
-#     sign = 1.0 if results[task][1] >= 0 else -1.0
-#     for _, data in results.iterrows():
-#         g.text(data[task] - (sign * 0.08), data.name + 0.12, round(data[task], 4), color='white', ha="center", size=10, weight='bold')
-#     plt.title("%s Test Results" % task)
-#     plt.xlabel("Test Performance")
-#     #plt.show()
-#     plt.savefig("graphs/task_by_task/%s-test-results-subtracted.png" % task, dpi=100)
-#     plt.clf()
+make_csv()
+data = pandas.read_csv("results.csv")
+data = data.set_index("Encoder")
+sns.set_theme()
+colors = sns.color_palette()
+palette = {method: colors[i] for i, method in enumerate(set(data["Method"]))}
+for task in ALL_TASKS:
+    plt.figure(figsize=(20, 10))
+    data = pandas.read_csv("results.csv")
+    results = data.sort_values(task, ascending=False).reset_index()
+    g = sns.barplot(x=task, y="Encoder", hue="Method", data=results, dodge=False, palette=palette)
+    sign = 1.0 if results[task][1] >= 0 else -1.0
+    for _, data in results.iterrows():
+        g.text(data[task] - (sign * 0.08), data.name + 0.12, round(data[task], 4), color='white', ha="center", size=10, weight='bold')
+    plt.title("%s Test Results" % task)
+    plt.xlabel("Test Performance")
+    #plt.show()
+    plt.savefig("graphs/task_by_task/%s-test-results-subtracted.png" % task, dpi=100)
+    plt.clf()
 
 # values = []
 # structural_values = []
@@ -1644,24 +1646,24 @@ sns.set_theme()
 # print("the p-value is:", scipy.stats.binom_test(k, n=n, p=p, alternative='greater'))
 #
 
-data = [
-    {"Encoder": "SWAV_800", "KineticsActionPrediction": 0.6589},
-    {"Encoder": "SWAV_200", "KineticsActionPrediction": 0.6321},
-    {"Encoder": "MoCov2_800", "KineticsActionPrediction": 0.629},
-    {"Encoder": "MoCov2_200", "KineticsActionPrediction": 0.622},
-    {"Encoder": "Supervised", "KineticsActionPrediction": 0.6103},
-    {"Encoder": "SWAVPlaces", "KineticsActionPrediction": 0.6101},
-    {"Encoder": "SWAVTaskonomy", "KineticsActionPrediction": 0.609},
-    {"Encoder": "SWAVKinetics", "KineticsActionPrediction": 0.609},
-    {"Encoder": "SWAVCombination", "KineticsActionPrediction": 0.5901},
-    {"Encoder": "MoCov2Places", "KineticsActionPrediction": 0.571},
-    {"Encoder": "MoCov2Taskonomy", "KineticsActionPrediction": 0.5682},
-    {"Encoder": "MoCov2Combination", "KineticsActionPrediction": 0.5601},
-    {"Encoder": "MoCov2Kinetics", "KineticsActionPrediction": 0.609},
-]
-data = pandas.DataFrame(data)
-sns.barplot(y="Encoder", x="KineticsActionPrediction", data=data)
-plt.show()
+# data = [
+#     {"Encoder": "SWAV_800", "KineticsActionPrediction": 0.6589},
+#     {"Encoder": "SWAV_200", "KineticsActionPrediction": 0.6321},
+#     {"Encoder": "MoCov2_800", "KineticsActionPrediction": 0.629},
+#     {"Encoder": "MoCov2_200", "KineticsActionPrediction": 0.622},
+#     {"Encoder": "Supervised", "KineticsActionPrediction": 0.6103},
+#     {"Encoder": "SWAVPlaces", "KineticsActionPrediction": 0.6101},
+#     {"Encoder": "SWAVTaskonomy", "KineticsActionPrediction": 0.609},
+#     {"Encoder": "SWAVKinetics", "KineticsActionPrediction": 0.609},
+#     {"Encoder": "SWAVCombination", "KineticsActionPrediction": 0.5901},
+#     {"Encoder": "MoCov2Places", "KineticsActionPrediction": 0.571},
+#     {"Encoder": "MoCov2Taskonomy", "KineticsActionPrediction": 0.5682},
+#     {"Encoder": "MoCov2Combination", "KineticsActionPrediction": 0.5601},
+#     {"Encoder": "MoCov2Kinetics", "KineticsActionPrediction": 0.609},
+# ]
+# data = pandas.DataFrame(data)
+# sns.barplot(y="Encoder", x="KineticsActionPrediction", data=data)
+# plt.show()
 
 
 #

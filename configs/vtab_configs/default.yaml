@@ -317,8 +317,13 @@ KineticsActionPrediction:
   task: "KineticsActionPrediction"
   pre_encode: true
   training_configs:
-    adam-0.0003:
+#    adam-0.0003:
+#      optimizer: "adam"
+#      lr: 0.0003
+    adam-0.01:
       optimizer: "adam"
       lr: 0.0003
+      scheduler:
+        type: "Linear"
   num_epochs: 100
   batch_size: 32
