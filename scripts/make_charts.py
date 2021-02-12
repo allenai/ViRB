@@ -169,13 +169,13 @@ EMBEDDING_STRUCTURAL_TASKS = [
 ]
 PIXELWISE_SEMANTIC_TASKS = [
     "PetsDetection",
-    "CityscapesSemanticSegmentation"
+    #"CityscapesSemanticSegmentation"
 ]
 PIXELWISE_STRUCTURAL_TASKS = [
     "NYUDepth",
     "NYUWalkable",
     "THORDepth",
-    "TaskonomyDepth"
+    #"TaskonomyDepth"
 ]
 
 ALL_TASKS = EMBEDDING_SEMANTIC_TASKS + EMBEDDING_STRUCTURAL_TASKS + PIXELWISE_SEMANTIC_TASKS + PIXELWISE_STRUCTURAL_TASKS
@@ -1645,18 +1645,130 @@ sns.set_theme()
 #
 
 data = [
-    {"Encoder": "SWAV_800", "CityscapesSemanticSegmentation": 0.6589},
-    {"Encoder": "SWAV_200", "CityscapesSemanticSegmentation": 0.6321},
-    {"Encoder": "MoCov2_800", "CityscapesSemanticSegmentation": 0.629},
-    {"Encoder": "MoCov2_200", "CityscapesSemanticSegmentation": 0.622},
-    {"Encoder": "Supervised", "CityscapesSemanticSegmentation": 0.6103},
-    {"Encoder": "SWAVPlaces", "CityscapesSemanticSegmentation": 0.6101},
-    {"Encoder": "SWAVTaskonomy", "CityscapesSemanticSegmentation": 0.609},
-    {"Encoder": "SWAVCombination", "CityscapesSemanticSegmentation": 0.5901},
-    {"Encoder": "MoCov2Places", "CityscapesSemanticSegmentation": 0.571},
-    {"Encoder": "MoCov2Taskonomy", "CityscapesSemanticSegmentation": 0.5682},
-    {"Encoder": "MoCov2Combination", "CityscapesSemanticSegmentation": 0.5601},
+    {"Encoder": "SWAV_800", "KineticsActionPrediction": 0.6589},
+    {"Encoder": "SWAV_200", "KineticsActionPrediction": 0.6321},
+    {"Encoder": "MoCov2_800", "KineticsActionPrediction": 0.629},
+    {"Encoder": "MoCov2_200", "KineticsActionPrediction": 0.622},
+    {"Encoder": "Supervised", "KineticsActionPrediction": 0.6103},
+    {"Encoder": "SWAVPlaces", "KineticsActionPrediction": 0.6101},
+    {"Encoder": "SWAVTaskonomy", "KineticsActionPrediction": 0.609},
+    {"Encoder": "SWAVKinetics", "KineticsActionPrediction": 0.609},
+    {"Encoder": "SWAVCombination", "KineticsActionPrediction": 0.5901},
+    {"Encoder": "MoCov2Places", "KineticsActionPrediction": 0.571},
+    {"Encoder": "MoCov2Taskonomy", "KineticsActionPrediction": 0.5682},
+    {"Encoder": "MoCov2Combination", "KineticsActionPrediction": 0.5601},
+    {"Encoder": "MoCov2Kinetics", "KineticsActionPrediction": 0.609},
 ]
 data = pandas.DataFrame(data)
-sns.barplot(y="Encoder", x="CityscapesSemanticSegmentation", data=data)
+sns.barplot(y="Encoder", x="KineticsActionPrediction", data=data)
 plt.show()
+
+
+#
+#
+# ###### Number of data points vs performance
+# make_csv()
+# data = pandas.read_csv("results.csv")
+# data = data.set_index("Encoder")
+# data = data.loc[["SWAV_200", "MoCov2_200", "SWAVHalfIN", "MoCov2HalfIN", "SWAVUnbalancedIN", "MoCov2UnbalancedIN",
+#                  "SWAVQuarterIN", "MoCov2QuarterIN", "SWAVLogIN", "MoCov2LogIN"]]
+# # data = data.drop(["TaskonomyDepth", "CityscapesSemanticSegmentation"], axis=1)
+# sns.set_theme()
+#
+# n = len(ALL_TASKS)
+# spearman = np.zeros((n,1))
+# pearson = np.zeros((n,1))
+# spearman_pval = np.zeros((n,1))
+# pearson_pval = np.zeros((n,1))
+# for i in range(n):
+#     values_i = data[ALL_TASKS[i]]
+#     values_j = data["DatasetSize"]
+#     s, sp = scipy.stats.spearmanr(values_i, values_j)
+#     p, pp = scipy.stats.pearsonr(values_i, values_j)
+#     spearman[i] = s
+#     pearson[i] = p
+#     spearman_pval[i] = sp
+#     pearson_pval[i] = pp
+#
+# heatmap = np.concatenate((spearman, spearman_pval, pearson, pearson_pval), axis=1)
+#
+# plt.figure(figsize=(15, 15))
+# title = "Correlation Between Encoder Dataset Size and Test Performance"
+# plt.title(title)
+# ax = sns.heatmap(heatmap, annot=True)
+# ax.set_yticklabels(ALL_TASKS, rotation=0)
+# ax.set_xticklabels(["spearman", "spearman_pval", "pearson", "pearson_pval"], rotation=0)
+# plt.savefig("graphs/dataset_size/correlations.png")
+# plt.clf()
+#
+# ###### Number of epochs vs performance
+# data = pandas.read_csv("results.csv")
+# data = data.set_index("Encoder")
+# data = data.loc[["SWAV_800", "SWAV_200", "SWAV_50", "MoCov2_800", "MoCov2_200", "MoCov2_100", "MoCov2_50",
+#                  "SWAVHalfIN", "SWAVHalfIN_100", "MoCov2HalfIN", "MoCov2HalfIN_100",
+#                  "SWAVUnbalancedIN", "SWAVUnbalancedIN_100", "MoCov2UnbalancedIN", "SWAVUnbalancedIN_100",
+#                  "SWAVQuarterIN", "MoCov2QuarterIN", "SWAVLogIN", "MoCov2LogIN"]]
+# # data = data.drop(["TaskonomyDepth", "CityscapesSemanticSegmentation"], axis=1)
+# sns.set_theme()
+#
+# n = len(ALL_TASKS)
+# spearman = np.zeros((n,1))
+# pearson = np.zeros((n,1))
+# spearman_pval = np.zeros((n,1))
+# pearson_pval = np.zeros((n,1))
+# for i in range(n):
+#     values_i = data[ALL_TASKS[i]]
+#     values_j = data["Updates"]
+#     s, sp = scipy.stats.spearmanr(values_i, values_j)
+#     p, pp = scipy.stats.pearsonr(values_i, values_j)
+#     spearman[i] = s
+#     pearson[i] = p
+#     spearman_pval[i] = sp
+#     pearson_pval[i] = pp
+#
+# heatmap = np.concatenate((spearman, spearman_pval, pearson, pearson_pval), axis=1)
+#
+# plt.figure(figsize=(15, 15))
+# title = "Correlation Between Encoder Number of Updates and Test Performance"
+# plt.title(title)
+# ax = sns.heatmap(heatmap, annot=True)
+# ax.set_yticklabels(ALL_TASKS, rotation=0)
+# ax.set_xticklabels(["spearman", "spearman_pval", "pearson", "pearson_pval"], rotation=0)
+# plt.savefig("graphs/num_updates/correlations.png")
+# plt.clf()
+#
+# ###### Balanced vs performance
+# data = pandas.read_csv("results.csv")
+# data = data.set_index("Encoder")
+# data = data.loc[["SWAV_50", "MoCov2_100", "MoCov2_50",
+#                  "SWAVHalfIN", "SWAVHalfIN_100", "MoCov2HalfIN", "MoCov2HalfIN_100",
+#                  "SWAVUnbalancedIN", "SWAVUnbalancedIN_100", "MoCov2UnbalancedIN", "SWAVUnbalancedIN_100",
+#                  "SWAVQuarterIN", "MoCov2QuarterIN", "SWAVLogIN", "MoCov2LogIN"]]
+# # data = data.drop(["TaskonomyDepth", "CityscapesSemanticSegmentation"], axis=1)
+# sns.set_theme()
+#
+# n = len(ALL_TASKS)
+# spearman = np.zeros((n,1))
+# pearson = np.zeros((n,1))
+# spearman_pval = np.zeros((n,1))
+# pearson_pval = np.zeros((n,1))
+# for i in range(n):
+#     values_i = data[ALL_TASKS[i]]
+#     values_j = np.array([not ("Unbalanced" in i or "Log" in i) for i in data.index])
+#     s, sp = scipy.stats.spearmanr(values_i, values_j)
+#     p, pp = scipy.stats.pearsonr(values_i, values_j)
+#     spearman[i] = s
+#     pearson[i] = p
+#     spearman_pval[i] = sp
+#     pearson_pval[i] = pp
+#
+# heatmap = np.concatenate((spearman, spearman_pval, pearson, pearson_pval), axis=1)
+#
+# plt.figure(figsize=(15, 15))
+# title = "Correlation Between Encoder Balanced Datasets and Test Performance"
+# plt.title(title)
+# ax = sns.heatmap(heatmap, annot=True)
+# ax.set_yticklabels(ALL_TASKS, rotation=0)
+# ax.set_xticklabels(["spearman", "spearman_pval", "pearson", "pearson_pval"], rotation=0)
+# plt.savefig("graphs/balanced/correlations.png")
+# plt.clf()

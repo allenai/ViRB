@@ -7,9 +7,9 @@ class MultiEmbeddingClassificationHead(nn.Module):
         super().__init__()
         self.embedding_size = embedding_size
         self.head = nn.Sequential(
-            nn.Linear(embedding_size * num_embeddings, 512),
+            nn.Linear(embedding_size * num_embeddings, 2048),
             nn.ReLU(inplace=True),
-            nn.Linear(512, output_size)
+            nn.Linear(2048, output_size)
         )
         # self.head = nn.Linear(embedding_size * num_embeddings, output_size)
 
