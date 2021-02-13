@@ -23,7 +23,7 @@ class EgoHandsDataset:
         self.train = train
         imgs = glob.glob('data/egohands/images/*/*.jpg')
         imgs.sort()
-        labels = glob.glob('data/egohands/labels/*/*.jpg')
+        labels = glob.glob('data/egohands/labels/*/*.png')
         labels.sort()
 
         if self.train:
@@ -72,7 +72,9 @@ class EgoHandsDataset:
 
                 img = self.img_preprocessor(img)
                 label = self.label_preprocessor(label).long().squeeze()
-                label[label > 4] = 0
+
+                # if torch.unique(label).shape[0] > 5:
+                #     print("PROBLEM<!!!")
 
                 if torch.unique(label).shape[0] > 1:
                     break
