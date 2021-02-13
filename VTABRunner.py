@@ -39,7 +39,8 @@ RNN_CLASSIFICATION_TASKS = [
     "KineticsActionPrediction"
 ]
 SEMANTIC_SEGMENTATION = [
-    "CityscapesSemanticSegmentation"
+    "CityscapesSemanticSegmentation",
+    "EgoHands"
 ]
 BINARY_PIXEL_WISE_CLASSIFICATION = [
     "Flowers-Detection",
@@ -125,6 +126,9 @@ def get_dataset_class(config):
     if config["task"] == "KineticsActionPrediction":
         from datasets.KineticsActionPrediction import KineticsActionPredictionDataset
         return KineticsActionPredictionDataset
+    if config["task"] == "EgoHands":
+        from datasets.EgoHandsDataset import EgoHandsDataset
+        return EgoHandsDataset
 
 
 def get_task_head(config, dataset):

@@ -37,10 +37,10 @@ class DeepLabHead(nn.Module):
 
         self.block4 = CascadeBlock(Bottleneck, 512, 1024, 3, stride=1, dilation=2)
         self.block4.load_state_dict(renamed_weights)
-        self.block5 = CascadeBlock(Bottleneck, 512, 1024, 3, stride=1, dilation=4)
-        self.block5.load_state_dict(renamed_weights)
-        self.block6 = CascadeBlock(Bottleneck, 512, 1024, 3, stride=1, dilation=8)
-        self.block6.load_state_dict(renamed_weights)
+        # self.block5 = CascadeBlock(Bottleneck, 512, 1024, 3, stride=1, dilation=4)
+        # self.block5.load_state_dict(renamed_weights)
+        # self.block6 = CascadeBlock(Bottleneck, 512, 1024, 3, stride=1, dilation=8)
+        # self.block6.load_state_dict(renamed_weights)
         # self.block7 = CascadeBlock(Bottleneck, 512, 1024, 3, stride=1, dilation=16)
         # self.block7.load_state_dict(renamed_weights)
 
@@ -50,8 +50,8 @@ class DeepLabHead(nn.Module):
 
         #x_backbone = x["layer5"]
         x_backbone = self.block4(x["layer4"])
-        x_backbone = self.block5(x["layer4"], backbone=x_backbone)
-        x_backbone = self.block6(x["layer4"], backbone=x_backbone)
+        # x_backbone = self.block5(x["layer4"], backbone=x_backbone)
+        # x_backbone = self.block6(x["layer4"], backbone=x_backbone)
         # x_backbone = self.block7(x["layer4"], backbone=x_backbone)
 
         x_aspp = self.aspp(x_backbone)

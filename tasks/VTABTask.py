@@ -49,9 +49,9 @@ class VTABTask:
                                                             shuffle=True,
                                                             num_workers=num_workers)
         self.test_dataloader = torch.utils.data.DataLoader(test_set,
-                                                           batch_size=batch_size,
+                                                           batch_size=1,
                                                            shuffle=False,
-                                                           num_workers=num_workers)
+                                                           num_workers=0)
         if self.pre_encode:
             self.train_dataloader = EncodableDataloader(self.train_dataloader,
                                                         self.training_configs[0]["model"],
