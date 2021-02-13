@@ -75,6 +75,9 @@ class EgoHandsDataset:
 
                 if torch.unique(label).shape[0] > 1:
                     break
+                else:
+                    print("Sturck here!")
+
 
         else:
             img = self.img_preprocessor(Image.open(self.imgs[idx]).convert('RGB'))
