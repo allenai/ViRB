@@ -48,7 +48,7 @@ class EgoHandsDataset:
 
         if self.train:
             i = Image.open(self.imgs[idx]).convert('RGB')
-            l = Image.open(self.labels[idx]).convert('L')
+            l = Image.open(self.labels[idx]).convert('I')
             ogw, ogh = i.size
 
             # # Scale the image
