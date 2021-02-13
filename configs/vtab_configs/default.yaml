@@ -341,4 +341,4 @@ EgoHands:
 #      scheduler:
 #        type: "Linear"
   num_epochs: 100
-  batch_size: 12
+  batch_size: 10
