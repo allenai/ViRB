@@ -41,7 +41,6 @@ class EgoHandsDataset:
             transforms.ToTensor()
         ])
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-        print("Images Length:", len(self.imgs), "Labels Length:", len(self.labels), "len:", self.__len__())
 
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
