@@ -74,7 +74,7 @@ class EgoHandsDataset:
                 img = self.img_preprocessor(img)
                 label = self.label_preprocessor(label).long().squeeze()
 
-                if torch.unique(label).shape > 1:
+                if torch.unique(label).shape[0] > 1:
                     break
 
         else:
