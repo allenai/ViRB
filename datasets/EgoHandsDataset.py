@@ -86,7 +86,7 @@ class EgoHandsDataset:
         return len(self.imgs)
 
     def class_names(self):
-        return [l[0] for l in cslabels]
+        return ["background", "yourleft", "yourright", "myleft", "myright"]
 
     def num_classes(self):
-        return 20
+        return 5
