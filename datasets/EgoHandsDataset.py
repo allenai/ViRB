@@ -21,18 +21,17 @@ class EgoHandsDataset:
     def __init__(self, train=True):
         super().__init__()
         self.train = train
-        self.imgs = glob.glob('data/egohands/images/*/*.jpg')
-        self.imgs.sort()
-        self.labels = glob.glob('data/egohands/labels/*/*.jpg')
-        self.labels.sort()
-
+        imgs = glob.glob('data/egohands/images/*/*.jpg')
+        imgs.sort()
+        labels = glob.glob('data/egohands/labels/*/*.jpg')
+        labels.sort()
 
         if self.train:
-            self.imgs = self.imgs[:int(0.9*len(self.imgs))]
-            self.labels = self.labels[:int(0.9 * len(self.imgs))]
+            self.imgs = imgs[:int(0.9*len(imgs))]
+            self.labels = labels[:int(0.9 * len(labels))]
         else:
-            self.imgs = self.imgs[int(0.9 * len(self.imgs)):]
-            self.labels = self.labels[int(0.9 * len(self.imgs)):]
+            self.imgs = imgs[int(0.9 * len(imgs)):]
+            self.labels = labels[int(0.9 * len(labels)):]
 
         self.img_preprocessor = transforms.Compose([
             transforms.ToTensor(),
@@ -42,6 +41,10 @@ class EgoHandsDataset:
             transforms.ToTensor()
         ])
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        print("Images Length:", len(self.imgs), "Labels Length:", len(self.labels), "len:", self.__len__())
+        import time
+        time.sleep(10)
+        exit()
 
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
