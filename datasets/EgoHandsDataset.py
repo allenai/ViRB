@@ -48,7 +48,7 @@ class EgoHandsDataset:
 
         if self.train:
             i = Image.open(self.imgs[idx]).convert('RGB')
-            l = Image.open(self.labels[idx]).convert('I')
+            l = Image.open(self.labels[idx]).convert('L')
             ogw, ogh = i.size
 
             # # Scale the image
@@ -72,6 +72,7 @@ class EgoHandsDataset:
 
                 img = self.img_preprocessor(img)
                 label = self.label_preprocessor(label).long().squeeze()
+                label[label > 4] = 0
 
                 if torch.unique(label).shape[0] > 1:
                     break

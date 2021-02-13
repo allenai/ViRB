@@ -151,7 +151,6 @@ class CascadeBlock(nn.Module):
             block(inplanes, planes, dilation=dilation, conv=self.conv, norm=self._make_norm)
         )
 
-
     def forward(self, x, backbone=None):
         out = self.upsample_layer(x)
         if backbone is not None:
