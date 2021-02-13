@@ -48,9 +48,9 @@ class EgoHandsDataset:
             idx = idx.tolist()
 
         if self.train:
-            img = Image.open(self.imgs[idx]).convert('RGB')
-            label = Image.open(self.labels[idx]).convert('I')
-            ogw, ogh = img.size
+            i = Image.open(self.imgs[idx]).convert('RGB')
+            l = Image.open(self.labels[idx]).convert('I')
+            ogw, ogh = i.size
 
             # # Scale the image
             # scale = random.uniform(0.5, 2.0)
@@ -68,8 +68,8 @@ class EgoHandsDataset:
                 ch = 450
                 x = random.randint(0, ogw - cw)
                 y = random.randint(0, ogh - ch)
-                img = img.crop((x, y, x+cw, y+ch))
-                label = label.crop((x, y, x+cw, y+ch))
+                img = i.crop((x, y, x+cw, y+ch))
+                label = l.crop((x, y, x+cw, y+ch))
 
                 img = self.img_preprocessor(img)
                 label = self.label_preprocessor(label).long().squeeze()
