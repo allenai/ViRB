@@ -63,15 +63,21 @@ class EgoHandsDataset:
 
             # Add random crop to image
 
-            cw = 513
-            ch = 513
-            x = random.randint(0, ogw - cw)
-            y = random.randint(0, ogh - ch)
-            img = i.crop((x, y, x+cw, y+ch))
-            label = l.crop((x, y, x+cw, y+ch))
+            repeat_counter = 0
+            while True:
+                cw = 513
+                ch = 513
+                x = random.randint(0, ogw - cw)
+                y = random.randint(0, ogh - ch)
+                img = i.crop((x, y, x+cw, y+ch))
+                label = l.crop((x, y, x+cw, y+ch))
 
-            img = self.img_preprocessor(img)
-            label = self.label_preprocessor(label).long().squeeze()
+                img = self.img_preprocessor(img)
+                label = self.label_preprocessor(label).long().squeeze()
+
+                repeat_counter += 1
+                if len(torch.unique(label)) > 1 or repeat_counter > 10:
+                    break
 
         else:
             img = self.img_preprocessor(Image.open(self.imgs[idx]).convert('RGB'))

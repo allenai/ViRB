@@ -328,7 +328,7 @@
 #  num_epochs: 100
 #  batch_size: 32
 
-EgoHands:
+EgoHandsNoBlank:
   task: "EgoHands"
   pre_encode: false
   training_configs:
@@ -340,5 +340,5 @@ EgoHands:
 #      lr: 0.0003
 #      scheduler:
 #        type: "Linear"
-  num_epochs: 100
+  num_epochs: 25
   batch_size: 16
