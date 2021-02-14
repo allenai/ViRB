@@ -62,25 +62,16 @@ class EgoHandsDataset:
             #     label = ImageOps.mirror(label)
 
             # Add random crop to image
-            count = 0
-            while True:
-                cw = 513
-                ch = 513
-                x = random.randint(0, ogw - cw)
-                y = random.randint(0, ogh - ch)
-                img = i.crop((x, y, x+cw, y+ch))
-                label = l.crop((x, y, x+cw, y+ch))
 
-                img = self.img_preprocessor(img)
-                label = self.label_preprocessor(label).long().squeeze()
+            cw = 513
+            ch = 513
+            x = random.randint(0, ogw - cw)
+            y = random.randint(0, ogh - ch)
+            img = i.crop((x, y, x+cw, y+ch))
+            label = l.crop((x, y, x+cw, y+ch))
 
-                count += 1
-
-                if torch.unique(label).shape[0] > 1:
-                    break
-                else:
-                    print("Stuck here!", count)
-
+            img = self.img_preprocessor(img)
+            label = self.label_preprocessor(label).long().squeeze()
 
         else:
             img = self.img_preprocessor(Image.open(self.imgs[idx]).convert('RGB'))
