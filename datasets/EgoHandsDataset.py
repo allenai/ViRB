@@ -15,23 +15,37 @@ from scipy.io import loadmat
 import numpy as np
 
 
+## Splits from 2015 EgoHands Paper
+SPLITS = {
+    "TEST":  [1,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0],
+    "VALID": [0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
+    "TRAIN": [0,1,1,1,1,1,0,1,1,1,0,1,0,0,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,0,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1,0,1]
+}
+
+
 class EgoHandsDataset:
     """COCO detection dataset class"""
 
     def __init__(self, train=True):
         super().__init__()
         self.train = train
-        imgs = glob.glob('data/egohands/images/*/*.jpg')
-        imgs.sort()
-        labels = glob.glob('data/egohands/labels/*/*.png')
-        labels.sort()
+        img_dirs = glob.glob('data/egohands/images/*')
+        img_dirs.sort()
+        label_dirs = glob.glob('data/egohands/labels/*')
+        label_dirs.sort()
 
         if self.train:
-            self.imgs = imgs[:int(0.9*len(imgs))]
-            self.labels = labels[:int(0.9 * len(labels))]
+            pruned_img_dirs = [img for img, si in zip(img_dirs, SPLITS["TRAIN"]) if si == 1]
+            self.imgs = [img for pid in pruned_img_dirs for img in glob.glob(pid+"/*.jpg")]
+            pruned_label_dirs = [label for label, si in zip(label_dirs, SPLITS["TRAIN"]) if si == 1]
+            self.labels = [label for pld in pruned_label_dirs for label in glob.glob(pld + "/*.png")]
         else:
-            self.imgs = imgs[int(0.9 * len(imgs)):]
-            self.labels = labels[int(0.9 * len(labels)):]
+            pruned_img_dirs = [img for img, si in zip(img_dirs, SPLITS["TEST"]) if si == 1]
+            self.imgs = [img for pid in pruned_img_dirs for img in glob.glob(pid + "/*.jpg")]
+            pruned_label_dirs = [label for label, si in zip(label_dirs, SPLITS["TEST"]) if si == 1]
+            self.labels = [label for pld in pruned_label_dirs for label in glob.glob(pld + "/*.png")]
+        self.imgs.sort()
+        self.labels.sort()
 
         self.img_preprocessor = transforms.Compose([
             transforms.ToTensor(),
