@@ -220,7 +220,7 @@ def get_loss_function(config):
     if config["task"] == "EgoHands":
         # return torch.nn.CrossEntropyLoss(weight=torch.Tensor([0.1, 1.0, 1.0, 1.0, 1.0]).to(config["device_id"]))
         from utils.loss_functions import FocalLoss
-        return FocalLoss()
+        return FocalLoss(weight=torch.Tensor([0.1, 1.0, 1.0, 1.0, 1.0]).to(config["device_id"]))
     if config["task"] in SEMANTIC_SEGMENTATION:
         return torch.nn.CrossEntropyLoss()
     if config["task"] in PIXEL_WISE_REGRESSION:
