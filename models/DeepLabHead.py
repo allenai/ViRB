@@ -61,6 +61,18 @@ class DeepLabHead(nn.Module):
         x = nn.Upsample(label_size, mode='bilinear', align_corners=True)(x)
         return x
 
+    def eval(self):
+        self.block4.eval()
+        self.aspp.eval()
+        self.decoder.eval()
+        return self
+
+    def train(self, mode=True):
+        self.block4.eval()
+        self.aspp.train(mode)
+        self.decoder.train(mode)
+        return self
+
 
 class ASPP(nn.Module):
 
