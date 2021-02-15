@@ -218,7 +218,9 @@ def get_loss_function(config):
     if config["task"] == "COCODetection":
         return torch.nn.CrossEntropyLoss(ignore_index=0)
     if config["task"] == "EgoHands":
-        return torch.nn.CrossEntropyLoss(weight=torch.Tensor([0.1, 1.0, 1.0, 1.0, 1.0]).to(config["device_id"]))
+        # return torch.nn.CrossEntropyLoss(weight=torch.Tensor([0.1, 1.0, 1.0, 1.0, 1.0]).to(config["device_id"]))
+        from utils.loss_functions import FocalLoss
+        return FocalLoss()
     if config["task"] in SEMANTIC_SEGMENTATION:
         return torch.nn.CrossEntropyLoss()
     if config["task"] in PIXEL_WISE_REGRESSION:
