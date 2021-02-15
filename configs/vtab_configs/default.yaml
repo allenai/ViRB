@@ -328,7 +328,7 @@
 #  num_epochs: 100
 #  batch_size: 32
 
-EgoHandsNoBlankCorrectSplit:
+EgoHandsNoBlankCorrectSplitNoBlock4Training:
   task: "EgoHands"
   pre_encode: false
   training_configs:
