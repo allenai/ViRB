@@ -54,11 +54,11 @@ def neighbor_error(out, labels, stride=3, delta=0.05):
         tp = 0
         for x in range(w):
             for y in range(h):
-                if labels[0, y, x] == 0.0:
+                if labels[y, x] == 0.0:
                     continue
-                patch = out[0, max(0,y-stride):min(h-1,y+stride), max(0,x-stride):min(w-1,x+stride)]
+                patch = out[max(0, y-stride):min(h-1, y+stride), max(0, x-stride):min(w-1, x+stride)]
                 total += 1
-                if torch.any(torch.abs(patch - labels[0, y, x]) <= labels[0, y, x] * delta):
+                if torch.any(torch.abs(patch - labels[y, x]) <= labels[y, x] * delta):
                     tp += 1
         return torch.Tensor([tp / total])
     else:
