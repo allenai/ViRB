@@ -15,6 +15,10 @@ def sparse_label_loss(out, label):
     return prediction_loss + classification_loss
 
 
+def nonzero_l1_loss(out, label):
+    return F.l1_loss(out[label != 0], label[label != 0])
+
+
 class FocalLoss(nn.Module):
 
     def __init__(self, weight=None,

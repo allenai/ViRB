@@ -239,7 +239,8 @@ def get_loss_function(config):
     if config["task"] in BINARY_PIXEL_WISE_CLASSIFICATION:
         return torch.nn.BCEWithLogitsLoss()
     if config["task"] in SIAMESE_PIXEL_WISE_REGRESSION:
-        return torch.nn.L1Loss()
+        from utils.loss_functions import nonzero_l1_loss
+        return nonzero_l1_loss
 
 
 def get_error_function(config):
