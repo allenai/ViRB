@@ -61,7 +61,7 @@ class KITTIDataset:
         if self.train:
             img_a = Image.open(self.imgs_a[idx]).convert('RGB')
             img_b = Image.open(self.imgs_b[idx]).convert('RGB')
-            label = Image.open(self.labels[idx]).convert('F')
+            label = Image.open(self.labels[idx]).convert('F').resize(img_a.size)
             ogw, ogh = img_a.size
 
             # Scale the image
