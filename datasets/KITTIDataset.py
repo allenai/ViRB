@@ -75,8 +75,8 @@ class KITTIDataset:
             #     label = ImageOps.mirror(label)
 
             # Add random crop to image
-            cw = 300  # random.randint(200, ogw)
-            ch = 300  # min(int(random.uniform(0.5, 1.0) * cw), ogh)  # random.randint(200, ogh)
+            cw = 224  # random.randint(200, ogw)
+            ch = 224  # min(int(random.uniform(0.5, 1.0) * cw), ogh)  # random.randint(200, ogh)
             x = random.randint(0, ogw - cw)
             y = random.randint(0, ogh - ch)
             img_a = img_a.crop((x, y, x+cw, y+ch))
