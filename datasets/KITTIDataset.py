@@ -89,7 +89,8 @@ class KITTIDataset:
         else:
             img_a = self.img_preprocessor(Image.open(self.imgs_a[idx]).convert('RGB'))
             img_b = self.img_preprocessor(Image.open(self.imgs_b[idx]).convert('RGB'))
-            label = self.label_preprocessor(Image.open(self.labels[idx]).convert('F').resize(tuple(img_a.shape[-2:]))).squeeze()
+            img_size = img_a.shape[-1], img_a.shape[-2]
+            label = self.label_preprocessor(Image.open(self.labels[idx]).convert('F').resize(img_size)).squeeze()
         return torch.stack((img_a, img_b), dim=0), label / 255
 
     def __len__(self):
