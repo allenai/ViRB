@@ -16,6 +16,8 @@ def sparse_label_loss(out, label):
 
 
 def nonzero_l1_loss(out, label):
+    out = out.squeeze()
+    label = label.squeeze()
     return F.l1_loss(out[label != 0], label[label != 0])
 
 
