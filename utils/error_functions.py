@@ -47,9 +47,9 @@ def iou(out, labels):
 
 
 def neighbor_error(out, labels, stride=3, delta=0.05):
+    b, h, w = tuple(labels.shape)
     out = out.squeeze()
     labels = labels.squeeze()
-    b, h, w = tuple(labels.shape)
     if b == 1:
         total = 0
         tp = 0
