@@ -44,3 +44,19 @@ def iou(out, labels):
             union = torch.logical_or(prediction, layer_wise_label_mask).sum(-1).sum(-1)
 
             return torch.mean((intersection + 1e-8) / (union + 1e-8))
+
+
+def neighbor_error(out, labels, stride=3, delta=0.05):
+    total = 0
+    tp = 0
+    b, h, w = tuple(labels.shape)
+    for n in range(b):
+        for x in range(w):
+            for y in range(h):
+                if labels[n, y, x] == 0.0:
+                    continue
+                patch = out[n, max(0,y-stride):min(h-1,y+stride), max(0,x-stride):min(w-1,x+stride)]
+                total += 1
+                if torch.any(torch.abs(patch - labels[n, y, x]) < labels[n, y, x] * delta):
+                    tp += 1
+    return torch.Tensor([tp / total])

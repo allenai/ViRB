@@ -53,7 +53,10 @@ PIXEL_WISE_REGRESSION = [
     "NYUDepth",
     "TaskonomyEdges",
     "TaskonomyInpainting",
-    "TaskonomyDepth"
+    "TaskonomyDepth",
+]
+SIAMESE_PIXEL_WISE_REGRESSION = [
+    "KITTI",
 ]
 
 GPU_IDS = ["cuda:%d" % i for i in range(torch.cuda.device_count())] if torch.cuda.device_count() > 0 else ["cpu"]
@@ -129,6 +132,9 @@ def get_dataset_class(config):
     if config["task"] == "EgoHands":
         from datasets.EgoHandsDataset import EgoHandsDataset
         return EgoHandsDataset
+    if config["task"] == "KITTI":
+        from datasets.KITTIDataset import KITTIDataset
+        return KITTIDataset
 
 
 def get_task_head(config, dataset):
@@ -172,6 +178,9 @@ def get_task_head(config, dataset):
             dataset.num_classes(),
             6
         )
+    if config["task"] in SIAMESE_PIXEL_WISE_REGRESSION:
+        from models.SiamesePixelWisePredictionHead import SiamesePixelWisePredictionHead
+        return SiamesePixelWisePredictionHead(1)
 
 
 def get_optimizer(config, model):
@@ -229,6 +238,8 @@ def get_loss_function(config):
         return torch.nn.CrossEntropyLoss()
     if config["task"] in BINARY_PIXEL_WISE_CLASSIFICATION:
         return torch.nn.BCEWithLogitsLoss()
+    if config["task"] in SIAMESE_PIXEL_WISE_REGRESSION:
+        return torch.nn.L1Loss()
 
 
 def get_error_function(config):
@@ -246,6 +257,9 @@ def get_error_function(config):
     if config["task"] in SEMANTIC_SEGMENTATION:
         from utils.error_functions import iou
         return iou
+    if config["task"] in SIAMESE_PIXEL_WISE_REGRESSION:
+        from utils.error_functions import neighbor_error
+        return neighbor_error
 
 
 def run_VTAB_task(config, logging_queue):

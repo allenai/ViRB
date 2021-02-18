@@ -1646,24 +1646,25 @@ sns.set_theme()
 # print("the p-value is:", scipy.stats.binom_test(k, n=n, p=p, alternative='greater'))
 #
 
-# data = [
-#     {"Encoder": "SWAV_800", "KineticsActionPrediction": 0.6589},
-#     {"Encoder": "SWAV_200", "KineticsActionPrediction": 0.6321},
-#     {"Encoder": "MoCov2_800", "KineticsActionPrediction": 0.629},
-#     {"Encoder": "MoCov2_200", "KineticsActionPrediction": 0.622},
-#     {"Encoder": "Supervised", "KineticsActionPrediction": 0.6103},
-#     {"Encoder": "SWAVPlaces", "KineticsActionPrediction": 0.6101},
-#     {"Encoder": "SWAVTaskonomy", "KineticsActionPrediction": 0.609},
-#     {"Encoder": "SWAVKinetics", "KineticsActionPrediction": 0.609},
-#     {"Encoder": "SWAVCombination", "KineticsActionPrediction": 0.5901},
-#     {"Encoder": "MoCov2Places", "KineticsActionPrediction": 0.571},
-#     {"Encoder": "MoCov2Taskonomy", "KineticsActionPrediction": 0.5682},
-#     {"Encoder": "MoCov2Combination", "KineticsActionPrediction": 0.5601},
-#     {"Encoder": "MoCov2Kinetics", "KineticsActionPrediction": 0.609},
-# ]
-# data = pandas.DataFrame(data)
-# sns.barplot(y="Encoder", x="KineticsActionPrediction", data=data)
-# plt.show()
+data = [
+    {"Encoder": "SWAV_800", "EgoHands": 0.68},
+    {"Encoder": "SWAVTaskonomy", "EgoHands": 0.679},
+    {"Encoder": "SimCLR", "EgoHands": 0.677},
+    {"Encoder": "SWAV_200", "EgoHands": 0.651},
+    {"Encoder": "MoCov2_800", "EgoHands": 0.65},
+    {"Encoder": "SWAVCombination", "EgoHands": 0.649},
+    {"Encoder": "MoCov2_200", "EgoHands": 0.642},
+    {"Encoder": "Supervised", "EgoHands": 0.64},
+    {"Encoder": "SWAVPlaces", "EgoHands": 0.6101},
+    {"Encoder": "MoCov2Kinetics", "EgoHands": 0.609},
+    {"Encoder": "MoCov2Combination", "EgoHands": 0.5601},
+    {"Encoder": "MoCov2Places", "EgoHands": 0.541},
+    {"Encoder": "SWAVKinetics", "EgoHands": 0.54},
+    {"Encoder": "MoCov2Taskonomy", "EgoHands": 0.5382},
+]
+data = pandas.DataFrame(data)
+sns.barplot(y="Encoder", x="EgoHands", data=data)
+plt.show()
 
 
 #
