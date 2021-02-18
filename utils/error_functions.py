@@ -47,16 +47,19 @@ def iou(out, labels):
 
 
 def neighbor_error(out, labels, stride=3, delta=0.05):
-    total = 0
-    tp = 0
+    out = out.squeeze()
     b, h, w = tuple(labels.shape)
-    for n in range(b):
+    if b == 1:
+        total = 0
+        tp = 0
         for x in range(w):
             for y in range(h):
-                if labels[n, y, x] == 0.0:
+                if labels[0, y, x] == 0.0:
                     continue
-                patch = out[n, max(0,y-stride):min(h-1,y+stride), max(0,x-stride):min(w-1,x+stride)]
+                patch = out[0, max(0,y-stride):min(h-1,y+stride), max(0,x-stride):min(w-1,x+stride)]
                 total += 1
-                if torch.any(torch.abs(patch - labels[n, y, x]) < labels[n, y, x] * delta):
+                if torch.any(torch.abs(patch - labels[0, y, x]) <= labels[0, y, x] * delta):
                     tp += 1
-    return torch.Tensor([tp / total])
+        return torch.Tensor([tp / total])
+    else:
+        return torch.count_nonzero((torch.abs(out-labels) <= delta*labels)[labels != 0.0]) / (labels != 0.0).sum()
