@@ -62,5 +62,5 @@ def neighbor_error(out, labels, stride=3, delta=0.05):
                     tp += 1
         return torch.Tensor([tp / total])
     else:
-        # return torch.mean(torch.abs(out-labels))
-        return torch.count_nonzero((torch.abs(out[labels != 0.0]-labels[labels != 0.0]) <= delta)) / (labels != 0.0).sum()
+        return torch.mean(torch.abs(out-labels))
+        # return torch.count_nonzero((torch.abs(out[labels != 0.0]-labels[labels != 0.0]) <= delta)) / (labels != 0.0).sum()
