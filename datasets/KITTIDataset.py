@@ -65,10 +65,10 @@ class KITTIDataset:
             ogw, ogh = img_a.size
 
             # Scale the image
-            scale = random.uniform(0.75, 2.0)
-            img_a = img_a.resize((int(ogw * scale), int(ogh * scale)))
-            img_b = img_b.resize((int(ogw * scale), int(ogh * scale)))
-            label = label.resize((int(ogw * scale), int(ogh * scale)), resample=Image.NEAREST)
+            # scale = random.uniform(0.75, 2.0)
+            # img_a = img_a.resize((int(ogw * scale), int(ogh * scale)))
+            # img_b = img_b.resize((int(ogw * scale), int(ogh * scale)))
+            # label = label.resize((int(ogw * scale), int(ogh * scale)), resample=Image.NEAREST)
 
             # Mirror the image half of the time
             # if random.uniform(0, 1) > 0.5:
