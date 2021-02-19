@@ -1742,51 +1742,54 @@ sns.set_theme()
 # plt.clf()
 #
 ###### Balanced vs performance
-# data = pandas.read_csv("results.csv")
-# data = data.set_index("Encoder")
-# data = data.drop(["KineticsActionPrediction", "Imagenetv2"], axis=1)
-# full_data = data
-# data = data.loc[["SWAV_50", "MoCov2_50",
-#                  "SWAVHalfIN_100", "MoCov2HalfIN_100",
-#                  "SWAVUnbalancedIN_100", "MoCov2UnbalancedIN_100",
-#                  "SWAVQuarterIN", "MoCov2QuarterIN", "SWAVLogIN", "MoCov2LogIN"]]
-# sns.set_theme()
-#
-# task_results = np.zeros((len(ALL_TASKS),len(data)))
-# for t, task in enumerate(ALL_TASKS):
-#     for e, encoder in enumerate(data.index):
-#         task_results[t,e] = data.loc[encoder][task]
-#     task_results[t] -= min(full_data[task])
-#     task_results[t] /= (max(full_data[task]) - min(full_data[task]))
-#     # d = np.array((full_data[task]))
-#     # d = d[np.logical_not(np.isnan(d))]
-#     # task_results[t] -= np.mean(d)
-#     # task_results[t] /= np.std(d - np.mean(full_data[task]))
-#
-#
-# # task_results = (task_results.T - task_results.min(axis=1)).T
-# # task_results = (task_results.T / task_results.max(axis=1)).T
-#
-# log = []
-# linear = []
-# balanced = []
-# for i in range(len(data.index)):
-#     if "Log" in data.index[i]:
-#         log.append(task_results[i])
-#     elif "Unbalanced" in data.index[i]:
-#         linear.append(task_results[i])
-#     else:
-#         balanced.append(task_results[i])
-#
-# log = np.concatenate(log, axis=0)
-# linear = np.concatenate(linear, axis=0)
-# balanced = np.concatenate(balanced, axis=0)
-#
-# print(log.mean(), linear.mean(), balanced.mean())
-#
-# data = [{"balance": "log", "data": d} for d in log] + [{"balance": "linear", "data": d} for d in linear] +[{"balance": "balanced", "data": d} for d in balanced]
-# data = pandas.DataFrame(data)
-# sns.violinplot(x="balance", y="data", data=data)
-# plt.show()
-#
-# print(scipy.stats.f_oneway(log, linear, balanced))
+data = pandas.read_csv("results.csv")
+data = data.set_index("Encoder")
+data = data.drop(["KineticsActionPrediction", "Imagenetv2"], axis=1)
+full_data = data
+data = data.loc[["SWAV_50", "MoCov2_50",
+                 "SWAVHalfIN_100", "MoCov2HalfIN_100",
+                 "SWAVUnbalancedIN_100", "MoCov2UnbalancedIN_100",
+                 "SWAVQuarterIN", "MoCov2QuarterIN", "SWAVLogIN", "MoCov2LogIN"]]
+sns.set_theme()
+
+task_results = np.zeros((len(ALL_TASKS),len(data)))
+for t, task in enumerate(ALL_TASKS):
+    for e, encoder in enumerate(data.index):
+        task_results[t,e] = data.loc[encoder][task]
+    # task_results[t] -= min(full_data[task])
+    # task_results[t] /= (max(full_data[task]) - min(full_data[task]))
+    d = np.array((full_data[task]))
+    d = d[np.logical_not(np.isnan(d))]
+    task_results[t] -= np.mean(d)
+    task_results[t] /= np.std(d - np.mean(full_data[task]))
+
+
+log = []
+linear = []
+balanced = []
+for i in range(len(data.index)):
+    if "Log" in data.index[i]:
+        log.append(task_results[i])
+    elif "Unbalanced" in data.index[i]:
+        linear.append(task_results[i])
+    else:
+        balanced.append(task_results[i])
+
+log = np.concatenate(log, axis=0)
+linear = np.concatenate(linear, axis=0)
+balanced = np.concatenate(balanced, axis=0)
+
+
+data = [{"Dataset Balance": "log", "Score": d} for d in log] + \
+       [{"Dataset Balance": "linear", "Score": d} for d in linear] + \
+       [{"Dataset Balance": "balanced", "Score": d} for d in balanced]
+data = pandas.DataFrame(data)
+plt.title("Normalized End Task Test Results vs. Distribution of Encoder Dataset Sample")
+sns.violinplot(x="Dataset Balance", y="Score", data=data)
+plt.show()
+
+print("Log vs. Liner:", scipy.stats.f_oneway(log, linear))
+print("Log vs. Balanced:", scipy.stats.f_oneway(log, balanced))
+print("Liner vs. Balanced:", scipy.stats.f_oneway(linear, balanced))
+print("All:", scipy.stats.f_oneway(log, linear, balanced))
+

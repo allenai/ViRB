@@ -21,6 +21,12 @@ def nonzero_l1_loss(out, label):
     return F.l1_loss(out[label != 0], label[label != 0])
 
 
+def nonzero_l2_loss(out, label):
+    out = out.squeeze()
+    label = label.squeeze()
+    return F.mse_loss(out[label != 0], label[label != 0])
+
+
 class FocalLoss(nn.Module):
 
     def __init__(self, weight=None,
