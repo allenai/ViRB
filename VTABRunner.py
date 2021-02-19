@@ -33,7 +33,10 @@ CLASSIFICATION_TASKS = [
     "Imagenet",
     "Imagenetv2",
     "THORNumSteps",
-    "THORActionPrediction"
+]
+ACTION_PREDICTION_TASKS = [
+    "THORActionPrediction",
+    "nuScenesActionPrediction"
 ]
 RNN_CLASSIFICATION_TASKS = [
     "KineticsActionPrediction"
@@ -135,16 +138,12 @@ def get_dataset_class(config):
     if config["task"] == "KITTI":
         from datasets.KITTIDataset import KITTIDataset
         return KITTIDataset
+    if config["task"] == "nuScenesActionPrediction":
+        from datasets.nuScenesActionPredictionDataset import nuScenesActionPredictionDataset
+        return nuScenesActionPredictionDataset
 
 
 def get_task_head(config, dataset):
-    if config["task"] == "THORActionPrediction":
-        from models.MultiEmbeddingClassificationHead import MultiEmbeddingClassificationHead
-        return MultiEmbeddingClassificationHead(
-            config["encoder"].outputs()["embedding"][0],
-            dataset.num_classes(),
-            2
-        )
     if config["task"] == "TaskonomyInpainting":
         from models.PixelWisePredictionHead import PixelWisePredictionHead
         return PixelWisePredictionHead(3)
@@ -181,6 +180,13 @@ def get_task_head(config, dataset):
     if config["task"] in SIAMESE_PIXEL_WISE_REGRESSION:
         from models.SiamesePixelWisePredictionHead import SiamesePixelWisePredictionHead
         return SiamesePixelWisePredictionHead(1)
+    if config["task"] in ACTION_PREDICTION_TASKS:
+        from models.MultiEmbeddingClassificationHead import MultiEmbeddingClassificationHead
+        return MultiEmbeddingClassificationHead(
+            config["encoder"].outputs()["embedding"][0],
+            dataset.num_classes(),
+            2
+        )
 
 
 def get_optimizer(config, model):
@@ -241,6 +247,8 @@ def get_loss_function(config):
     if config["task"] in SIAMESE_PIXEL_WISE_REGRESSION:
         from utils.loss_functions import nonzero_l1_loss
         return nonzero_l1_loss
+    if config["task"] in ACTION_PREDICTION_TASKS:
+        return torch.nn.CrossEntropyLoss()
 
 
 def get_error_function(config):
@@ -261,6 +269,9 @@ def get_error_function(config):
     if config["task"] in SIAMESE_PIXEL_WISE_REGRESSION:
         from utils.error_functions import neighbor_error
         return neighbor_error
+    if config["task"] in ACTION_PREDICTION_TASKS:
+        from utils.error_functions import classification_error
+        return classification_error
 
 
 def run_VTAB_task(config, logging_queue):

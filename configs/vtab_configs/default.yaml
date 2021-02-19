@@ -342,18 +342,35 @@
 ##        type: "Linear"
 #  num_epochs: 25
 #  batch_size: 16
-
-KITTI:
-  task: "KITTI"
-  pre_encode: false
-  training_configs:
-    adam-0.0003:
-      optimizer: "adam"
-      lr: 0.0003
-#    adam-0.01:
+#
+#KITTI:
+#  task: "KITTI"
+#  pre_encode: false
+#  training_configs:
+#    adam-0.0003:
 #      optimizer: "adam"
 #      lr: 0.0003
-#      scheduler:
-#        type: "Linear"
-  num_epochs: 250
-  batch_size: 16
+##    adam-0.01:
+##      optimizer: "adam"
+##      lr: 0.0003
+##      scheduler:
+##        type: "Linear"
+#  num_epochs: 250
+#  batch_size: 16
+
+nuScenesActionPrediction:
+  task: "nuScenesActionPrediction"
+  training_configs:
+    adam-0.0001:
+      optimizer: "adam"
+      lr: 0.0001
+#    adam-0.001:
+#      optimizer: "adam"
+#      lr: 0.001
+#    sgd-0.01:
+#      optimizer: "sgd"
+#      lr: 0.01
+#    sgd-0.001:
+#      optimizer: "sgd"
+#      lr: 0.001
+  num_epochs: 100

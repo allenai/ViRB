@@ -6,6 +6,7 @@ import matplotlib
 import seaborn as sns
 import numpy as np
 import pandas
+import scipy
 
 import scipy
 import scipy.stats
@@ -154,14 +155,14 @@ COMBO_EXPERIMENTS = [
 ### TASKS
 EMBEDDING_SEMANTIC_TASKS = [
     "Imagenet",
-    "Imagenetv2",
+    #"Imagenetv2",
     "Pets",
     "CIFAR-100",
     "CalTech-101",
     "Eurosat",
     "dtd",
     "SUN397",
-    "KineticsActionPrediction"
+    #"KineticsActionPrediction"
 ]
 EMBEDDING_STRUCTURAL_TASKS = [
     "CLEVERNumObjects",
@@ -384,26 +385,26 @@ def make_csv():
 
 
 ### BIG TABLE
-make_csv()
-data = pandas.read_csv("results.csv")
-data = data.set_index("Encoder")
-sns.set_theme()
-colors = sns.color_palette()
-palette = {method: colors[i] for i, method in enumerate(set(data["Method"]))}
-for task in ALL_TASKS:
-    plt.figure(figsize=(20, 10))
-    data = pandas.read_csv("results.csv")
-    results = data.sort_values(task, ascending=False).reset_index()
-    g = sns.barplot(x=task, y="Encoder", hue="Method", data=results, dodge=False, palette=palette)
-    sign = 1.0 if results[task][1] >= 0 else -1.0
-    for _, data in results.iterrows():
-        g.text(data[task] - (sign * 0.08), data.name + 0.12, round(data[task], 4), color='white', ha="center", size=10, weight='bold')
-    plt.title("%s Test Results" % task)
-    plt.xlabel("Test Performance")
-    #plt.show()
-    plt.savefig("graphs/task_by_task/%s-test-results-subtracted.png" % task, dpi=100)
-    plt.clf()
-
+# make_csv()
+# data = pandas.read_csv("results.csv")
+# data = data.set_index("Encoder")
+# sns.set_theme()
+# colors = sns.color_palette()
+# palette = {method: colors[i] for i, method in enumerate(set(data["Method"]))}
+# for task in ALL_TASKS:
+#     plt.figure(figsize=(20, 10))
+#     data = pandas.read_csv("results.csv")
+#     results = data.sort_values(task, ascending=False).reset_index()
+#     g = sns.barplot(x=task, y="Encoder", hue="Method", data=results, dodge=False, palette=palette)
+#     sign = 1.0 if results[task][1] >= 0 else -1.0
+#     for _, data in results.iterrows():
+#         g.text(data[task] - (sign * 0.08), data.name + 0.12, round(data[task], 4), color='white', ha="center", size=10, weight='bold')
+#     plt.title("%s Test Results" % task)
+#     plt.xlabel("Test Performance")
+#     #plt.show()
+#     plt.savefig("graphs/task_by_task/%s-test-results-subtracted.png" % task, dpi=100)
+#     plt.clf()
+#
 # values = []
 # structural_values = []
 # embedding_values = []
@@ -1645,26 +1646,26 @@ sns.set_theme()
 # print("SWAV is better in %d/%d tasks" % (k, n))
 # print("the p-value is:", scipy.stats.binom_test(k, n=n, p=p, alternative='greater'))
 #
-
-data = [
-    {"Encoder": "SWAV_800", "EgoHands": 0.68},
-    {"Encoder": "SWAVTaskonomy", "EgoHands": 0.679},
-    {"Encoder": "SimCLR", "EgoHands": 0.677},
-    {"Encoder": "SWAV_200", "EgoHands": 0.651},
-    {"Encoder": "MoCov2_800", "EgoHands": 0.65},
-    {"Encoder": "SWAVCombination", "EgoHands": 0.649},
-    {"Encoder": "MoCov2_200", "EgoHands": 0.642},
-    {"Encoder": "Supervised", "EgoHands": 0.64},
-    {"Encoder": "SWAVPlaces", "EgoHands": 0.6101},
-    {"Encoder": "MoCov2Kinetics", "EgoHands": 0.609},
-    {"Encoder": "MoCov2Combination", "EgoHands": 0.5601},
-    {"Encoder": "MoCov2Places", "EgoHands": 0.541},
-    {"Encoder": "SWAVKinetics", "EgoHands": 0.54},
-    {"Encoder": "MoCov2Taskonomy", "EgoHands": 0.5382},
-]
-data = pandas.DataFrame(data)
-sns.barplot(y="Encoder", x="EgoHands", data=data)
-plt.show()
+#
+# data = [
+#     {"Encoder": "MoCov2Places", "KITTI": 0.5501},
+#     {"Encoder": "MoCov2Kinetics", "KITTI": 0.5410},
+#     {"Encoder": "MoCov2_800", "KITTI": 0.5404},
+#     {"Encoder": "MoCov2Combination", "KITTI": 0.53902},
+#     {"Encoder": "MoCov2_200", "KITTI": 0.495},
+#     {"Encoder": "MoCov1_200", "KITTI": 0.4933},
+#     {"Encoder": "SWAVPlaces", "KITTI": 0.481},
+#     {"Encoder": "SWAVKinetics", "KITTI": 0.48},
+#     {"Encoder": "MoCov2Taskonomy", "KITTI": 0.4723},
+#     {"Encoder": "SWAV_800", "KITTI": 0.4657},
+#     {"Encoder": "SWAV_200", "KITTI": 0.441},
+#     {"Encoder": "Supervised", "KITTI": 0.4233},
+#     {"Encoder": "SWAVTaskonomy", "KITTI": 0.4101},
+#     {"Encoder": "PIRL", "KITTI": 0.402},
+# ]
+# data = pandas.DataFrame(data)
+# sns.barplot(y="Encoder", x="KITTI", data=data)
+# plt.show()
 
 
 #
@@ -1740,38 +1741,52 @@ plt.show()
 # plt.savefig("graphs/num_updates/correlations.png")
 # plt.clf()
 #
-# ###### Balanced vs performance
+###### Balanced vs performance
 # data = pandas.read_csv("results.csv")
 # data = data.set_index("Encoder")
-# data = data.loc[["SWAV_50", "MoCov2_100", "MoCov2_50",
-#                  "SWAVHalfIN", "SWAVHalfIN_100", "MoCov2HalfIN", "MoCov2HalfIN_100",
-#                  "SWAVUnbalancedIN", "SWAVUnbalancedIN_100", "MoCov2UnbalancedIN", "SWAVUnbalancedIN_100",
+# data = data.drop(["KineticsActionPrediction", "Imagenetv2"], axis=1)
+# full_data = data
+# data = data.loc[["SWAV_50", "MoCov2_50",
+#                  "SWAVHalfIN_100", "MoCov2HalfIN_100",
+#                  "SWAVUnbalancedIN_100", "MoCov2UnbalancedIN_100",
 #                  "SWAVQuarterIN", "MoCov2QuarterIN", "SWAVLogIN", "MoCov2LogIN"]]
-# # data = data.drop(["TaskonomyDepth", "CityscapesSemanticSegmentation"], axis=1)
 # sns.set_theme()
 #
-# n = len(ALL_TASKS)
-# spearman = np.zeros((n,1))
-# pearson = np.zeros((n,1))
-# spearman_pval = np.zeros((n,1))
-# pearson_pval = np.zeros((n,1))
-# for i in range(n):
-#     values_i = data[ALL_TASKS[i]]
-#     values_j = np.array([not ("Unbalanced" in i or "Log" in i) for i in data.index])
-#     s, sp = scipy.stats.spearmanr(values_i, values_j)
-#     p, pp = scipy.stats.pearsonr(values_i, values_j)
-#     spearman[i] = s
-#     pearson[i] = p
-#     spearman_pval[i] = sp
-#     pearson_pval[i] = pp
+# task_results = np.zeros((len(ALL_TASKS),len(data)))
+# for t, task in enumerate(ALL_TASKS):
+#     for e, encoder in enumerate(data.index):
+#         task_results[t,e] = data.loc[encoder][task]
+#     task_results[t] -= min(full_data[task])
+#     task_results[t] /= (max(full_data[task]) - min(full_data[task]))
+#     # d = np.array((full_data[task]))
+#     # d = d[np.logical_not(np.isnan(d))]
+#     # task_results[t] -= np.mean(d)
+#     # task_results[t] /= np.std(d - np.mean(full_data[task]))
 #
-# heatmap = np.concatenate((spearman, spearman_pval, pearson, pearson_pval), axis=1)
 #
-# plt.figure(figsize=(15, 15))
-# title = "Correlation Between Encoder Balanced Datasets and Test Performance"
-# plt.title(title)
-# ax = sns.heatmap(heatmap, annot=True)
-# ax.set_yticklabels(ALL_TASKS, rotation=0)
-# ax.set_xticklabels(["spearman", "spearman_pval", "pearson", "pearson_pval"], rotation=0)
-# plt.savefig("graphs/balanced/correlations.png")
-# plt.clf()
+# # task_results = (task_results.T - task_results.min(axis=1)).T
+# # task_results = (task_results.T / task_results.max(axis=1)).T
+#
+# log = []
+# linear = []
+# balanced = []
+# for i in range(len(data.index)):
+#     if "Log" in data.index[i]:
+#         log.append(task_results[i])
+#     elif "Unbalanced" in data.index[i]:
+#         linear.append(task_results[i])
+#     else:
+#         balanced.append(task_results[i])
+#
+# log = np.concatenate(log, axis=0)
+# linear = np.concatenate(linear, axis=0)
+# balanced = np.concatenate(balanced, axis=0)
+#
+# print(log.mean(), linear.mean(), balanced.mean())
+#
+# data = [{"balance": "log", "data": d} for d in log] + [{"balance": "linear", "data": d} for d in linear] +[{"balance": "balanced", "data": d} for d in balanced]
+# data = pandas.DataFrame(data)
+# sns.violinplot(x="balance", y="data", data=data)
+# plt.show()
+#
+# print(scipy.stats.f_oneway(log, linear, balanced))
