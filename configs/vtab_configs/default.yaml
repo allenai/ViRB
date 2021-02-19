@@ -374,3 +374,4 @@ nuScenesActionPrediction:
 #      optimizer: "sgd"
 #      lr: 0.001
   num_epochs: 100
+  batch_size: 32
