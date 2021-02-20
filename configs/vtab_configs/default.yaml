@@ -273,25 +273,25 @@
 ##      lr: 0.001
 #  num_epochs: 25
 
-#CityscapesSemanticSegmentation:
-#  task: "CityscapesSemanticSegmentation"
-#  pre_encode: false
-#  training_configs:
-#    adam-0.0003:
-#      optimizer: "adam"
-#      lr: 0.0003
+CityscapesSemanticSegmentation:
+  task: "CityscapesSemanticSegmentation"
+  pre_encode: false
+  training_configs:
+    adam-0.0003:
+      optimizer: "adam"
+      lr: 0.0003
+      scheduler:
+        type: "Poly"
+        exponent: 0.9
+#    sgd-0.01:
+#      optimizer: "sgd"
+#      lr: 0.001
 #      scheduler:
-#        type: "Poly"
-#        exponent: 0.9
-##    sgd-0.01:
-##      optimizer: "sgd"
-##      lr: 0.001
-##      scheduler:
-##        type: "StepLR"
-##        step_size: 25
-##        gamma: 0.3
-#  num_epochs: 100
-#  batch_size: 16
+#        type: "StepLR"
+#        step_size: 25
+#        gamma: 0.3
+  num_epochs: 100
+  batch_size: 16
 
 #Imagenetv2:
 #  task: "Imagenetv2"
@@ -327,21 +327,21 @@
 #        type: "Linear"
 #  num_epochs: 100
 #  batch_size: 32
-
-EgoHands:
-  task: "EgoHands"
-  pre_encode: false
-  training_configs:
-    adam-0.0003:
-      optimizer: "adam"
-      lr: 0.0003
-#    adam-0.01:
+#
+#EgoHands:
+#  task: "EgoHands"
+#  pre_encode: false
+#  training_configs:
+#    adam-0.0003:
 #      optimizer: "adam"
 #      lr: 0.0003
-#      scheduler:
-#        type: "Linear"
-  num_epochs: 25
-  batch_size: 16
+##    adam-0.01:
+##      optimizer: "adam"
+##      lr: 0.0003
+##      scheduler:
+##        type: "Linear"
+#  num_epochs: 25
+#  batch_size: 16
 #
 #KITTI:
 #  task: "KITTI"

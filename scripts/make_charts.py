@@ -1746,8 +1746,8 @@ data = pandas.read_csv("results.csv")
 data = data.set_index("Encoder")
 data = data.drop(["KineticsActionPrediction", "Imagenetv2"], axis=1)
 full_data = data
-data = data.loc[["SWAV_50", "MoCov2_50",
-                 "SWAVHalfIN_100", "MoCov2HalfIN_100",
+data = data.loc[[#"SWAV_50", "MoCov2_50",
+                 #"SWAVHalfIN_100", "MoCov2HalfIN_100",
                  "SWAVUnbalancedIN_100", "MoCov2UnbalancedIN_100",
                  "SWAVQuarterIN", "MoCov2QuarterIN", "SWAVLogIN", "MoCov2LogIN"]]
 sns.set_theme()
@@ -1788,8 +1788,14 @@ plt.title("Normalized End Task Test Results vs. Distribution of Encoder Dataset 
 sns.violinplot(x="Dataset Balance", y="Score", data=data)
 plt.show()
 
+print("ANOVA")
 print("Log vs. Liner:", scipy.stats.f_oneway(log, linear))
 print("Log vs. Balanced:", scipy.stats.f_oneway(log, balanced))
 print("Liner vs. Balanced:", scipy.stats.f_oneway(linear, balanced))
 print("All:", scipy.stats.f_oneway(log, linear, balanced))
+print("Kruskal")
+print("Log vs. Liner:", scipy.stats.kruskal(log, linear))
+print("Log vs. Balanced:", scipy.stats.kruskal(log, balanced))
+print("Liner vs. Balanced:", scipy.stats.kruskal(linear, balanced))
+print("All:", scipy.stats.kruskal(log, linear, balanced))
 
