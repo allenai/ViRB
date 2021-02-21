@@ -75,12 +75,10 @@ def flatten_model_by_layer(model):
 
 def compute_cka(a, b):
     assert a.size(0) == b.size(0)
-    cs = torch.nn.CosineSimilarity(dim=0)
-    results = torch.zeros(int(0.5*a.size(0)**2+0.5*a.size(0)))
-    for i in range(a.size(0)):
-        for j in range(i, b.size(0)):
-            results[i*a.size(0) + j - (i**2+i)//2] = cs(a[i], b[j])
-    return torch.mean(results)
+    cs = torch.nn.CosineSimilarity(dim=1)
+    a = a.repeat(a.size(0), *([1]*len(a.shape)))
+    b = b.repeat(b.size(0), *([1]*len(b.shape)))
+    return torch.mean(cs(a, b))
 
 
 ######## Graph the norms of the model weights
