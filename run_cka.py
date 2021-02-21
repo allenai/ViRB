@@ -76,8 +76,8 @@ def flatten_model_by_layer(model):
 def compute_cka(a, b):
     assert a.size(0) == b.size(0)
     cs = torch.nn.CosineSimilarity(dim=1)
-    a = a.repeat(a.size(0), *([1]*len(a.shape)))
-    b = b.repeat(b.size(0), *([1]*len(b.shape)))
+    a = a.repeat(a.size(0), *([1]*len(a.shape))).cpu()
+    b = b.repeat(b.size(0), *([1]*len(b.shape))).cpu()
     return torch.mean(cs(a, b))
 
 
@@ -118,7 +118,7 @@ def compute_cka(a, b):
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 model = ResNet50Encoder("pretrained_weights/SWAV_800.pt")
 model = model.to(device)
-cka_correlations = torch.zeros((2, 2)).to(device)
+cka_correlations = torch.zeros((2, 2))
 for i in range(2):
     for j in range(i, 2):
         ds1 = DATASETS[i]()
