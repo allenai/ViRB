@@ -76,8 +76,8 @@ def flatten_model_by_layer(model):
 def compute_cka(a, b):
     assert a.size(0) == b.size(0)
     cs = torch.nn.CosineSimilarity(dim=1)
-    a = a.repeat(a.size(0), *([1]*len(a.shape))).cpu()
-    b = b.repeat(b.size(0), *([1]*len(b.shape))).cpu()
+    a = a.cpu().repeat(a.size(0), *([1]*len(a.shape)))
+    b = b.cpu().repeat(b.size(0), *([1]*len(b.shape)))
     return torch.mean(cs(a, b))
 
 
