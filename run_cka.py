@@ -3,6 +3,7 @@ import glob
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 
 from models.ResNet50Encoder import ResNet50Encoder
 from datasets.Caltech101EncldableDataset import CalTech101EncodableDataset
@@ -45,10 +46,7 @@ STRUCTURAL_DATASETS = [
     ThorActionPredictionDataset
 ]
 
-DATASETS = [
-    CalTech101EncodableDataset,
-    nuScenesActionPredictionDataset
-]
+DATASETS = SEMANTIC_DATASETS + STRUCTURAL_DATASETS
 
 
 def flatten_model_by_layer(model):
@@ -118,9 +116,9 @@ def compute_cka(a, b):
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 model = ResNet50Encoder("pretrained_weights/SWAV_800.pt")
 model = model.to(device)
-cka_correlations = torch.zeros((2, 2))
-for i in range(2):
-    for j in range(i, 2):
+cka_correlations = torch.zeros((len(DATASETS), len(DATASETS)))
+for i in range(len(DATASETS)):
+    for j in range(i, len(DATASETS)):
         ds1 = DATASETS[i]()
         dl1 = torch.utils.data.DataLoader(ds1, batch_size=10, shuffle=True, num_workers=0)
         ds2 = DATASETS[i]()
@@ -153,3 +151,4 @@ for i in range(2):
             cos_similarity = compute_cka(outs1["embedding"], outs2["embedding"])
             cka_correlations[i, j] = cka_correlations[j, i] = cos_similarity.mean()
 print(cka_correlations)
+np.save("SWAV_800_cka.npy", cka_correlations.cpu().numpy())
