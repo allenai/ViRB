@@ -39,12 +39,12 @@ SEMANTIC_DATASETS = [
 
 STRUCTURAL_DATASETS = [
     CLEVERNumObjectsEncodableDataset,
-    KineticsActionPredictionDataset,
+    # KineticsActionPredictionDataset,
     KITTIDataset,
-    nuScenesActionPredictionDataset,
+    # nuScenesActionPredictionDataset,
     NyuDepthEncodableDataset,
     TaskonomyDepthEncodableDataset,
-    ThorActionPredictionDataset
+    # ThorActionPredictionDataset
 ]
 
 DATASETS = SEMANTIC_DATASETS + STRUCTURAL_DATASETS
