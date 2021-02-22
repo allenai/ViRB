@@ -40,7 +40,7 @@ SEMANTIC_DATASETS = [
 STRUCTURAL_DATASETS = [
     CLEVERNumObjectsEncodableDataset,
     # KineticsActionPredictionDataset,
-    KITTIDataset,
+    # KITTIDataset,
     # nuScenesActionPredictionDataset,
     NyuDepthEncodableDataset,
     TaskonomyDepthEncodableDataset,
