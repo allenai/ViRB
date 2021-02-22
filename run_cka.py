@@ -145,12 +145,12 @@ for weights in glob.glob("pretrained_weights/*.pt"):
                 if count > 10:
                     break
                 out = model(data.to(device))
-                outs["embedding"].append(out["embedding"])
+                outs["embedding"].append(out["embedding"].cpu())
     for key in outs:
         outs[key] = torch.cat(outs[key], dim=0)
     cka = compute_cka(outs["embedding"])
     print("Processing", weights.split("/")[1].split(".")[0], torch.linalg.norm(outs["embedding"], ord=1).item())
-    model_similarity[weights.split("/")[1].split(".")[0]] = cka.cpu()
+    model_similarity[weights.split("/")[1].split(".")[0]] = cka
 
 cka_table = torch.ones((len(model_similarity), len(model_similarity)))
 cs = torch.nn.CosineSimilarity(dim=0)
