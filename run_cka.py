@@ -4,6 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import random
 
 from models.ResNet50Encoder import ResNet50Encoder
 from datasets.Caltech101EncldableDataset import CalTech101EncodableDataset
@@ -71,12 +72,18 @@ def flatten_model_by_layer(model):
     return weights
 
 
-def compute_cka(a, b):
-    assert a.size(0) == b.size(0)
-    cs = torch.nn.CosineSimilarity(dim=1)
-    a = a.cpu().repeat(a.size(0), *([1]*len(a.shape)))
-    b = b.cpu().repeat(b.size(0), *([1]*len(b.shape)))
-    return torch.mean(cs(a, b))
+def compute_cka(x):
+    with torch.no_grad():
+        size = x.size(0)
+        cs = torch.nn.CosineSimilarity(dim=1)
+        a = []
+        b = []
+        for i in range(size-1):
+            a.append(x[i].repeat(size-i-1, 1))
+            b.append(x[i+1:])
+        a = torch.cat(a, dim=0)
+        b = torch.cat(b, dim=0)
+        return cs(a, b)
 
 
 ######## Graph the norms of the model weights
@@ -114,41 +121,42 @@ def compute_cka(a, b):
 # plt.show()
 
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
-model = ResNet50Encoder("pretrained_weights/SWAV_800.pt")
-model = model.to(device)
-cka_correlations = torch.zeros((len(DATASETS), len(DATASETS)))
-for i in range(len(DATASETS)):
-    for j in range(i, len(DATASETS)):
-        ds1 = DATASETS[i]()
-        dl1 = torch.utils.data.DataLoader(ds1, batch_size=10, shuffle=True, num_workers=0)
-        ds2 = DATASETS[i]()
-        dl2 = torch.utils.data.DataLoader(ds2, batch_size=10, shuffle=True, num_workers=0)
-        outs1 = {
-            "embedding": []
-        }
-        outs2 = {
-            "embedding": []
-        }
+model_similarity = {}
+for weights in glob.glob("pretrained_weights/*.pt"):
+    # Set random seed
+    torch.backends.cudnn.deterministic = True
+    random.seed(1)
+    torch.manual_seed(1)
+    torch.cuda.manual_seed(1)
+    np.random.seed(1)
+
+    model = ResNet50Encoder(weights)
+    model = model.to(device)
+    outs = {
+        "embedding": []
+    }
+    for dataset in DATASETS:
+        ds = dataset()
+        dl = torch.utils.data.DataLoader(ds, batch_size=10, shuffle=True, num_workers=0)
         with torch.no_grad():
-            count1 = 0
-            for data, label in dl1:
-                count1 += 1
-                if count1 > 100:
+            count = 0
+            for data, label in dl:
+                count += 1
+                if count > 10:
                     break
                 out = model(data.to(device))
-                outs1["embedding"].append(out["embedding"])
-            for key in outs1:
-                outs1[key] = torch.cat(outs1[key], dim=0)
-            count2 = 0
-            for data, label in dl1:
-                count2 += 1
-                if count2 > 100:
-                    break
-                out = model(data.to(device))
-                outs2["embedding"].append(out["embedding"])
-            for key in outs2:
-                outs2[key] = torch.cat(outs2[key], dim=0)
-            cos_similarity = compute_cka(outs1["embedding"], outs2["embedding"])
-            cka_correlations[i, j] = cka_correlations[j, i] = cos_similarity.mean()
-print(cka_correlations)
-np.save("SWAV_800_cka.npy", cka_correlations.cpu().numpy())
+                outs["embedding"].append(out["embedding"])
+    for key in outs:
+        outs[key] = torch.cat(outs[key], dim=0)
+    cka = compute_cka(outs["embedding"])
+    print("Processing", weights.split("/")[1].split(".")[0], torch.linalg.norm(outs["embedding"], ord=1).item())
+    model_similarity[weights.split("/")[1].split(".")[0]] = cka
+
+cka_table = torch.ones((len(model_similarity), len(model_similarity)))
+cs = torch.nn.CosineSimilarity(dim=0)
+for i in range(len(model_similarity)):
+    for j in range(i, len(model_similarity)):
+        cka_table[i, j] = cka_table[j, i] = cs(
+            model_similarity[list(model_similarity.keys())[i]], model_similarity[list(model_similarity.keys())[j]]
+        )
+np.save("cka_table.npy", cka_table.detach().cpu().numpy())
