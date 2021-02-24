@@ -82,9 +82,9 @@ def compute_cka(a, b):
 # plt.show()
 
 DATASETS = [
-    'Caltech'#, 'Cityscapes', 'CLEVR', 'dtd', 'Egohands', 'Eurosat',
-    # 'ImageNet', 'Kinetics', 'nuScenes', 'NYU', 'Pets',
-    # 'SUN397', 'Taskonomy', 'ThorActionPrediction'
+    'Caltech', 'Cityscapes', 'CLEVR', 'dtd', 'Egohands', 'Eurosat',
+    'ImageNet', 'Kinetics', 'nuScenes', 'NYU', 'Pets',
+    'SUN397', 'Taskonomy', 'ThorActionPrediction'
 ]
 
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
