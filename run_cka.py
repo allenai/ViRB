@@ -107,9 +107,9 @@ for weights in glob.glob("pretrained_weights/*.pt"):
     for key in outs:
         outs[key] = torch.cat(outs[key], dim=0)
     print("embeddings shape:", outs["embedding"].shape)
-    cka = torch.zeros((15, 15))
-    for i in range(15):
-        for j in range(i, 15):
+    cka = torch.zeros((14, 14))
+    for i in range(14):
+        for j in range(i, 14):
             cka[i, j] = cka[j, i] = torch.mean(compute_cka(
                 outs["embedding"][i*1000:(i+1)*1000],
                 outs["embedding"][j*1000:(j+1)*1000]
