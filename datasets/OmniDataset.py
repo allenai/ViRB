@@ -18,7 +18,7 @@ PATHS = {
     'Egohands': 'data/egohands/images/*/*.jpg',
     'Eurosat': 'data/eurosat/train/*/*.jpg',
     'ImageNet': 'data/imagenet/train/*/*.JPEG',
-    'Kinetics': 'data/kinetics400/*/*.jpg',
+    'Kinetics': 'data/kinetics400/train/*/*.jpg',
     'KITTI': 'data/KITTI/training/image_2/*.png',
     'nuScenes': 'data/nuScenes/samples/CAM_FRONT/*.jpg',
     'NYU': 'data/nyu/train/images/*.png',
