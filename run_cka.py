@@ -35,6 +35,7 @@ def flatten_model_by_layer(model):
 def compute_cka(a, b):
     with torch.no_grad():
         sizea, sizeb = a.size(0), b.size(0)
+        print(a.shape, b.shape)
         assert sizea == sizeb
         cs = torch.nn.CosineSimilarity(dim=1)
         aa = []
