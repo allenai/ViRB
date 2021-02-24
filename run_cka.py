@@ -7,47 +7,7 @@ import numpy as np
 import random
 
 from models.ResNet50Encoder import ResNet50Encoder
-from datasets.Caltech101EncldableDataset import CalTech101EncodableDataset
-from datasets.Cifar100EncodbleDataset import CIFAR100EncodableDataset
-from datasets.CityscapesSemanticSegmentationDataset import CityscapesSemanticSegmentationDataset
-from datasets.CLEVERNumObjectsEncodbleDataset import CLEVERNumObjectsEncodableDataset
-from datasets.dtdEncodbleDataset import dtdEncodableDataset
-from datasets.EgoHandsDataset import EgoHandsDataset
-from datasets.EurosatEncodbleDataset import EurosatEncodableDataset
-from datasets.ImagenetEncodbleDataset import ImagenetEncodableDataset
-from datasets.KineticsActionPrediction import KineticsActionPredictionDataset
-from datasets.KITTIDataset import KITTIDataset
-from datasets.nuScenesActionPredictionDataset import nuScenesActionPredictionDataset
-from datasets.NyuDepthEncodbleDataset import NyuDepthEncodableDataset
-from datasets.PetsEncodbleDataset import PetsEncodableDataset
-from datasets.SUN397EncodbleDataset import SUN397EncodableDataset
-from datasets.TaskonomyDepthEncodbleDataset import TaskonomyDepthEncodableDataset
-from datasets.ThorActionPredictionDataset import ThorActionPredictionDataset
-
-
-SEMANTIC_DATASETS = [
-    CalTech101EncodableDataset,
-    CIFAR100EncodableDataset,
-    CityscapesSemanticSegmentationDataset,
-    EgoHandsDataset,
-    ImagenetEncodableDataset,
-    PetsEncodableDataset,
-    SUN397EncodableDataset,
-    EurosatEncodableDataset,
-    dtdEncodableDataset
-]
-
-STRUCTURAL_DATASETS = [
-    CLEVERNumObjectsEncodableDataset,
-    # KineticsActionPredictionDataset,
-    # KITTIDataset,
-    # nuScenesActionPredictionDataset,
-    NyuDepthEncodableDataset,
-    TaskonomyDepthEncodableDataset,
-    # ThorActionPredictionDataset
-]
-
-DATASETS = SEMANTIC_DATASETS + STRUCTURAL_DATASETS
+from datasets.OmniDataset import OmniDataset
 
 
 def flatten_model_by_layer(model):
@@ -72,18 +32,19 @@ def flatten_model_by_layer(model):
     return weights
 
 
-def compute_cka(x):
+def compute_cka(a, b):
     with torch.no_grad():
-        size = x.size(0)
+        sizea, sizeb = a.size(0), b.size(0)
+        assert sizea == sizeb
         cs = torch.nn.CosineSimilarity(dim=1)
-        a = []
-        b = []
-        for i in range(size-1):
-            a.append(x[i].repeat(size-i-1, 1))
-            b.append(x[i+1:])
-        a = torch.cat(a, dim=0)
-        b = torch.cat(b, dim=0)
-        return cs(a, b)
+        aa = []
+        bb = []
+        for i in range(sizea-1):
+            aa.append(a[i].repeat(sizea-i-1, 1))
+            bb.append(b[i+1:])
+        aa = torch.cat(a, dim=0)
+        bb = torch.cat(b, dim=0)
+        return cs(aa, bb)
 
 
 ######## Graph the norms of the model weights
@@ -120,43 +81,50 @@ def compute_cka(x):
 # sns.barplot(x="name", y="norm", data=data)
 # plt.show()
 
+DATASETS = [
+    'Caltech', 'Cityscapes'#, 'CLEVR', 'dtd', 'Egohands', 'Eurosat',
+    #'ImageNet', 'Kinetics', 'KITTI', 'nuScenes', 'NYU', 'Pets',
+    #'SUN397', 'Taskonomy', 'ThorActionPrediction'
+]
+
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 model_similarity = {}
 for weights in glob.glob("pretrained_weights/*.pt"):
-    # Set random seed
-    torch.backends.cudnn.deterministic = True
-    random.seed(1)
-    torch.manual_seed(1)
-    torch.cuda.manual_seed(1)
-    np.random.seed(1)
-
+    print("Processing", weights.split("/")[1].split(".")[0])
     model = ResNet50Encoder(weights)
     model = model.to(device)
     outs = {
         "embedding": []
     }
-    for dataset in DATASETS:
-        ds = dataset()
-        dl = torch.utils.data.DataLoader(ds, batch_size=10, shuffle=True, num_workers=0)
-        with torch.no_grad():
-            count = 0
-            for data, label in dl:
-                count += 1
-                if count > 10:
-                    break
-                out = model(data.to(device))
-                outs["embedding"].append(out["embedding"].cpu())
+    ds = OmniDataset(DATASETS)
+    dl = torch.utils.data.DataLoader(ds, batch_size=10, shuffle=False, num_workers=0)
+    with torch.no_grad():
+        for data in dl:
+            out = model(data.to(device))
+            outs["embedding"].append(out["embedding"])
     for key in outs:
         outs[key] = torch.cat(outs[key], dim=0)
-    cka = compute_cka(outs["embedding"])
-    print("Processing", weights.split("/")[1].split(".")[0], torch.linalg.norm(outs["embedding"], ord=1).item())
-    model_similarity[weights.split("/")[1].split(".")[0]] = cka
+    cka = torch.zeros((15, 15))
+    for i in range(15):
+        for j in range(i, 15):
+            cka[i, j] = cka[j, i] = torch.mean(compute_cka(
+                outs["embedding"][i*1000:(i+1)*1000],
+                outs["embedding"][j*1000:(j+1)*1000]
+            ))
 
-cka_table = torch.ones((len(model_similarity), len(model_similarity)))
-cs = torch.nn.CosineSimilarity(dim=0)
-for i in range(len(model_similarity)):
-    for j in range(i, len(model_similarity)):
-        cka_table[i, j] = cka_table[j, i] = cs(
-            model_similarity[list(model_similarity.keys())[i]], model_similarity[list(model_similarity.keys())[j]]
-        )
-np.save("cka_table.npy", cka_table.detach().cpu().numpy())
+
+# cka_table = torch.ones((15, 15))
+# cs = torch.nn.CosineSimilarity(dim=0)
+# for i in range(len(model_similarity)):
+#     for j in range(i, len(model_similarity)):
+#         cka_table[i, j] = cka_table[j, i] = cs(
+#             model_similarity[list(model_similarity.keys())[i]], model_similarity[list(model_similarity.keys())[j]]
+#         )
+# np.save("cka_table.npy", cka_table.detach().cpu().numpy())
+
+# cka_table = np.load("cka_table.npy")
+# sns.heatmap(cka_table)
+# names = [weights.split("/")[1].split(".")[0] for weights in glob.glob("pretrained_weights/*.pt")]
+# plt.xticks(np.arange(len(names)), names, rotation='vertical')
+# plt.yticks(np.arange(len(names)), names, rotation='horizontal')
+# plt.show()
