@@ -15,7 +15,7 @@ PATHS = {
     'Cityscapes': 'data/cityscapes/leftImg8bit/train/*/*.png',
     'CLEVR': 'data/CLEVR/images/train/*.png',
     'dtd': 'data/dtd/train/*/*.jpg',
-    'Egohands': 'data/egohands/images/*',
+    'Egohands': 'data/egohands/images/*/*,jpg',
     'Eurosat': 'data/eurosat/train/*/*.jpg',
     'ImageNet': 'data/imagenet/train/*/*.JPEG',
     'Kinetics': 'data/kinetics400/*/*.jpg',
