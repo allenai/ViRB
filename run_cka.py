@@ -35,7 +35,6 @@ def flatten_model_by_layer(model):
 def compute_cka(a, b):
     with torch.no_grad():
         sizea, sizeb = a.size(0), b.size(0)
-        print(a.shape, b.shape)
         assert sizea == sizeb
         cs = torch.nn.CosineSimilarity(dim=1)
         aa = []
@@ -83,15 +82,14 @@ def compute_cka(a, b):
 # plt.show()
 
 DATASETS = [
-    'Caltech', 'Cityscapes', 'CLEVR', 'dtd', 'Egohands', 'Eurosat',
-    'ImageNet', 'Kinetics', 'nuScenes', 'NYU', 'Pets',
-    'SUN397', 'Taskonomy', 'ThorActionPrediction'
+    'Caltech'#, 'Cityscapes', 'CLEVR', 'dtd', 'Egohands', 'Eurosat',
+    # 'ImageNet', 'Kinetics', 'nuScenes', 'NYU', 'Pets',
+    # 'SUN397', 'Taskonomy', 'ThorActionPrediction'
 ]
 
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 model_similarity = {}
 for weights in glob.glob("pretrained_weights/*.pt"):
-    weights = "pretrained_weights/SWAV_800.pt"
     print("Processing", weights.split("/")[1].split(".")[0])
     model = ResNet50Encoder(weights)
     model = model.to(device)
@@ -106,15 +104,14 @@ for weights in glob.glob("pretrained_weights/*.pt"):
             outs["embedding"].append(out["embedding"])
     for key in outs:
         outs[key] = torch.cat(outs[key], dim=0)
-    print("embeddings shape:", outs["embedding"].shape)
-    cka = torch.zeros((14, 14))
+    cka = torch.zeros((14, 14, 499500))
     for i in range(14):
         for j in range(i, 14):
-            cka[i, j] = cka[j, i] = torch.mean(compute_cka(
+            cka[i, j] = cka[j, i] = compute_cka(
                 outs["embedding"][i*1000:(i+1)*1000],
                 outs["embedding"][j*1000:(j+1)*1000]
-            ))
-    np.save('SWAV_800_cka.numpy', cka.detach().cpu().numpy())
+            )
+    np.save(weights.replace("pretrained_weights/", "").replace(".pt", ""), cka.detach().cpu().numpy())
 
 
 # cka_table = torch.ones((15, 15))
@@ -126,9 +123,15 @@ for weights in glob.glob("pretrained_weights/*.pt"):
 #         )
 # np.save("cka_table.npy", cka_table.detach().cpu().numpy())
 
-# cka_table = np.load("cka_table.npy")
-# sns.heatmap(cka_table)
-# names = [weights.split("/")[1].split(".")[0] for weights in glob.glob("pretrained_weights/*.pt")]
-# plt.xticks(np.arange(len(names)), names, rotation='vertical')
-# plt.yticks(np.arange(len(names)), names, rotation='horizontal')
+# cka_table = np.load("SWAV_800_cka.numpy.npy")
+# results = [(DATASETS[i], cka_table[0, i]) for i in range(14)]
+# results.sort(key=lambda x: x[1], reverse=True)
+# results = [r[0] for r in results]
+# new_cka = np.zeros_like(cka_table)
+# for i, x in enumerate(results):
+#     for j, y in enumerate(results):
+#         new_cka[i, j] = cka_table[DATASETS.index(x), DATASETS.index(y)]
+# ax = sns.heatmap(new_cka)
+# ax.set_xticklabels(DATASETS, rotation=30)
+# ax.set_yticklabels(DATASETS, rotation=0)
 # plt.show()

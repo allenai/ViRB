@@ -39,7 +39,6 @@ class OmniDataset:
             path = PATHS[key]
             imgs = glob.glob(path)
             imgs.sort()
-            print(key, len(imgs))
             random.seed(1999)
             random.shuffle(imgs)
             for i in range(IMGS_PER_DATASET):

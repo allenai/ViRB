@@ -382,12 +382,6 @@ def make_csv():
 
 
 
-
-
-
-
-
-
 ### BIG TABLE
 # make_csv()
 # data = pandas.read_csv("results.csv")
@@ -1103,8 +1097,8 @@ plt.clf()
 # plt.savefig("graphs/different_datasets/All_vs_Supervised.png", dpi=100)
 # plt.clf()
 #
-data = pandas.read_csv("results.csv")
-sns.set_theme()
+# data = pandas.read_csv("results.csv")
+# sns.set_theme()
 # colors = sns.color_palette()
 # for dataset in data.Dataset.unique():
 #     d = data[(data["Dataset"] == dataset) & (data["Epochs"] == 200) & (data["Updates"] == int(200*1e6))]
