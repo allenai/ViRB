@@ -82,14 +82,15 @@ def compute_cka(a, b):
 # plt.show()
 
 DATASETS = [
-    'Caltech', 'Cityscapes'#, 'CLEVR', 'dtd', 'Egohands', 'Eurosat',
-    #'ImageNet', 'Kinetics', 'KITTI', 'nuScenes', 'NYU', 'Pets',
-    #'SUN397', 'Taskonomy', 'ThorActionPrediction'
+    'Caltech', 'Cityscapes', 'CLEVR', 'dtd', 'Egohands', 'Eurosat',
+    'ImageNet', 'Kinetics', 'KITTI', 'nuScenes', 'NYU', 'Pets',
+    'SUN397', 'Taskonomy', 'ThorActionPrediction'
 ]
 
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 model_similarity = {}
 for weights in glob.glob("pretrained_weights/*.pt"):
+    weights = "pretrained_weights/SWAV_800.pt"
     print("Processing", weights.split("/")[1].split(".")[0])
     model = ResNet50Encoder(weights)
     model = model.to(device)
@@ -111,6 +112,7 @@ for weights in glob.glob("pretrained_weights/*.pt"):
                 outs["embedding"][i*1000:(i+1)*1000],
                 outs["embedding"][j*1000:(j+1)*1000]
             ))
+    np.save('SWAV_800_cka.numpy', cka.detach().cpu().numpy())
 
 
 # cka_table = torch.ones((15, 15))
