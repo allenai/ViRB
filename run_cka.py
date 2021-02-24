@@ -40,8 +40,8 @@ def compute_cka(a, b):
         aa = []
         bb = []
         for i in range(sizea-1):
-            aa.append(a[i].repeat(sizea-i-1, 1))
-            bb.append(b[i+1:])
+            aa.append(a[i].repeat(sizea-i-1, 1).half())
+            bb.append(b[i+1:].half())
         aa = torch.cat(aa, dim=0)
         bb = torch.cat(bb, dim=0)
         return cs(aa, bb)
