@@ -42,8 +42,8 @@ def compute_cka(a, b):
         for i in range(sizea-1):
             aa.append(a[i].repeat(sizea-i-1, 1))
             bb.append(b[i+1:])
-        aa = torch.cat(a, dim=0)
-        bb = torch.cat(b, dim=0)
+        aa = torch.cat(aa, dim=0)
+        bb = torch.cat(bb, dim=0)
         return cs(aa, bb)
 
 
@@ -83,7 +83,7 @@ def compute_cka(a, b):
 
 DATASETS = [
     'Caltech', 'Cityscapes', 'CLEVR', 'dtd', 'Egohands', 'Eurosat',
-    'ImageNet', 'Kinetics', 'KITTI', 'nuScenes', 'NYU', 'Pets',
+    'ImageNet', 'Kinetics', 'nuScenes', 'NYU', 'Pets',
     'SUN397', 'Taskonomy', 'ThorActionPrediction'
 ]
 
