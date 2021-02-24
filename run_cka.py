@@ -105,6 +105,7 @@ for weights in glob.glob("pretrained_weights/*.pt"):
             outs["embedding"].append(out["embedding"])
     for key in outs:
         outs[key] = torch.cat(outs[key], dim=0)
+    print("embeddings shape:", outs["embedding"].shape)
     cka = torch.zeros((15, 15))
     for i in range(15):
         for j in range(i, 15):
