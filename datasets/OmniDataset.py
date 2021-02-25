@@ -25,7 +25,7 @@ PATHS = {
     'Pets': 'data/pets/train/*/*.jpg',
     'SUN397': 'data/SUN397/train/*/*.jpg',
     'Taskonomy': 'data/taskonomy/train/rgb/*/*.png',
-    'ThorActionPrediction': 'data/thor_action_prediction/train/*/*.jpg'
+    'Thor': 'data/thor_action_prediction/train/*/*.jpg'
 }
 
 

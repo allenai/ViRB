@@ -1,13 +1,18 @@
 import torch
 import glob
+import scipy
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import random
+import tqdm
+import time
 
 from models.ResNet50Encoder import ResNet50Encoder
 from datasets.OmniDataset import OmniDataset
+from datasets.ImagenetEncodbleDataset import ImagenetEncodableDataset
+from datasets.Caltech101EncldableDataset import CalTech101EncodableDataset
 
 
 def flatten_model_by_layer(model):
@@ -84,34 +89,34 @@ def compute_cka(a, b):
 DATASETS = [
     'Caltech', 'Cityscapes', 'CLEVR', 'dtd', 'Egohands', 'Eurosat',
     'ImageNet', 'Kinetics', 'nuScenes', 'NYU', 'Pets',
-    'SUN397', 'Taskonomy', 'ThorActionPrediction'
+    'SUN397', 'Taskonomy', 'Thor'
 ]
 
-device = "cuda:0" if torch.cuda.is_available() else "cpu"
-model_similarity = {}
-for weights in glob.glob("pretrained_weights/*.pt"):
-    print("Processing", weights.split("/")[1].split(".")[0])
-    model = ResNet50Encoder(weights)
-    model = model.to(device)
-    outs = {
-        "embedding": []
-    }
-    ds = OmniDataset(DATASETS)
-    dl = torch.utils.data.DataLoader(ds, batch_size=10, shuffle=False, num_workers=0)
-    with torch.no_grad():
-        for data in dl:
-            out = model(data.to(device))
-            outs["embedding"].append(out["embedding"])
-    for key in outs:
-        outs[key] = torch.cat(outs[key], dim=0)
-    cka = torch.zeros((14, 14, 499500))
-    for i in range(14):
-        for j in range(i, 14):
-            cka[i, j] = cka[j, i] = compute_cka(
-                outs["embedding"][i*1000:(i+1)*1000],
-                outs["embedding"][j*1000:(j+1)*1000]
-            )
-    np.save(weights.replace("pretrained_weights/", "").replace(".pt", ""), cka.detach().cpu().numpy())
+# device = "cuda:0" if torch.cuda.is_available() else "cpu"
+# model_similarity = {}
+# for weights in glob.glob("pretrained_weights/*.pt"):
+#     print("Processing", weights.split("/")[1].split(".")[0])
+#     model = ResNet50Encoder(weights)
+#     model = model.to(device)
+#     outs = {
+#         "embedding": []
+#     }
+#     ds = OmniDataset(DATASETS)
+#     dl = torch.utils.data.DataLoader(ds, batch_size=10, shuffle=False, num_workers=0)
+#     with torch.no_grad():
+#         for data in dl:
+#             out = model(data.to(device))
+#             outs["embedding"].append(out["embedding"])
+#     for key in outs:
+#         outs[key] = torch.cat(outs[key], dim=0)
+#     cka = torch.zeros((14, 14, 499500))
+#     for i in range(14):
+#         for j in range(i, 14):
+#             cka[i, j] = cka[j, i] = compute_cka(
+#                 outs["embedding"][i*1000:(i+1)*1000],
+#                 outs["embedding"][j*1000:(j+1)*1000]
+#             )
+#     np.save(weights.replace("pretrained_weights/", "").replace(".pt", ""), cka.detach().cpu().numpy())
 
 
 # cka_table = torch.ones((15, 15))
@@ -122,16 +127,55 @@ for weights in glob.glob("pretrained_weights/*.pt"):
 #             model_similarity[list(model_similarity.keys())[i]], model_similarity[list(model_similarity.keys())[j]]
 #         )
 # np.save("cka_table.npy", cka_table.detach().cpu().numpy())
+#
+# for table in glob.glob("cka/*.npy"):
+#     title = table.replace("cka/", "").replace(".npy", "")
+#     print(title)
+#     plt.figure(figsize=(10, 10))
+#     plt.title(title)
+#     cka_table = np.load(table)
+#     cka_table = np.mean(cka_table, axis=2)
+#     mindex = np.argmax(cka_table) // 14
+#     results = [(DATASETS[i], cka_table[mindex, i]) for i in range(14)]
+#     results.sort(key=lambda x: x[1], reverse=True)
+#     results = [r[0] for r in results]
+#     new_cka = np.zeros_like(cka_table)
+#     for i, x in enumerate(results):
+#         for j, y in enumerate(results):
+#             new_cka[i, j] = cka_table[DATASETS.index(x), DATASETS.index(y)]
+#     ax = sns.heatmap(new_cka)
+#     ax.set_xticklabels(results, rotation=30)
+#     ax.set_yticklabels(results, rotation=0)
+#     plt.savefig("graphs/cka/" + title)
+#     plt.clf()
 
-# cka_table = np.load("SWAV_800_cka.numpy.npy")
-# results = [(DATASETS[i], cka_table[0, i]) for i in range(14)]
-# results.sort(key=lambda x: x[1], reverse=True)
-# results = [r[0] for r in results]
-# new_cka = np.zeros_like(cka_table)
-# for i, x in enumerate(results):
-#     for j, y in enumerate(results):
-#         new_cka[i, j] = cka_table[DATASETS.index(x), DATASETS.index(y)]
-# ax = sns.heatmap(new_cka)
-# ax.set_xticklabels(DATASETS, rotation=30)
-# ax.set_yticklabels(DATASETS, rotation=0)
-# plt.show()
+# a = np.load("cka/SWAV_800.npy")
+# b = np.load("cka/MoCov2_800.npy")
+
+def main():
+    device = "cuda:0" if torch.cuda.is_available() else "cpu"
+    # ds = ImagenetEncodableDataset()
+    ds = CalTech101EncodableDataset()
+    dl = torch.utils.data.DataLoader(ds, batch_size=32, shuffle=False, num_workers=10)
+    outs = []
+    model = ResNet50Encoder("pretrained_weights/SWAV_800.pt")
+    model = model.to(device).eval()
+    enc_start = time.time()
+    with torch.no_grad():
+        for image, _ in tqdm.tqdm(dl):
+            image = image.to(device)
+            out = model(image)
+            outs.append(out["embedding"].cpu().numpy())
+    enc_end = time.time()
+    enc_time = enc_end - enc_start
+    print("Encoding Time: %02d:%02d" % (enc_time // 60, enc_time % 60))
+    outs = np.concatenate(outs, axis=0)
+    distance = scipy.spatial.distance.pdist(outs, metric="cosine")
+    dist_end = time.time()
+    dist_time = dist_end - enc_end
+    print("Distance Time: %02d:%02d" % (dist_time // 60, dist_time % 60))
+    print(distance)
+
+
+if __name__ == '__main__':
+    main()
