@@ -169,20 +169,20 @@ def run_cka(dataset):
         outs = np.concatenate(outs, axis=0)
         distance = scipy.spatial.distance.pdist(outs, metric="cosine")
         distances[model_name.replace("pretrained_weights/", "").replace(".pt", "")] = distance
-    n = len(distances.keys())
-    heatmap = np.ones((n, n))
+    keys = list(distances.keys())
+    n = len(keys)
+    heatmap = np.zeros((n, n))
     for i in range(n):
         for j in range(i, n):
-            x = distances[list(distances.keys())[i]]
-            y = distances[list(distances.keys())[j]]
+            x = distances[keys[i]]
+            y = distances[keys[j]]
             heatmap[i, j] = heatmap[j, i] = scipy.spatial.distance.cosine(x, y)
-    plt.figure(figsize=(15, 20))
+    plt.figure(figsize=(20, 15))
     ax = sns.heatmap(heatmap)
     plt.title(dataset)
-    ax.set_xticklabels(distances.keys(), rotation=30)
-    ax.set_yticklabels(distances.keys(), rotation=0)
+    ax.set_xticklabels(keys, rotation=30)
+    ax.set_yticklabels(keys, rotation=0)
     plt.savefig("graphs/cka/%s" % dataset)
-    # plt.show()
     plt.close()
 
 
