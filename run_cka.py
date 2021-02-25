@@ -8,6 +8,7 @@ import numpy as np
 import random
 import tqdm
 import time
+import yaml
 
 from models.ResNet50Encoder import ResNet50Encoder
 from datasets.OmniDataset import OmniDataset
@@ -153,12 +154,14 @@ DATASETS = [
 # b = np.load("cka/MoCov2_800.npy")
 
 def run_cka(dataset):
+    with open('configs/experiment_lists/default.yaml') as f:
+        encoders = yaml.load(f)
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
-    ds = OmniDataset(dataset, max_imgs=1000)
+    ds = OmniDataset(dataset, max_imgs=10000)
     dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=False, num_workers=16)
     distances = {}
-    for model_name in tqdm.tqdm(glob.glob("pretrained_weights/*.pt")):
-        model = ResNet50Encoder(model_name)
+    for model_name, path in tqdm.tqdm(encoders.items()):
+        model = ResNet50Encoder(path)
         model = model.to(device).eval()
         outs = []
         with torch.no_grad():
@@ -168,7 +171,7 @@ def run_cka(dataset):
                 outs.append(out["embedding"].cpu().numpy())
         outs = np.concatenate(outs, axis=0)
         distance = scipy.spatial.distance.pdist(outs, metric="cosine")
-        distances[model_name.replace("pretrained_weights/", "").replace(".pt", "")] = distance
+        distances[model_name] = distance
     keys = list(distances.keys())
     n = len(keys)
     heatmap = np.zeros((n, n))
