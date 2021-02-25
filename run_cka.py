@@ -171,12 +171,12 @@ def run_cka(dataset):
         distances[model_name.replace("pretrained_weights/", "").replace(".pt", "")] = distance
     n = len(distances.keys())
     heatmap = np.ones((n, n))
-    for i in range(1, n):
+    for i in range(n):
         for j in range(i, n):
             x = distances[list(distances.keys())[i]]
             y = distances[list(distances.keys())[j]]
             heatmap[i, j] = heatmap[j, i] = scipy.spatial.distance.cosine(x, y)
-    plt.figure(figsize=(15, 15))
+    plt.figure(figsize=(15, 20))
     ax = sns.heatmap(heatmap)
     plt.title(dataset)
     ax.set_xticklabels(distances.keys(), rotation=30)
