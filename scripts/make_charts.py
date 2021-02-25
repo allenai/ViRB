@@ -1742,77 +1742,77 @@ plt.clf()
 # plt.clf()
 #
 ###### Balanced vs performance
-data = pandas.read_csv("results.csv")
-data = data.set_index("Encoder")
-data = data.drop(["KineticsActionPrediction", "Imagenetv2"], axis=1)
-full_data = data
-data = data.loc[[#"SWAV_50", "MoCov2_50",
-                 #"SWAVHalfIN_100", "MoCov2HalfIN_100",
-                 "SWAVUnbalancedIN_100", "MoCov2UnbalancedIN_100",
-                 "SWAVQuarterIN", "MoCov2QuarterIN", "SWAVLogIN", "MoCov2LogIN"]]
-sns.set_theme()
-
-task_results = np.zeros((len(ALL_TASKS),len(data)))
-for t, task in enumerate(ALL_TASKS):
-    for e, encoder in enumerate(data.index):
-        task_results[t,e] = data.loc[encoder][task]
-    # task_results[t] -= min(full_data[task])
-    # task_results[t] /= (max(full_data[task]) - min(full_data[task]))
-    d = np.array((full_data[task]))
-    d = d[np.logical_not(np.isnan(d))]
-    task_results[t] -= np.mean(d)
-    task_results[t] /= np.std(d - np.mean(full_data[task]))
-
-
-log = []
-linear = []
-balanced = []
-for i in range(len(data.index)):
-    if "Log" in data.index[i]:
-        log.append(task_results[i])
-    elif "Unbalanced" in data.index[i]:
-        linear.append(task_results[i])
-    else:
-        balanced.append(task_results[i])
-
-log = np.concatenate(log, axis=0)
-linear = np.concatenate(linear, axis=0)
-balanced = np.concatenate(balanced, axis=0)
-
-
-data = [{"Dataset Balance": "log", "Score": d} for d in log] + \
-       [{"Dataset Balance": "linear", "Score": d} for d in linear] + \
-       [{"Dataset Balance": "balanced", "Score": d} for d in balanced]
-data = pandas.DataFrame(data)
-plt.title("Normalized End Task Test Results vs. Distribution of Encoder Dataset Sample")
-sns.violinplot(x="Dataset Balance", y="Score", data=data)
-plt.show()
-
-print("ANOVA")
-print("Log vs. Liner:", scipy.stats.f_oneway(log, linear))
-print("Log vs. Balanced:", scipy.stats.f_oneway(log, balanced))
-print("Liner vs. Balanced:", scipy.stats.f_oneway(linear, balanced))
-print("All:", scipy.stats.f_oneway(log, linear, balanced))
-print("Kruskal")
-print("Log vs. Liner:", scipy.stats.kruskal(log, linear))
-print("Log vs. Balanced:", scipy.stats.kruskal(log, balanced))
-print("Liner vs. Balanced:", scipy.stats.kruskal(linear, balanced))
-print("All:", scipy.stats.kruskal(log, linear, balanced))
-
-# make_csv()
 # data = pandas.read_csv("results.csv")
 # data = data.set_index("Encoder")
-# datapoints = []
-# for dp in data.index:
-#     d = data.loc[dp]
-#     if d["Dataset"] in ["HalfImagenet", "LogImagenet", "UnbalancedImagenet", "QuarterImageNet"]:
-#         continue
-#     datapoints.append({"Normalize Score": d["SUN397-normalized"], "Task": "SUN397", "Dataset": d["Dataset"]})
-#     datapoints.append({"Normalize Score": d["TaskonomyDepth-normalized"], "Task": "Taskonomy Depth", "Dataset": d["Dataset"]})
-#     datapoints.append({"Normalize Score": d["KineticsActionPrediction-normalized"], "Task": "Kinetics Action Prediction", "Dataset": d["Dataset"]})
-#     datapoints.append({"Normalize Score": d["CalTech-101-normalized"], "Task": "CalTech101", "Dataset": d["Dataset"]})
-# sns.swarmplot(x="Task", y="Normalize Score", hue="Dataset", data=pandas.DataFrame(datapoints), s=10)
+# data = data.drop(["KineticsActionPrediction", "Imagenetv2"], axis=1)
+# full_data = data
+# data = data.loc[[#"SWAV_50", "MoCov2_50",
+#                  #"SWAVHalfIN_100", "MoCov2HalfIN_100",
+#                  "SWAVUnbalancedIN_100", "MoCov2UnbalancedIN_100",
+#                  "SWAVQuarterIN", "MoCov2QuarterIN", "SWAVLogIN", "MoCov2LogIN"]]
+# sns.set_theme()
+#
+# task_results = np.zeros((len(ALL_TASKS),len(data)))
+# for t, task in enumerate(ALL_TASKS):
+#     for e, encoder in enumerate(data.index):
+#         task_results[t,e] = data.loc[encoder][task]
+#     # task_results[t] -= min(full_data[task])
+#     # task_results[t] /= (max(full_data[task]) - min(full_data[task]))
+#     d = np.array((full_data[task]))
+#     d = d[np.logical_not(np.isnan(d))]
+#     task_results[t] -= np.mean(d)
+#     task_results[t] /= np.std(d - np.mean(full_data[task]))
+#
+#
+# log = []
+# linear = []
+# balanced = []
+# for i in range(len(data.index)):
+#     if "Log" in data.index[i]:
+#         log.append(task_results[i])
+#     elif "Unbalanced" in data.index[i]:
+#         linear.append(task_results[i])
+#     else:
+#         balanced.append(task_results[i])
+#
+# log = np.concatenate(log, axis=0)
+# linear = np.concatenate(linear, axis=0)
+# balanced = np.concatenate(balanced, axis=0)
+#
+#
+# data = [{"Dataset Balance": "log", "Score": d} for d in log] + \
+#        [{"Dataset Balance": "linear", "Score": d} for d in linear] + \
+#        [{"Dataset Balance": "balanced", "Score": d} for d in balanced]
+# data = pandas.DataFrame(data)
+# plt.title("Normalized End Task Test Results vs. Distribution of Encoder Dataset Sample")
+# sns.violinplot(x="Dataset Balance", y="Score", data=data)
 # plt.show()
+#
+# print("ANOVA")
+# print("Log vs. Liner:", scipy.stats.f_oneway(log, linear))
+# print("Log vs. Balanced:", scipy.stats.f_oneway(log, balanced))
+# print("Liner vs. Balanced:", scipy.stats.f_oneway(linear, balanced))
+# print("All:", scipy.stats.f_oneway(log, linear, balanced))
+# print("Kruskal")
+# print("Log vs. Liner:", scipy.stats.kruskal(log, linear))
+# print("Log vs. Balanced:", scipy.stats.kruskal(log, balanced))
+# print("Liner vs. Balanced:", scipy.stats.kruskal(linear, balanced))
+# print("All:", scipy.stats.kruskal(log, linear, balanced))
+#
+make_csv()
+data = pandas.read_csv("results.csv")
+data = data.set_index("Encoder")
+datapoints = []
+for dp in data.index:
+    d = data.loc[dp]
+    if d["Dataset"] in ["HalfImagenet", "LogImagenet", "UnbalancedImagenet", "QuarterImageNet"]:
+        continue
+    datapoints.append({"Score": d["SUN397"], "Task": "SUN397", "Dataset": d["Dataset"]})
+    datapoints.append({"Score": d["TaskonomyDepth"], "Task": "Taskonomy Depth", "Dataset": d["Dataset"]})
+    datapoints.append({"Score": d["KineticsActionPrediction"], "Task": "Kinetics Action Prediction", "Dataset": d["Dataset"]})
+    datapoints.append({"Score": d["CalTech-101"], "Task": "CalTech101", "Dataset": d["Dataset"]})
+sns.swarmplot(x="Task", y="Score", hue="Dataset", data=pandas.DataFrame(datapoints), s=10)
+plt.show()
 
 # make_csv()
 # data = pandas.read_csv("results.csv")

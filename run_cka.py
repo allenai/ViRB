@@ -157,7 +157,7 @@ def run_cka(dataset):
     with open('configs/experiment_lists/default.yaml') as f:
         encoders = yaml.load(f)
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
-    ds = OmniDataset(dataset, max_imgs=10000)
+    ds = OmniDataset(dataset, max_imgs=10)
     dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=False, num_workers=16)
     distances = {}
     for model_name, path in tqdm.tqdm(encoders.items()):
@@ -190,7 +190,8 @@ def run_cka(dataset):
 
 
 def main():
-    run_cka("Caltech")
+    run_cka("Thor")
+    run_cka("ImageNet")
     # device = "cuda:0" if torch.cuda.is_available() else "cpu"
     # ds = ImagenetEncodableDataset()
     # # ds = CalTech101EncodableDataset()
