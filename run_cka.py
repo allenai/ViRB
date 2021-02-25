@@ -176,7 +176,7 @@ def run_cka(dataset):
         for j in range(i, n):
             x = distances[keys[i]]
             y = distances[keys[j]]
-            heatmap[i, j] = heatmap[j, i] = scipy.spatial.distance.cosine(x, y)
+            heatmap[i, j] = heatmap[j, i] = 1 - scipy.spatial.distance.cosine(x, y)
     plt.figure(figsize=(20, 15))
     ax = sns.heatmap(heatmap)
     plt.title(dataset)
