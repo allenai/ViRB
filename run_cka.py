@@ -154,8 +154,8 @@ DATASETS = [
 
 def main():
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
-    ds = ImagenetEncodableDataset()
-    # ds = CalTech101EncodableDataset()
+    # ds = ImagenetEncodableDataset()
+    ds = CalTech101EncodableDataset()
     dl = torch.utils.data.DataLoader(ds, batch_size=32, shuffle=False, num_workers=10)
     outs = []
     model = ResNet50Encoder("pretrained_weights/SWAV_800.pt")
@@ -170,11 +170,12 @@ def main():
     enc_time = enc_end - enc_start
     print("Encoding Time: %02d:%02d" % (enc_time // 60, enc_time % 60))
     outs = np.concatenate(outs, axis=0)
+    print("Outs Shape", outs.shape)
     distance = scipy.spatial.distance.pdist(outs, metric="cosine")
     dist_end = time.time()
     dist_time = dist_end - enc_end
     print("Distance Time: %02d:%02d" % (dist_time // 60, dist_time % 60))
-    print(distance)
+    print("Distance Shape", distance.shape)
 
 
 if __name__ == '__main__':
