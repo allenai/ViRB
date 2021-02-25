@@ -152,30 +152,65 @@ DATASETS = [
 # a = np.load("cka/SWAV_800.npy")
 # b = np.load("cka/MoCov2_800.npy")
 
-def main():
+def run_cka(dataset):
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
-    ds = ImagenetEncodableDataset()
-    # ds = CalTech101EncodableDataset()
+    ds = OmniDataset(dataset, max_imgs=100)
     dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=False, num_workers=16)
-    outs = []
-    model = ResNet50Encoder("pretrained_weights/SWAV_800.pt")
-    model = model.to(device).eval()
-    enc_start = time.time()
-    with torch.no_grad():
-        for image, _ in tqdm.tqdm(dl):
-            image = image.to(device)
-            out = model(image)
-            outs.append(out["embedding"].cpu().numpy())
-    enc_end = time.time()
-    enc_time = enc_end - enc_start
-    print("Encoding Time: %02d:%02d" % (enc_time // 60, enc_time % 60))
-    outs = np.concatenate(outs, axis=0)
-    print("Outs Shape", outs.shape)
-    distance = scipy.spatial.distance.pdist(outs, metric="cosine")
-    dist_end = time.time()
-    dist_time = dist_end - enc_end
-    print("Distance Time: %02d:%02d" % (dist_time // 60, dist_time % 60))
-    print("Distance Shape", distance.shape)
+    distances = {}
+    for model_name in tqdm.tqdm(glob.glob("pretrained_weights/*.pt")):
+        model = ResNet50Encoder(model_name)
+        model = model.to(device).eval()
+        outs = []
+        with torch.no_grad():
+            for image in dl:
+                image = image.to(device)
+                out = model(image)
+                outs.append(out["embedding"].cpu().numpy())
+        outs = np.concatenate(outs, axis=0)
+        distance = scipy.spatial.distance.pdist(outs, metric="cosine")
+        distances[model_name.replace("pretrained_weights/", "").replace(".pt", "")] = distance
+    n = len(distance.keys())
+    heatmap = np.ones((n, n))
+    for i in range(1, n):
+        for j in range(i, n):
+            x = distance[distance.keys()[i]]
+            y = distance[distance.keys()[j]]
+            heatmap[i, j] = heatmap[j, i] = scipy.spatial.distance.cosine(x, y)
+    plt.figure(figsize=(15, 15))
+    ax = sns.heatmap(heatmap)
+    plt.title(dataset)
+    ax.set_xticklabels(distance.keys(), rotation=30)
+    ax.set_yticklabels(distance.keys(), rotation=0)
+    plt.savefig("graphs/cka/%s" % dataset)
+    # plt.show()
+    plt.close()
+
+
+def main():
+    run_cka("Caltech")
+    # device = "cuda:0" if torch.cuda.is_available() else "cpu"
+    # ds = ImagenetEncodableDataset()
+    # # ds = CalTech101EncodableDataset()
+    # dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=False, num_workers=16)
+    # outs = []
+    # model = ResNet50Encoder("pretrained_weights/SWAV_800.pt")
+    # model = model.to(device).eval()
+    # enc_start = time.time()
+    # with torch.no_grad():
+    #     for image, _ in tqdm.tqdm(dl):
+    #         image = image.to(device)
+    #         out = model(image)
+    #         outs.append(out["embedding"].cpu().numpy())
+    # enc_end = time.time()
+    # enc_time = enc_end - enc_start
+    # print("Encoding Time: %02d:%02d" % (enc_time // 60, enc_time % 60))
+    # outs = np.concatenate(outs, axis=0)
+    # print("Outs Shape", outs.shape)
+    # distance = scipy.spatial.distance.pdist(outs, metric="cosine")
+    # dist_end = time.time()
+    # dist_time = dist_end - enc_end
+    # print("Distance Time: %02d:%02d" % (dist_time // 60, dist_time % 60))
+    # print("Distance Shape", distance.shape)
 
 
 if __name__ == '__main__':

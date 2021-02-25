@@ -9,7 +9,6 @@ from PIL import Image
 import random
 
 
-IMGS_PER_DATASET = 1000
 PATHS = {
     'Caltech': 'data/caltech-101/train/*/*.jpg',
     'Cityscapes': 'data/cityscapes/leftImg8bit/train/*/*.png',
@@ -32,16 +31,17 @@ PATHS = {
 class OmniDataset:
     """Class of every dataset"""
 
-    def __init__(self, keys):
+    def __init__(self, keys, max_imgs=10000):
         super().__init__()
         self.data = []
+        keys = keys if isinstance(keys, list) else [keys]
         for key in keys:
             path = PATHS[key]
             imgs = glob.glob(path)
             imgs.sort()
             random.seed(1999)
             random.shuffle(imgs)
-            for i in range(IMGS_PER_DATASET):
+            for i in range(min(len(imgs), max_imgs)):
                 self.data.append(imgs[i])
         self.preprocessor = transforms.Compose([
             transforms.Resize((224, 224)),
