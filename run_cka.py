@@ -154,7 +154,7 @@ DATASETS = [
 
 def run_cka(dataset):
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
-    ds = OmniDataset(dataset, max_imgs=100)
+    ds = OmniDataset(dataset, max_imgs=1000)
     dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=False, num_workers=16)
     distances = {}
     for model_name in tqdm.tqdm(glob.glob("pretrained_weights/*.pt")):
@@ -169,18 +169,18 @@ def run_cka(dataset):
         outs = np.concatenate(outs, axis=0)
         distance = scipy.spatial.distance.pdist(outs, metric="cosine")
         distances[model_name.replace("pretrained_weights/", "").replace(".pt", "")] = distance
-    n = len(distance.keys())
+    n = len(distances.keys())
     heatmap = np.ones((n, n))
     for i in range(1, n):
         for j in range(i, n):
-            x = distance[distance.keys()[i]]
-            y = distance[distance.keys()[j]]
+            x = distances[distances.keys()[i]]
+            y = distances[distances.keys()[j]]
             heatmap[i, j] = heatmap[j, i] = scipy.spatial.distance.cosine(x, y)
     plt.figure(figsize=(15, 15))
     ax = sns.heatmap(heatmap)
     plt.title(dataset)
-    ax.set_xticklabels(distance.keys(), rotation=30)
-    ax.set_yticklabels(distance.keys(), rotation=0)
+    ax.set_xticklabels(distances.keys(), rotation=30)
+    ax.set_yticklabels(distances.keys(), rotation=0)
     plt.savefig("graphs/cka/%s" % dataset)
     # plt.show()
     plt.close()
