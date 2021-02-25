@@ -154,8 +154,8 @@ DATASETS = [
 
 def main():
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
-    # ds = ImagenetEncodableDataset()
-    ds = CalTech101EncodableDataset()
+    ds = ImagenetEncodableDataset()
+    # ds = CalTech101EncodableDataset()
     dl = torch.utils.data.DataLoader(ds, batch_size=32, shuffle=False, num_workers=10)
     outs = []
     model = ResNet50Encoder("pretrained_weights/SWAV_800.pt")
