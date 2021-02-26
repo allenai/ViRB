@@ -168,7 +168,7 @@ def run_cka(dataset):
             for image in dl:
                 image = image.to(device)
                 out = model(image)
-                outs.append((1 - out["embedding"]).cpu().clone().numpy())
+                outs.append((out["embedding"]).cpu().clone().numpy())
         outs = np.concatenate(outs, axis=0)
         distance = scipy.spatial.distance.pdist(outs, metric="cosine")
         distances[model_name] = distance
@@ -201,7 +201,7 @@ def linear_cka(dataset):
         model = model.to(device).eval()
         outs = []
         with torch.no_grad():
-            for image in dl:
+            for image, _ in dl:
                 image = image.to(device)
                 out = model(image)
                 outs.append((out["embedding"]).cpu().half())
