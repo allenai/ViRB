@@ -212,9 +212,9 @@ def linear_cka(dataset):
     heatmap = np.zeros((n, n))
     for i in range(n):
         for j in range(i, n):
-            x = data[keys[i]]
-            y = data[keys[j]]
-            heatmap[i, j] = heatmap[j, i] = torch.norm(y.T @ x, p='fro', dim=2) / (torch.norm(y.T @ x, p='fro') * torch.norm(y.T @ x, p='fro'))
+            x = data[keys[i]].to(device)
+            y = data[keys[j]].to(device)
+            heatmap[i, j] = heatmap[j, i] = torch.norm(y.T @ x, p='fro', dim=2) / (torch.norm(x.T @ x, p='fro') * torch.norm(y.T @ xy, p='fro'))
     plt.figure(figsize=(20, 15))
     ax = sns.heatmap(heatmap, annot=True)
     plt.title(dataset)
