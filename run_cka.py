@@ -213,11 +213,11 @@ def linear_cka(dataset):
     for i in range(n):
         for j in range(i, n):
             x = data[keys[i]].to(device)
+            x /= x.sum(dim=1)
             y = data[keys[j]].to(device)
-            print("X shape", x.shape)
-            print("Y shape", y.shape)
-            print("YTX shape", (y.T @ x).shape)
-            heatmap[i, j] = heatmap[j, i] = torch.pow(torch.norm(y.T @ x), 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y,))
+            y /= y.sum(dim=1)
+            cka = torch.norm(y.T @ x) ** 2 / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
+            heatmap[i, j] = heatmap[j, i] = cka
     plt.figure(figsize=(20, 15))
     ax = sns.heatmap(heatmap, annot=True)
     plt.title(dataset)
@@ -225,6 +225,7 @@ def linear_cka(dataset):
     ax.set_yticklabels(keys, rotation=0)
     plt.savefig("graphs/cka/%s" % dataset)
     plt.close()
+
 
 def main():
     linear_cka("Caltech")
