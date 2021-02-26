@@ -157,7 +157,7 @@ def run_cka(dataset):
     with open('configs/experiment_lists/default.yaml') as f:
         encoders = yaml.load(f)
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
-    ds = OmniDataset(dataset, max_imgs=10)
+    ds = OmniDataset(dataset, max_imgs=10000)
     dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=False, num_workers=16)
     distances = {}
     for model_name, path in tqdm.tqdm(encoders.items()):
@@ -182,7 +182,7 @@ def run_cka(dataset):
             heatmap[i, j] = heatmap[j, i] = 1 - scipy.spatial.distance.cosine(x, y)
     plt.figure(figsize=(20, 15))
     ax = sns.heatmap(heatmap)
-    plt.title(dataset)
+    plt.title(dataset, annot=True)
     ax.set_xticklabels(keys, rotation=30)
     ax.set_yticklabels(keys, rotation=0)
     plt.savefig("graphs/cka/%s" % dataset)
