@@ -181,8 +181,8 @@ def run_cka(dataset):
             y = distances[keys[j]]
             heatmap[i, j] = heatmap[j, i] = 1 - scipy.spatial.distance.cosine(x, y)
     plt.figure(figsize=(20, 15))
-    ax = sns.heatmap(heatmap)
-    plt.title(dataset, annot=True)
+    ax = sns.heatmap(heatmap, annot=True)
+    plt.title(dataset)
     ax.set_xticklabels(keys, rotation=30)
     ax.set_yticklabels(keys, rotation=0)
     plt.savefig("graphs/cka/%s" % dataset)
