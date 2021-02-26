@@ -189,8 +189,42 @@ def run_cka(dataset):
     plt.close()
 
 
+def linear_cka(dataset):
+    with open('configs/experiment_lists/default.yaml') as f:
+        encoders = yaml.load(f)
+    device = "cuda:0" if torch.cuda.is_available() else "cpu"
+    ds = CalTech101EncodableDataset()
+    dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=False, num_workers=16)
+    data = {}
+    for model_name, path in tqdm.tqdm(encoders.items()):
+        model = ResNet50Encoder(path)
+        model = model.to(device).eval()
+        outs = []
+        with torch.no_grad():
+            for image in dl:
+                image = image.to(device)
+                out = model(image)
+                outs.append((out["embedding"]).cpu().half())
+        outs = torch.cat(outs, dim=0)
+        data[model_name] = outs
+    keys = list(data.keys())
+    n = len(keys)
+    heatmap = np.zeros((n, n))
+    for i in range(n):
+        for j in range(i, n):
+            x = data[keys[i]]
+            y = data[keys[j]]
+            heatmap[i, j] = heatmap[j, i] = torch.norm(y.T @ x, p='fro', dim=2) / (torch.norm(y.T @ x, p='fro') * torch.norm(y.T @ x, p='fro'))
+    plt.figure(figsize=(20, 15))
+    ax = sns.heatmap(heatmap, annot=True)
+    plt.title(dataset)
+    ax.set_xticklabels(keys, rotation=30)
+    ax.set_yticklabels(keys, rotation=0)
+    plt.savefig("graphs/cka/%s" % dataset)
+    plt.close()
+
 def main():
-    run_cka("Caltech")
+    linear_cka("Caltech")
     # run_cka("Thor")
     # run_cka("ImageNet")
     # device = "cuda:0" if torch.cuda.is_available() else "cpu"
