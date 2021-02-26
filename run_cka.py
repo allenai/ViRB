@@ -204,18 +204,19 @@ def linear_cka(dataset):
             for image, _ in dl:
                 image = image.to(device)
                 out = model(image)
-                outs.append((out["embedding"]).cpu().half())
-        outs = torch.cat(outs, dim=0)
-        data[model_name] = outs
+                outs.append(out["embedding"].cpu().half())
+                break
+            outs = torch.cat(outs, dim=0)
+            # center columns
+            outs -= outs.mean(dim=0)
+            data[model_name] = outs
     keys = list(data.keys())
     n = len(keys)
     heatmap = np.zeros((n, n))
     for i in range(n):
         for j in range(i, n):
             x = data[keys[i]].to(device)
-            x = (x.T - x.mean(dim=1)).T
             y = data[keys[j]].to(device)
-            y = (y.T - y.mean(dim=1)).T
             cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
             heatmap[i, j] = heatmap[j, i] = cka
     plt.figure(figsize=(20, 15))
