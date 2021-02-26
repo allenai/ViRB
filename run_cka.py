@@ -168,7 +168,7 @@ def run_cka(dataset):
             for image in dl:
                 image = image.to(device)
                 out = model(image)
-                outs.append(out["embedding"].cpu().numpy())
+                outs.append((1 - out["embedding"]).cpu().clone().numpy())
         outs = np.concatenate(outs, axis=0)
         distance = scipy.spatial.distance.pdist(outs, metric="cosine")
         distances[model_name] = distance
@@ -190,8 +190,9 @@ def run_cka(dataset):
 
 
 def main():
-    run_cka("Thor")
-    run_cka("ImageNet")
+    run_cka("Caltech")
+    # run_cka("Thor")
+    # run_cka("ImageNet")
     # device = "cuda:0" if torch.cuda.is_available() else "cpu"
     # ds = ImagenetEncodableDataset()
     # # ds = CalTech101EncodableDataset()

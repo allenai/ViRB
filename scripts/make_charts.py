@@ -422,56 +422,56 @@ def make_csv():
 
 
 #### Generating Pearson and Spearman Correlations
-make_csv()
-data = pandas.read_csv("results.csv")
-tasks = ["Imagenet", "CalTech-101", "Pets", "PetsDetection", "dtd", "CIFAR-100", "Cityscapes", "Egohands",
-         "SUN397", "Eurosat", "KineticsActionPrediction" "CLEVERNumObjects", "THORNumSteps", "THORDepth", "NYUDepth",
-         "TaskonomyDepth", "NYUWalkable", "THORActionPrediction","nuScenesActionPrediction", "KITTI"]
-n = len(tasks)
-spearman = np.zeros((n,n))
-pearson = np.zeros((n,n))
-spearman_pval = np.zeros((n,n))
-pearson_pval = np.zeros((n,n))
-for i in range(n):
-    for j in range(n):
-        values_i = data[tasks[i]]
-        values_j = data[tasks[j]]
-        s, sp = scipy.stats.spearmanr(values_i, values_j)
-        p, pp = scipy.stats.pearsonr(values_i, values_j)
-        spearman[i][j] = s
-        pearson[i][j] = p
-        spearman_pval[i][j] = sp
-        pearson_pval[i][j] = pp
-
-plt.figure(figsize=(20, 20))
-title = "Spearman Correlation on Performance Between Tasks"
-plt.title(title)
-ax = sns.heatmap(spearman, annot=True)
-ax.set_yticklabels(tasks, rotation=0)
-ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
-plt.savefig("graphs/task_correlations/spearman.png")
-plt.clf()
-title = "Spearman Correlation p-values on Performance Between Tasks"
-plt.title(title)
-ax = sns.heatmap(spearman_pval, annot=True)
-ax.set_yticklabels(tasks, rotation=0)
-ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
-plt.savefig("graphs/task_correlations/spearman-pval.png")
-plt.clf()
-title = "Pearson Correlation on Performance Between Tasks"
-plt.title(title)
-ax = sns.heatmap(pearson, annot=True)
-ax.set_yticklabels(tasks, rotation=0)
-ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
-plt.savefig("graphs/task_correlations/pearson.png")
-plt.clf()
-title = "Pearson Correlation p-values on Performance Between Tasks"
-plt.title(title)
-ax = sns.heatmap(pearson_pval, annot=True)
-ax.set_yticklabels(tasks, rotation=0)
-ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
-plt.savefig("graphs/task_correlations/pearson-pval.png")
-plt.clf()
+# make_csv()
+# data = pandas.read_csv("results.csv")
+# tasks = ["Imagenet", "CalTech-101", "Pets", "PetsDetection", "dtd", "CIFAR-100", "Cityscapes", "Egohands",
+#          "SUN397", "Eurosat", "KineticsActionPrediction" "CLEVERNumObjects", "THORNumSteps", "THORDepth", "NYUDepth",
+#          "TaskonomyDepth", "NYUWalkable", "THORActionPrediction","nuScenesActionPrediction", "KITTI"]
+# n = len(tasks)
+# spearman = np.zeros((n,n))
+# pearson = np.zeros((n,n))
+# spearman_pval = np.zeros((n,n))
+# pearson_pval = np.zeros((n,n))
+# for i in range(n):
+#     for j in range(n):
+#         values_i = data[tasks[i]]
+#         values_j = data[tasks[j]]
+#         s, sp = scipy.stats.spearmanr(values_i, values_j)
+#         p, pp = scipy.stats.pearsonr(values_i, values_j)
+#         spearman[i][j] = s
+#         pearson[i][j] = p
+#         spearman_pval[i][j] = sp
+#         pearson_pval[i][j] = pp
+#
+# plt.figure(figsize=(20, 20))
+# title = "Spearman Correlation on Performance Between Tasks"
+# plt.title(title)
+# ax = sns.heatmap(spearman, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/task_correlations/spearman.png")
+# plt.clf()
+# title = "Spearman Correlation p-values on Performance Between Tasks"
+# plt.title(title)
+# ax = sns.heatmap(spearman_pval, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/task_correlations/spearman-pval.png")
+# plt.clf()
+# title = "Pearson Correlation on Performance Between Tasks"
+# plt.title(title)
+# ax = sns.heatmap(pearson, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/task_correlations/pearson.png")
+# plt.clf()
+# title = "Pearson Correlation p-values on Performance Between Tasks"
+# plt.title(title)
+# ax = sns.heatmap(pearson_pval, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/task_correlations/pearson-pval.png")
+# plt.clf()
 
 # #### Generating Pearson and Spearman Correlations on Encoders Trained for 200 epochs
 # data = pandas.read_csv("results.csv")
@@ -1799,21 +1799,40 @@ plt.clf()
 # print("Liner vs. Balanced:", scipy.stats.kruskal(linear, balanced))
 # print("All:", scipy.stats.kruskal(log, linear, balanced))
 #
-make_csv()
-data = pandas.read_csv("results.csv")
-data = data.set_index("Encoder")
-datapoints = []
-for dp in data.index:
-    d = data.loc[dp]
-    if d["Dataset"] in ["HalfImagenet", "LogImagenet", "UnbalancedImagenet", "QuarterImageNet"]:
-        continue
-    datapoints.append({"Score": d["SUN397"], "Task": "SUN397", "Dataset": d["Dataset"]})
-    datapoints.append({"Score": d["TaskonomyDepth"], "Task": "Taskonomy Depth", "Dataset": d["Dataset"]})
-    datapoints.append({"Score": d["KineticsActionPrediction"], "Task": "Kinetics Action Prediction", "Dataset": d["Dataset"]})
-    datapoints.append({"Score": d["CalTech-101"], "Task": "CalTech101", "Dataset": d["Dataset"]})
-sns.swarmplot(x="Task", y="Score", hue="Dataset", data=pandas.DataFrame(datapoints), s=10)
-plt.show()
-
+# make_csv()
+# data = pandas.read_csv("results.csv")
+# data = data.set_index("Encoder")
+#
+# sun_datapoints = []
+# taskonomy_datapoints = []
+# kinetics_datapoints = []
+# caltech_datapoints = []
+#
+# sun_mean = data.loc["Supervised"]["SUN397"]
+# taskonomy_mean = data.loc["Supervised"]["TaskonomyDepth"]
+# kinetics_mean = data.loc["Supervised"]["KineticsActionPrediction"]
+# caltech_mean = data.loc["Supervised"]["CalTech-101"]
+#
+# for dp in data.index:
+#     d = data.loc[dp]
+#     if d["Dataset"] in ["HalfImagenet", "LogImagenet", "UnbalancedImagenet", "QuarterImageNet"]:
+#         continue
+#     sun_datapoints.append({"Score": d["SUN397"]-sun_mean, "Task": "SUN397", "Dataset": d["Dataset"], "Name": dp})
+#     taskonomy_datapoints.append({"Score": d["TaskonomyDepth"]-taskonomy_mean, "Task": "Taskonomy Depth", "Dataset": d["Dataset"], "Name": dp})
+#     kinetics_datapoints.append({"Score": d["KineticsActionPrediction"]-kinetics_mean, "Task": "Kinetics Action Prediction", "Dataset": d["Dataset"], "Name": dp})
+#     caltech_datapoints.append({"Score": d["CalTech-101"]-caltech_mean, "Task": "CalTech101", "Dataset": d["Dataset"], "Name": dp})
+# # sns.swarmplot(x="Task", y="Score", hue="Dataset", data=pandas.DataFrame(datapoints), s=10)
+# sns.set_theme()
+# plt.figure(1)
+# sns.barplot(x="Name", y="Score", hue="Dataset", data=pandas.DataFrame(sun_datapoints).sort_values("Score"), dodge=False)
+# plt.figure(2)
+# sns.barplot(x="Name", y="Score", hue="Dataset", data=pandas.DataFrame(taskonomy_datapoints).sort_values("Score"), dodge=False)
+# plt.figure(3)
+# sns.barplot(x="Name", y="Score", hue="Dataset", data=pandas.DataFrame(kinetics_datapoints).sort_values("Score"), dodge=False)
+# plt.figure(4)
+# sns.barplot(x="Name", y="Score", hue="Dataset", data=pandas.DataFrame(caltech_datapoints).sort_values("Score"), dodge=False)
+# plt.show()
+#
 # make_csv()
 # data = pandas.read_csv("results.csv")
 # data = data.set_index("Encoder")
