@@ -205,7 +205,6 @@ def linear_cka(dataset):
                 image = image.to(device)
                 out = model(image)
                 outs.append(out["embedding"].cpu().half())
-                break
             outs = torch.cat(outs, dim=0)
             # center columns
             outs -= outs.mean(dim=0)
