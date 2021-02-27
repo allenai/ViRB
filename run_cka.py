@@ -189,6 +189,15 @@ def run_cka(dataset):
     plt.close()
 
 
+def sort_heatmap_by_keys(heatmap, keys, corner="Supervised"):
+    mat = np.zeros_like(heatmap)
+    new_keys = keys.copy()
+    new_keys.sort(key=lambda k: mat[keys.index(corner), keys.index(k)], reverse=True)
+    for i, x in enumerate(new_keys):
+        for j, y in enumerate(new_keys):
+            mat[i, j] = heatmap[keys.index(x), keys.index(y)]
+    return new_keys, mat
+
 def linear_cka(dataset):
     with open('configs/experiment_lists/default.yaml') as f:
         encoders = yaml.load(f)
@@ -207,7 +216,6 @@ def linear_cka(dataset):
                 outs.append(out["embedding"].cpu())
             outs = torch.cat(outs, dim=0)
             # center columns
-            # outs /= outs.std(dim=0)
             outs -= outs.mean(dim=0)
             data[model_name] = outs
     keys = list(data.keys())
@@ -217,11 +225,11 @@ def linear_cka(dataset):
         for j in range(i, n):
             x = data[keys[i]].to(device)
             y = data[keys[j]].to(device)
-            print((torch.norm(y.T @ x) ** 2).item(), torch.norm(x.T @ x).item(), torch.norm(y.T @ y).item())
             cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
             heatmap[i, j] = heatmap[j, i] = cka
+    keys, mat = sort_heatmap_by_keys(heatmap, keys, corner="Supervised")
     plt.figure(figsize=(20, 15))
-    ax = sns.heatmap(heatmap, annot=True)
+    ax = sns.heatmap(mat, annot=True)
     plt.title(dataset)
     ax.set_xticklabels(keys, rotation=30)
     ax.set_yticklabels(keys, rotation=0)
