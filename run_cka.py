@@ -208,6 +208,7 @@ def linear_cka(dataset):
             outs = torch.cat(outs, dim=0)
             # center columns
             outs -= outs.mean(dim=0)
+            outs /= outs.std(dim=0)
             data[model_name] = outs
     keys = list(data.keys())
     n = len(keys)
@@ -216,7 +217,7 @@ def linear_cka(dataset):
         for j in range(i, n):
             x = data[keys[i]].to(device)
             y = data[keys[j]].to(device)
-            print("XTX:", (torch.norm(y.T @ x).item() ** 2), "XTX:", torch.norm(x.T @ x).item(), "YTX:", torch.norm(y.T @ y).item())
+            print("YTX:", (torch.norm(y.T @ x).item() ** 2), "XTX:", torch.norm(x.T @ x).item(), "YTX:", torch.norm(y.T @ y).item())
             cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
             heatmap[i, j] = heatmap[j, i] = cka
     plt.figure(figsize=(20, 15))
