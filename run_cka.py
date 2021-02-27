@@ -203,7 +203,7 @@ def linear_cka(dataset):
     with open('configs/experiment_lists/default.yaml') as f:
         encoders = yaml.load(f)
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
-    ds = OmniDataset(dataset, max_imgs=10000)
+    ds = OmniDataset(dataset, max_imgs=1500000)
     dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=False, num_workers=16)
     data = {}
     for model_name, path in tqdm.tqdm(encoders.items()):
@@ -224,18 +224,19 @@ def linear_cka(dataset):
     heatmap = np.zeros((n, n))
     for i in range(n):
         for j in range(i, n):
-            x = data[keys[i]].to(device)
-            y = data[keys[j]].to(device)
+            x = data[keys[i]]
+            y = data[keys[j]]
             cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
             heatmap[i, j] = heatmap[j, i] = cka
-    new_keys, mat = sort_heatmap_by_keys(heatmap, keys, corner="Supervised")
-    plt.figure(figsize=(20, 15))
-    ax = sns.heatmap(mat, annot=True)
-    plt.title(dataset)
-    ax.set_xticklabels(new_keys, rotation=30)
-    ax.set_yticklabels(new_keys, rotation=0)
-    plt.savefig("graphs/cka/%s" % dataset)
-    plt.close()
+    np.save("graphs/cka/%s" % dataset, heatmap)
+    # new_keys, mat = sort_heatmap_by_keys(heatmap, keys, corner="Supervised")
+    # plt.figure(figsize=(20, 15))
+    # ax = sns.heatmap(mat, annot=True)
+    # plt.title(dataset)
+    # ax.set_xticklabels(new_keys, rotation=30)
+    # ax.set_yticklabels(new_keys, rotation=0)
+    # plt.savefig("graphs/cka/%s" % dataset)
+    # plt.close()
 
 
 def main():
