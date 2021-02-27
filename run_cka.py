@@ -207,7 +207,7 @@ def linear_cka(dataset):
                 outs.append(out["embedding"].cpu())
             outs = torch.cat(outs, dim=0)
             # center columns
-            outs /= outs.std(dim=0)
+            # outs /= outs.std(dim=0)
             outs -= outs.mean(dim=0)
             data[model_name] = outs
     keys = list(data.keys())
