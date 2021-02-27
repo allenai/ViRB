@@ -192,11 +192,12 @@ def run_cka(dataset):
 def sort_heatmap_by_keys(heatmap, keys, corner="Supervised"):
     mat = np.zeros_like(heatmap)
     new_keys = keys.copy()
-    new_keys.sort(key=lambda k: mat[keys.index(corner), keys.index(k)], reverse=True)
+    new_keys.sort(key=lambda k: heatmap[keys.index(corner), keys.index(k)], reverse=True)
     for i, x in enumerate(new_keys):
         for j, y in enumerate(new_keys):
             mat[i, j] = heatmap[keys.index(x), keys.index(y)]
     return new_keys, mat
+
 
 def linear_cka(dataset):
     with open('configs/experiment_lists/default.yaml') as f:
@@ -227,12 +228,12 @@ def linear_cka(dataset):
             y = data[keys[j]].to(device)
             cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
             heatmap[i, j] = heatmap[j, i] = cka
-    keys, mat = sort_heatmap_by_keys(heatmap, keys, corner="Supervised")
+    new_keys, mat = sort_heatmap_by_keys(heatmap, keys, corner="Supervised")
     plt.figure(figsize=(20, 15))
     ax = sns.heatmap(mat, annot=True)
     plt.title(dataset)
-    ax.set_xticklabels(keys, rotation=30)
-    ax.set_yticklabels(keys, rotation=0)
+    ax.set_xticklabels(new_keys, rotation=30)
+    ax.set_yticklabels(new_keys, rotation=0)
     plt.savefig("graphs/cka/%s" % dataset)
     plt.close()
 
