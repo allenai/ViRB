@@ -203,7 +203,7 @@ def linear_cka(dataset):
     with open('configs/experiment_lists/default.yaml') as f:
         encoders = yaml.load(f)
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
-    ds = CalTech101EncodableDataset()
+    ds = OmniDataset(dataset, max_imgs=10000)
     dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=False, num_workers=16)
     data = {}
     for model_name, path in tqdm.tqdm(encoders.items()):
@@ -211,7 +211,7 @@ def linear_cka(dataset):
         model = model.to(device).eval()
         outs = []
         with torch.no_grad():
-            for image, _ in dl:
+            for image in dl:
                 image = image.to(device)
                 out = model(image)
                 outs.append(out["embedding"].cpu())
@@ -239,7 +239,8 @@ def linear_cka(dataset):
 
 
 def main():
-    linear_cka("Caltech")
+    for dataset in DATASETS:
+        linear_cka(dataset)
     # run_cka("Thor")
     # run_cka("ImageNet")
     # device = "cuda:0" if torch.cuda.is_available() else "cpu"
