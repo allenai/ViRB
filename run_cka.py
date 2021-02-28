@@ -255,9 +255,9 @@ def layer_wise_linear_cka(model_name, path):
                 for k in out:
                     if k not in outs:
                         outs[k] = []
-                    outs[k].append(out[k].flatten(start_dim=1).cpu())
+                    outs[k].append(out[k].flatten(start_dim=1).cpu().numpy())
             for k in outs:
-                outs[k] = torch.cat(outs[k], dim=0)
+                outs[k] = np.concatenate(outs[k], dim=0)
                 # center columns
                 outs[k] -= outs[k].mean(dim=0)
             data[dataset] = outs
@@ -272,7 +272,7 @@ def layer_wise_linear_cka(model_name, path):
             for j in range(i, n):
                 x = corr[keys[i]]
                 y = corr[keys[j]]
-                cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
+                cka = (np.linalg.norm(y.T @ x) ** 2) / (np.linalg.norm(x.T @ x) * np.linalg.norm(y.T @ y))
                 heatmap[i, j] = heatmap[j, i] = cka
         sns.heatmap(heatmap, annot=False, ax=axes[idx])
         axes[idx].set_xticklabels(keys, rotation=30)
