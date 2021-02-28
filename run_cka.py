@@ -313,7 +313,7 @@ def main():
 
     with open('configs/experiment_lists/default.yaml') as f:
         encoders = yaml.load(f)
-    for model_name, path in encoders:
+    for model_name, path in encoders.items():
         layer_wise_linear_cka(model_name, path)
 
 
