@@ -239,9 +239,52 @@ def linear_cka(dataset):
     # plt.close()
 
 
+def layer_wise_linear_cka(model_name, path):
+    device = "cuda:0" if torch.cuda.is_available() else "cpu"
+    model = ResNet50Encoder(path)
+    model = model.to(device).eval()
+    data = {}
+    for dataset in tqdm.tqdm(DATASETS):
+        ds = OmniDataset(dataset, max_imgs=1500000)
+        dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=False, num_workers=16)
+        outs = {}
+        with torch.no_grad():
+            for image in dl:
+                image = image.to(device)
+                out = model(image)
+                for k in out:
+                    if k not in outs:
+                        outs[k] = []
+                    outs[k].append(out[k].flatten(start_dim=1).cpu())
+            for k in outs:
+                outs[k] = torch.cat(outs[k], dim=0)
+                # center columns
+                outs[k] -= outs[k].mean(dim=0)
+            data[dataset] = outs
+
+    fig, axes = plt.subplots(3, 5, figsize=(20, 15))
+    fig.suptitle(model_name)
+    for idx, (dataset_name, corr) in enumerate(data):
+        keys = list(corr.keys())
+        n = len(keys)
+        heatmap = np.zeros((n, n))
+        for i in range(n):
+            for j in range(i, n):
+                x = corr[keys[i]]
+                y = corr[keys[j]]
+                cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
+                heatmap[i, j] = heatmap[j, i] = cka
+        sns.heatmap(heatmap, annot=True, ax=axes[idx])
+        axes[idx].set_xticklabels(keys, rotation=30)
+        axes[idx].set_yticklabels(keys, rotation=0)
+        axes[idx].set_title(dataset_name)
+    plt.savefig("graphs/cka/layer_wise/%s" % dataset)
+    plt.close()
+
+
 def main():
-    for dataset in DATASETS:
-        linear_cka(dataset)
+    # for dataset in DATASETS:
+    #     linear_cka(dataset)
     # run_cka("Thor")
     # run_cka("ImageNet")
     # device = "cuda:0" if torch.cuda.is_available() else "cpu"
@@ -267,6 +310,11 @@ def main():
     # dist_time = dist_end - enc_end
     # print("Distance Time: %02d:%02d" % (dist_time // 60, dist_time % 60))
     # print("Distance Shape", distance.shape)
+
+    with open('configs/experiment_lists/default.yaml') as f:
+        encoders = yaml.load(f)
+    for model_name, path in encoders:
+        layer_wise_linear_cka(model_name, path)
 
 
 if __name__ == '__main__':
