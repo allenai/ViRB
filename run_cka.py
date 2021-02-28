@@ -245,7 +245,7 @@ def layer_wise_linear_cka(model_name, path):
     model = model.to(device).eval()
     data = {}
     for dataset in tqdm.tqdm(DATASETS):
-        ds = OmniDataset(dataset, max_imgs=10000)
+        ds = OmniDataset(dataset, max_imgs=100)
         dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=False, num_workers=16)
         outs = {}
         with torch.no_grad():
@@ -264,7 +264,7 @@ def layer_wise_linear_cka(model_name, path):
 
     fig, axes = plt.subplots(3, 5, figsize=(20, 15))
     fig.suptitle(model_name)
-    for idx, (dataset_name, corr) in enumerate(data):
+    for idx, (dataset_name, corr) in enumerate(data.items()):
         keys = list(corr.keys())
         n = len(keys)
         heatmap = np.zeros((n, n))
@@ -274,7 +274,7 @@ def layer_wise_linear_cka(model_name, path):
                 y = corr[keys[j]]
                 cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
                 heatmap[i, j] = heatmap[j, i] = cka
-        sns.heatmap(heatmap, annot=True, ax=axes[idx])
+        sns.heatmap(heatmap, annot=False, ax=axes[idx])
         axes[idx].set_xticklabels(keys, rotation=30)
         axes[idx].set_yticklabels(keys, rotation=0)
         axes[idx].set_title(dataset_name)
@@ -315,6 +315,7 @@ def main():
         encoders = yaml.load(f)
     for model_name, path in encoders.items():
         layer_wise_linear_cka(model_name, path)
+        exit()
 
 
 if __name__ == '__main__':
