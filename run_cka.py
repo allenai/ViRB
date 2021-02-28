@@ -257,9 +257,9 @@ def layer_wise_linear_cka(model_name, path):
                         outs[k] = []
                     outs[k].append(out[k].flatten(start_dim=1).cpu().numpy())
             for k in outs:
-                outs[k] = np.concatenate(outs[k], dim=0)
+                outs[k] = np.concatenate(outs[k], axis=0)
                 # center columns
-                outs[k] -= outs[k].mean(dim=0)
+                outs[k] -= outs[k].mean(axis=0)
             data[dataset] = outs
 
     fig, axes = plt.subplots(3, 5, figsize=(20, 15))
