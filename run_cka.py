@@ -253,13 +253,12 @@ def layer_wise_linear_cka(model_name, path):
     model = model.to(device).eval()
     data = {}
     for dataset in DATASETS:
-        print("Encoding Datasets")
         ds = OmniDataset(dataset, max_imgs=1000)
-        print()
         dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=False, num_workers=16)
         outs = {}
+        print("Encoding Datasets")
         with torch.no_grad():
-            for image in dl:
+            for image in tqdm.tqdm(dl):
                 image = image.to(device)
                 out = model(image)
                 for k in out:
