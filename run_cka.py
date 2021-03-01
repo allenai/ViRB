@@ -239,7 +239,7 @@ def linear_cka(dataset):
     # plt.close()
 
 
-def fro_matmul(a, b, stride=1000):
+def fro_matmul(a, b, stride=10000):
     s = 0.0
     for i in tqdm.tqdm(range(0, b.shape[1], stride)):
         s += np.sum(np.power(a @ b[:, i*stride:min((i+1)*stride, b.shape[1])], 2))
@@ -268,8 +268,8 @@ def layer_wise_linear_cka(model_name, path):
                 # center columns
                 outs[k] -= outs[k].mean(axis=0)
             data[dataset] = outs
-        break
 
+    sns.set()
     fig, axes = plt.subplots(3, 5, figsize=(20, 15))
     fig.suptitle(model_name)
     for idx, (dataset_name, corr) in enumerate(data.items()):
