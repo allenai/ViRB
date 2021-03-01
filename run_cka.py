@@ -239,6 +239,13 @@ def linear_cka(dataset):
     # plt.close()
 
 
+def fro_matmul(a, b):
+    s = 0.0
+    for i in tqdm.tqdm(range(b.shape[1])):
+        s += np.sum(np.power(a @ b[:,i], 2))
+    return np.sqrt(s)
+
+
 def layer_wise_linear_cka(model_name, path):
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
     model = ResNet50Encoder(path)
@@ -272,7 +279,8 @@ def layer_wise_linear_cka(model_name, path):
             for j in range(i, n):
                 x = corr[keys[i]]
                 y = corr[keys[j]]
-                cka = (np.linalg.norm(y.T @ x) ** 2) / (np.linalg.norm(x.T @ x) * np.linalg.norm(y.T @ y))
+                # cka = (np.linalg.norm(y.T @ x) ** 2) / (np.linalg.norm(x.T @ x) * np.linalg.norm(y.T @ y))
+                cka = (fro_matmul(y.T, x) ** 2) / (fro_matmul(x.T, x) * fro_matmul(y.T, y))
                 heatmap[i, j] = heatmap[j, i] = cka
         sns.heatmap(heatmap, annot=False, ax=axes[idx])
         axes[idx].set_xticklabels(keys, rotation=30)
