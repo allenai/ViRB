@@ -283,10 +283,10 @@ def layer_wise_linear_cka(model_name, path):
                 # cka = (np.linalg.norm(y.T @ x) ** 2) / (np.linalg.norm(x.T @ x) * np.linalg.norm(y.T @ y))
                 cka = (fro_matmul(y.T, x) ** 2) / (fro_matmul(x.T, x) * fro_matmul(y.T, y))
                 heatmap[i, j] = heatmap[j, i] = cka
-        sns.heatmap(heatmap, annot=False, ax=axes[idx])
-        axes[idx].set_xticklabels(keys, rotation=30)
-        axes[idx].set_yticklabels(keys, rotation=0)
-        axes[idx].set_title(dataset_name)
+        sns.heatmap(heatmap, annot=False, ax=axes.flat[idx])
+        axes.flat[idx].set_xticklabels(keys, rotation=30)
+        axes.flat[idx].set_yticklabels(keys, rotation=0)
+        axes.flat[idx].set_title(dataset_name)
     plt.savefig("graphs/cka/layer_wise/%s" % dataset)
     plt.close()
 
