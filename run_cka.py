@@ -9,6 +9,7 @@ import random
 import tqdm
 import time
 import yaml
+import os
 
 from models.ResNet50Encoder import ResNet50Encoder
 from datasets.OmniDataset import OmniDataset
@@ -242,7 +243,7 @@ def linear_cka(dataset):
 def fro_matmul(a, b, stride=1000):
     s = 0.0
     for i in tqdm.tqdm(range(0, b.shape[1], stride)):
-        s += np.sum(np.power(a @ b[:, i*stride:min((i+1)*stride, b.shape[1])], 2))
+        s += np.sum(np.power(a @ b[:, i:min(i+stride, b.shape[1])], 2))
     return np.sqrt(s)
 
 
@@ -251,7 +252,7 @@ def layer_wise_linear_cka(model_name, path):
     model = ResNet50Encoder(path)
     model = model.to(device).eval()
     data = {}
-    for dataset in tqdm.tqdm(DATASETS):
+    for dataset in DATASETS:
         ds = OmniDataset(dataset, max_imgs=1000)
         dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=False, num_workers=16)
         outs = {}
@@ -269,9 +270,9 @@ def layer_wise_linear_cka(model_name, path):
                 outs[k] -= outs[k].mean(axis=0)
             data[dataset] = outs
 
-    sns.set()
-    fig, axes = plt.subplots(3, 5, figsize=(20, 15))
-    fig.suptitle(model_name)
+    # sns.set()
+    # fig, axes = plt.subplots(3, 5, figsize=(20, 15))
+    # fig.suptitle(model_name)
     for idx, (dataset_name, corr) in enumerate(data.items()):
         keys = list(corr.keys())
         n = len(keys)
@@ -283,12 +284,14 @@ def layer_wise_linear_cka(model_name, path):
                 # cka = (np.linalg.norm(y.T @ x) ** 2) / (np.linalg.norm(x.T @ x) * np.linalg.norm(y.T @ y))
                 cka = (fro_matmul(y.T, x) ** 2) / (fro_matmul(x.T, x) * fro_matmul(y.T, y))
                 heatmap[i, j] = heatmap[j, i] = cka
-        sns.heatmap(heatmap, annot=False, ax=axes.flat[idx])
-        axes.flat[idx].set_xticklabels(keys, rotation=30)
-        axes.flat[idx].set_yticklabels(keys, rotation=0)
-        axes.flat[idx].set_title(dataset_name)
-    plt.savefig("graphs/cka/layer_wise/%s" % dataset)
-    plt.close()
+        os.makedirs("graphs/cka/layer_wise/%s/" % model_name, exist_ok=True)
+        np.save("graphs/cka/layer_wise/%s/%s" % (model_name, dataset_name), heatmap)
+        # sns.heatmap(heatmap, annot=False, ax=axes.flat[idx])
+        # axes.flat[idx].set_xticklabels(keys, rotation=30)
+        # axes.flat[idx].set_yticklabels(keys, rotation=0)
+        # axes.flat[idx].set_title(dataset_name)
+    # plt.savefig("graphs/cka/layer_wise/%s" % model_name)
+    # plt.close()
 
 
 def main():
