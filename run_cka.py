@@ -240,7 +240,7 @@ def linear_cka(dataset):
     # plt.close()
 
 
-def fro_matmul(a, b, stride=1000):
+def fro_matmul(a, b, stride=10000):
     s = 0.0
     for i in tqdm.tqdm(range(0, b.shape[1], stride)):
         s += np.sum(np.power(a @ b[:, i:min(i+stride, b.shape[1])], 2))
