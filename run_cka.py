@@ -242,7 +242,7 @@ def linear_cka(dataset):
 
 def fro_matmul(a, b, stride=1000):
     s = 0.0
-    for i in tqdm.tqdm(range(0, b.shape[1], stride)):
+    for i in range(0, b.shape[1], stride):
         s += np.sum(np.power(a @ b[:, i:min(i+stride, b.shape[1])], 2))
     return np.sqrt(s)
 
@@ -325,7 +325,7 @@ def main():
 
     with open('configs/experiment_lists/default.yaml') as f:
         encoders = yaml.load(f)
-    for model_name, path in tqdm(encoders.items()):
+    for model_name, path in tqdm.tqdm(encoders.items()):
         layer_wise_linear_cka(model_name, path)
 
 
