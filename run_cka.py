@@ -240,7 +240,7 @@ def linear_cka(dataset):
     # plt.close()
 
 
-def fro_matmul(a, b, stride=1000):
+def fro_matmul(a, b, stride=10000):
     s = 0.0
     for i in tqdm.tqdm(range(0, b.shape[1], stride)):
         s += np.sum(np.power(a @ b[:, i:min(i+stride, b.shape[1])], 2))
@@ -252,13 +252,12 @@ def layer_wise_linear_cka(model_name, path):
     model = ResNet50Encoder(path)
     model = model.to(device).eval()
     data = {}
-    print("Encoding Datasets")
-    for dataset in tqdm.tqdm(DATASETS):
-        ds = OmniDataset(dataset, max_imgs=1000)
+    for dataset in DATASETS:
+        ds = OmniDataset(dataset, max_imgs=100)
         dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=False, num_workers=16)
         outs = {}
         with torch.no_grad():
-            for image in tqdm.tqdm(dl):
+            for image in dl:
                 image = image.to(device)
                 out = model(image)
                 for k in out:
