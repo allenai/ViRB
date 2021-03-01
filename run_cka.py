@@ -252,7 +252,7 @@ def layer_wise_linear_cka(model_name, path):
     model = model.to(device).eval()
     data = {}
     for dataset in tqdm.tqdm(DATASETS):
-        ds = OmniDataset(dataset, max_imgs=10000)
+        ds = OmniDataset(dataset, max_imgs=1000)
         dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=False, num_workers=16)
         outs = {}
         with torch.no_grad():
