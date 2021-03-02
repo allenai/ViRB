@@ -31,7 +31,7 @@ PATHS = {
     'Caltech': 'data/omni_10k/Caltech/*.png',
     'Cityscapes': 'data/omni_10k/Cityscapes/*.png',
     'CLEVR': 'data/omni_10k/CLEVR/*.png',
-    'dtd': 'data/omni_10k/dtd/*.jpg',
+    'dtd': 'data/omni_10k/dtd/*.png',
     'Egohands': 'data/omni_10k/Egohands/*.png',
     'Eurosat': 'data/omni_10k/Eurosat/*.png',
     'ImageNet': 'data/omni_10k/ImageNet/*.png',
