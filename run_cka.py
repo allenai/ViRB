@@ -319,6 +319,7 @@ def main():
 
     with open('configs/experiment_lists/default.yaml') as f:
         encoders = yaml.load(f)
+    print(encoders)
     for model_name, path in tqdm.tqdm(encoders.items()):
         layer_wise_linear_cka(model_name, path)
 
