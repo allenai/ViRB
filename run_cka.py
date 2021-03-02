@@ -1,20 +1,14 @@
 import torch
-import glob
 import scipy
 import seaborn as sns
 import matplotlib.pyplot as plt
-import pandas as pd
 import numpy as np
-import random
 import tqdm
-import time
 import yaml
 import os
 
 from models.ResNet50Encoder import ResNet50Encoder
 from datasets.OmniDataset import OmniDataset
-from datasets.ImagenetEncodbleDataset import ImagenetEncodableDataset
-from datasets.Caltech101EncldableDataset import CalTech101EncodableDataset
 
 
 def flatten_model_by_layer(model):
@@ -240,7 +234,7 @@ def linear_cka(dataset):
     # plt.close()
 
 
-def fro_matmul(a, b, stride=10000):
+def fro_matmul(a, b, stride=100000):
     s = 0.0
     for i in tqdm.tqdm(range(0, b.shape[1], stride)):
         s += np.sum(np.power(a @ b[:, i:min(i+stride, b.shape[1])], 2))
@@ -253,7 +247,7 @@ def layer_wise_linear_cka(model_name, path):
     model = model.to(device).eval()
     data = {}
     for dataset in DATASETS:
-        ds = OmniDataset(dataset, max_imgs=100)
+        ds = OmniDataset(dataset, max_imgs=10)
         dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=False, num_workers=16)
         outs = {}
         with torch.no_grad():
