@@ -1865,3 +1865,129 @@ def make_csv():
 # )
 # plt.show()
 
+
+
+####### Classification Task vs IN Score
+# make_csv()
+# data = pandas.read_csv("results.csv")
+# data = data.set_index("Encoder")
+# datapoints = []
+# for encoder in data.index:
+#     if data.loc[encoder]["Imagenet"] > 0.5:
+#         for task in EMBEDDING_STRUCTURAL_TASKS:
+#             datapoints.append({
+#                 "Encoder": encoder,
+#                 "Score": data.loc[encoder][task],
+#                 "IN Score": data.loc[encoder]["Imagenet"],
+#                 "TaskType": "Structural",
+#                 "Task": task
+#             })
+#         # for task in EMBEDDING_SEMANTIC_TASKS:
+#         #     datapoints.append({
+#         #         "Encoder": encoder,
+#         #         "Score": data.loc[encoder][task],
+#         #         "IN Score": data.loc[encoder]["Imagenet"],
+#         #         "TaskType": "Semantic",
+#         #         "Task": task
+#         #     })
+# sns.set()
+# plt.title("Structural Classification Task vs IN Score")
+# sns.color_palette("bright")
+# sns.lmplot(x="IN Score", y="Score", hue="Task", data=pandas.DataFrame(datapoints))
+# plt.savefig("graphs/classification_vs_IN/Structural")
+# plt.clf()
+#
+# datapoints = []
+# for encoder in data.index:
+#     if data.loc[encoder]["Imagenet"] > 0.5:
+#         # for task in EMBEDDING_STRUCTURAL_TASKS:
+#         #     datapoints.append({
+#         #         "Encoder": encoder,
+#         #         "Score": data.loc[encoder][task],
+#         #         "IN Score": data.loc[encoder]["Imagenet"],
+#         #         "TaskType": "Structural",
+#         #         "Task": task
+#         #     })
+#         for task in EMBEDDING_SEMANTIC_TASKS:
+#             datapoints.append({
+#                 "Encoder": encoder,
+#                 "Score": data.loc[encoder][task],
+#                 "IN Score": data.loc[encoder]["Imagenet"],
+#                 "TaskType": "Semantic",
+#                 "Task": task
+#             })
+# sns.set()
+# plt.title("Semantic Classification Task vs IN Score")
+# sns.color_palette("bright")
+# sns.lmplot(x="IN Score", y="Score", hue="Task", data=pandas.DataFrame(datapoints))
+# plt.savefig("graphs/classification_vs_IN/Semantic")
+# plt.clf()
+
+
+make_csv()
+data = pandas.read_csv("results.csv")
+data = data.set_index("Encoder")
+# CalTech
+datapoints = []
+for encoder in data.index:
+    if data.loc[encoder]["Imagenet"] > 0.4:
+        datapoints.append({
+            "Encoder": encoder,
+            "Score": data.loc[encoder]["CalTech-101"],
+            "IN Score": data.loc[encoder]["Imagenet"],
+            "Dataset": "Imagenet" if data.loc[encoder]["Dataset"] == "Imagenet" else "Other"
+        })
+sns.set()
+plt.title("CalTech vs Imagenet Score")
+sns.color_palette("bright")
+sns.lmplot(x="IN Score", y="Score", hue="Dataset", data=pandas.DataFrame(datapoints))
+plt.savefig("graphs/datasets_with_similar_end_tasks/CalTech")
+plt.clf()
+# SUN397
+datapoints = []
+for encoder in data.index:
+    if data.loc[encoder]["Imagenet"] > 0.4:
+        datapoints.append({
+            "Encoder": encoder,
+            "Score": data.loc[encoder]["SUN397"],
+            "IN Score": data.loc[encoder]["Imagenet"],
+            "Dataset": "Places" if data.loc[encoder]["Dataset"] == "Places" else "Other"
+        })
+sns.set()
+plt.title("SUN397 vs Imagenet Score")
+sns.color_palette("bright")
+sns.lmplot(x="IN Score", y="Score", hue="Dataset", data=pandas.DataFrame(datapoints))
+plt.savefig("graphs/datasets_with_similar_end_tasks/SUN397")
+plt.clf()
+# Kinetics
+datapoints = []
+for encoder in data.index:
+    if data.loc[encoder]["Imagenet"] > 0.4:
+        datapoints.append({
+            "Encoder": encoder,
+            "Score": data.loc[encoder]["KineticsActionPrediction"],
+            "IN Score": data.loc[encoder]["Imagenet"],
+            "Dataset": "Kinetics" if data.loc[encoder]["Dataset"] == "Kinetics" else "Other"
+        })
+sns.set()
+plt.title("Kinetics vs Imagenet Score")
+sns.color_palette("bright")
+sns.lmplot(x="IN Score", y="Score", hue="Dataset", data=pandas.DataFrame(datapoints))
+plt.savefig("graphs/datasets_with_similar_end_tasks/Kinetics")
+plt.clf()
+# Taskonomy
+datapoints = []
+for encoder in data.index:
+    if data.loc[encoder]["Imagenet"] > 0.25:
+        datapoints.append({
+            "Encoder": encoder,
+            "Score": data.loc[encoder]["TaskonomyDepth"],
+            "IN Score": data.loc[encoder]["Imagenet"],
+            "Dataset": "Taskonomy" if data.loc[encoder]["Dataset"] == "Taskonomy" else "Other"
+        })
+sns.set()
+plt.title("TaskonomyDepth vs Imagenet Score")
+sns.color_palette("bright")
+sns.lmplot(x="IN Score", y="Score", hue="Dataset", data=pandas.DataFrame(datapoints))
+plt.savefig("graphs/datasets_with_similar_end_tasks/TaskonomyDepth")
+plt.clf()
