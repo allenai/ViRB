@@ -234,10 +234,14 @@ def linear_cka(dataset):
     # plt.close()
 
 
-def fro_matmul(a, b, stride=100000):
+def fro_matmul(a, b, stride=1000):
+    device = "cuda:0" if torch.cuda.is_available() else "cpu"
     s = 0.0
-    for i in tqdm.tqdm(range(0, b.shape[1], stride)):
-        s += np.sum(np.power(a @ b[:, i:min(i+stride, b.shape[1])], 2))
+    a = a.to(device)
+    b = b.to(device)
+    with torch.no_grad():
+        for i in tqdm.tqdm(range(0, b.shape[1], stride)):
+            s += torch.sum(torch.pow(a @ b[:, i:min(i+stride, b.shape[1])], 2)).cpu().numpy()
     return np.sqrt(s)
 
 
@@ -320,7 +324,6 @@ def main():
 
     with open('configs/experiment_lists/default.yaml') as f:
         encoders = yaml.load(f)
-    print(encoders)
     for model_name, path in tqdm.tqdm(encoders.items()):
         layer_wise_linear_cka(model_name, path)
 
