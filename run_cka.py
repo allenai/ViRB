@@ -332,7 +332,8 @@ def main():
         arg_list = []
         for idx, (model_name, path) in enumerate(encoders.items()):
             arg_list.append((model_name, path, "cuda:%d" % (idx % nd)))
-        from multiprocessing import Pool
+        from multiprocessing import Pool, set_start_method
+        set_start_method("spawn")
         with Pool(processes=nd) as pool:
             pool.starmap(layer_wise_linear_cka, arg_list)
 
