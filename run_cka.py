@@ -245,8 +245,7 @@ def fro_matmul(a, b, stride=1000):
     return np.sqrt(s)
 
 
-def layer_wise_linear_cka(model_name, path):
-    device = "cuda:0" if torch.cuda.is_available() else "cpu"
+def layer_wise_linear_cka(model_name, path, device):
     model = ResNet50Encoder(path)
     model = model.to(device).eval()
     data = {}
@@ -324,8 +323,17 @@ def main():
 
     with open('configs/experiment_lists/default.yaml') as f:
         encoders = yaml.load(f)
-    for model_name, path in tqdm.tqdm(encoders.items()):
-        layer_wise_linear_cka(model_name, path)
+    nd = torch.cuda.device_count()
+    if nd == 0:
+        for model_name, path in tqdm.tqdm(encoders.items()):
+            layer_wise_linear_cka(model_name, path, "cpu")
+    else:
+        arg_list = []
+        for idx, (model_name, path) in enumerate(encoders.items()):
+            arg_list.append((model_name, path, "cuda:%d" % (idx % nd)))
+        from multiprocessing import Pool
+        with Pool(processes=nd) as pool:
+            pool.map(layer_wise_linear_cka, arg_list)
 
 
 if __name__ == '__main__':
