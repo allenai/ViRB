@@ -29,16 +29,13 @@ class ResNet50Encoder(nn.Module):
         x = self.model.relu(x)
         res["layer1"] = x
         x = self.model.maxpool(x)
-
         x = self.model.layer1(x)
         res["layer2"] = x
         x = self.model.layer2(x)
         res["layer3"] = x
         x = self.model.layer3(x)
-
         res["layer4"] = x
         x = self.model.layer4(x)
-
         res["layer5"] = x
 
         x = self.model.avgpool(x)

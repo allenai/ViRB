@@ -16,6 +16,7 @@ Pets:
 #      optimizer: "sgd"
 #      lr: 0.001
   num_epochs: 500
+  batch_size: 32
 
 SUN397:
   task: "SUN397"
@@ -36,6 +37,7 @@ SUN397:
 #      optimizer: "sgd"
 #      lr: 0.0001
   num_epochs: 250
+  batch_size: 32
 
 CIFAR-100:
   task: "CIFAR-100"
@@ -53,6 +55,7 @@ CIFAR-100:
 #      optimizer: "sgd"
 #      lr: 0.001
   num_epochs: 100
+  batch_size: 32
 
 CalTech-101:
   task: "CalTech-101"
@@ -70,6 +73,7 @@ CalTech-101:
 #      optimizer: "sgd"
 #      lr: 0.001
   num_epochs: 500
+  batch_size: 32
 
 Eurosat:
   task: "Eurosat"
@@ -87,6 +91,7 @@ Eurosat:
 #      optimizer: "sgd"
 #      lr: 0.001
   num_epochs: 200
+  batch_size: 32
 
 dtd:
   task: "dtd"
@@ -104,6 +109,7 @@ dtd:
 #      optimizer: "sgd"
 #      lr: 0.001
   num_epochs: 100
+  batch_size: 32
 
 CLEVERNumObjects:
   task: "CLEVERNumObjects"
@@ -121,6 +127,7 @@ CLEVERNumObjects:
 #      optimizer: "sgd"
 #      lr: 0.001
   num_epochs: 100
+  batch_size: 32
 
 THORNumSteps:
   task: "THORNumSteps"
@@ -138,6 +145,7 @@ THORNumSteps:
 #      optimizer: "sgd"
 #      lr: 0.001
   num_epochs: 100
+  batch_size: 32
 
 Imagenet:
   task: "Imagenet"
@@ -163,6 +171,7 @@ Imagenet:
 #        step_size: 50
 #        gamma: 0.1
   num_epochs: 100
+  batch_size: 32
 
 THORActionPrediction:
   task: "THORActionPrediction"
@@ -180,6 +189,7 @@ THORActionPrediction:
 #      optimizer: "sgd"
 #      lr: 0.001
   num_epochs: 100
+  batch_size: 32
 
 Pets-Detection:
   task: "Pets-Detection"
@@ -192,6 +202,7 @@ Pets-Detection:
 #      optimizer: "sgd"
 #      lr: 0.001
   num_epochs: 100
+  batch_size: 32
 
 THORDepth:
   task: "THORDepth"
@@ -204,6 +215,7 @@ THORDepth:
 #      optimizer: "sgd"
 #      lr: 0.01
   num_epochs: 50
+  batch_size: 32
 
 NYUDepth:
   task: "NYUDepth"
@@ -220,6 +232,7 @@ NYUDepth:
 #        step_size: 500
 #        gamma: 0.1
   num_epochs: 250
+  batch_size: 32
 
 NYUWalkable:
   task: "NYUWalkable"
@@ -236,6 +249,7 @@ NYUWalkable:
 #        step_size: 40
 #        gamma: 0.1
   num_epochs: 250
+  batch_size: 32
 
 #TaskonomyInpainting:
 #  task: "TaskonomyInpainting"
@@ -312,6 +326,7 @@ TaskonomyDepth:
 #      optimizer: "sgd"
 #      lr: 0.01
   num_epochs: 50
+  batch_size: 16
 
 KineticsActionPrediction:
   task: "KineticsActionPrediction"
