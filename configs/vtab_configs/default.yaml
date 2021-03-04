@@ -202,7 +202,7 @@ Pets-Detection:
 #      optimizer: "sgd"
 #      lr: 0.001
   num_epochs: 100
-  batch_size: 32
+  batch_size: 16
 
 THORDepth:
   task: "THORDepth"
@@ -215,7 +215,7 @@ THORDepth:
 #      optimizer: "sgd"
 #      lr: 0.01
   num_epochs: 50
-  batch_size: 32
+  batch_size: 16
 
 NYUDepth:
   task: "NYUDepth"
@@ -232,7 +232,7 @@ NYUDepth:
 #        step_size: 500
 #        gamma: 0.1
   num_epochs: 250
-  batch_size: 32
+  batch_size: 16
 
 NYUWalkable:
   task: "NYUWalkable"
@@ -249,7 +249,7 @@ NYUWalkable:
 #        step_size: 40
 #        gamma: 0.1
   num_epochs: 250
-  batch_size: 32
+  batch_size: 16
 
 #TaskonomyInpainting:
 #  task: "TaskonomyInpainting"
