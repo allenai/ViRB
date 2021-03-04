@@ -234,8 +234,7 @@ def linear_cka(dataset):
     # plt.close()
 
 
-def fro_matmul(a, b, stride=1000):
-    device = "cuda:0" if torch.cuda.is_available() else "cpu"
+def fro_matmul(a, b, stride=1000, device="cpu"):
     s = 0.0
     a = a.to(device)
     b = b.to(device)
@@ -280,7 +279,7 @@ def layer_wise_linear_cka(model_name, path, device):
                 x = corr[keys[i]]
                 y = corr[keys[j]]
                 # cka = (np.linalg.norm(y.T @ x) ** 2) / (np.linalg.norm(x.T @ x) * np.linalg.norm(y.T @ y))
-                cka = (fro_matmul(y.T, x) ** 2) / (fro_matmul(x.T, x) * fro_matmul(y.T, y))
+                cka = (fro_matmul(y.T, x, device=device) ** 2) / (fro_matmul(x.T, x, device=device) * fro_matmul(y.T, y, device=device))
                 heatmap[i, j] = heatmap[j, i] = cka
         os.makedirs("graphs/cka/layer_wise/%s/" % model_name, exist_ok=True)
         np.save("graphs/cka/layer_wise/%s/%s" % (model_name, dataset_name), heatmap)
