@@ -292,14 +292,14 @@ CityscapesSemanticSegmentation:
 #        gamma: 0.3
   num_epochs: 100
   batch_size: 16
-
-Imagenetv2:
-  task: "Imagenetv2"
-  task_head_weights_path: "out/%s/Imagenet*/model_head.pt"
-  training_configs:
-    adam-0.0003:
-      optimizer: "adam"
-      lr: 0.0003
+#
+#Imagenetv2:
+#  task: "Imagenetv2"
+#  task_head_weights_path: "out/%s/Imagenet*/model_head.pt"
+#  training_configs:
+#    adam-0.0003:
+#      optimizer: "adam"
+#      lr: 0.0003
 
 TaskonomyDepth:
   task: "TaskonomyDepth"
