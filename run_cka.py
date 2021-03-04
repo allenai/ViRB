@@ -324,18 +324,34 @@ def main():
     with open('configs/experiment_lists/default.yaml') as f:
         encoders = yaml.load(f)
     nd = torch.cuda.device_count()
-    nd = 8
     if nd == 0:
         for model_name, path in tqdm.tqdm(encoders.items()):
             layer_wise_linear_cka(model_name, path, "cpu")
     else:
-        arg_list = []
-        for idx, (model_name, path) in enumerate(encoders.items()):
-            arg_list.append((model_name, path, "cuda:%d" % (idx % nd)))
+        keys = list(encoders.keys())
+        # for idx, (model_name, path) in enumerate(encoders.items()):
+        #     arg_list.append((model_name, path, "cuda:%d" % (idx % nd)))
         # from multiprocessing import Pool, set_start_method
-        from multiprocessing.pool import ThreadPool
-        with ThreadPool(processes=nd) as pool:
-            pool.starmap(layer_wise_linear_cka, arg_list)
+        # from multiprocessing.pool import ThreadPool
+        # with ThreadPool(processes=nd) as pool:
+        #     pool.starmap(layer_wise_linear_cka, arg_list)
+        import threading
+        count = 0
+        while count < len(keys):
+            threads = []
+            for gpu_id in range(nd):
+                threads.append(
+                    threading.Thread(
+                        target=layer_wise_linear_cka,
+                        args=(keys[count], encoders[keys[count]], "cuda:%d" % gpu_id)
+                    )
+                )
+                count += 1
+            for thread in threads:
+                thread.start()
+            for thread in threads:
+                thread.join()
+
 
 
 if __name__ == '__main__':
