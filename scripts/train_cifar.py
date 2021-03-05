@@ -137,10 +137,10 @@ def train_cifar():
                                            download=True, transform=transform)
     testloader = torch.utils.data.DataLoader(testset, batch_size=256,
                                              shuffle=False, num_workers=12)
-    optimizer = optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0005)
-    scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[200, 250, 300], gamma=0.1)
+    optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0005)
+    scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[30, 60, 90], gamma=0.1)
 
-    for epoch in range(350):
+    for epoch in range(100):
         running_loss = 0.0
         model.train()
         for i, data in enumerate(trainloader, 0):
@@ -208,14 +208,18 @@ def run_cka(model, name, num_layers, im_size):
     np.save(name, heatmap)
 
 
-def show():
+def show(name):
     sns.set()
-    heatmap = np.load("cifar_tiny10_layerwise_cka.npy")
+    heatmap = np.load(name+".npy")
     sns.heatmap(heatmap)
-    plt.show()
+    plt.title(name + " CIFAR 10 CKA")
+    plt.savefig(name)
+    plt.clf()
 
 
 if __name__ == '__main__':
     model = ResNet50Encoder()
     run_cka(model, "resnet50", 6, (32, 32))
-    # show()
+    run_cka(model, "tiny10", 10, (32, 32))
+    show("resnet50")
+    show("tiny10")
