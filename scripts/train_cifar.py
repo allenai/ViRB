@@ -119,13 +119,27 @@ def main():
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
         print('Accuracy of the network on the 10000 test images: %d %%' % (100 * correct / total))
-    #
-    # heatmap = np.zeros((n, n))
-    # for i in range(n):
-    #     for j in range(i, n):
-    #         x = distances[keys[i]]
-    #         y = distances[keys[j]]
-    #         heatmap[i, j] = heatmap[j, i] = 1 - scipy.spatial.distance.cosine(x, y)
+
+    encodings = [[] for _ in range(10)]
+    with torch.no_grad():
+        for data in testloader:
+            images, _ = data
+            images = images.to(device)
+            outputs = model(images)
+            for i in range(10):
+                encodings[i].append(outputs[i])
+    for i in range(len(encodings)):
+        encodings[i] = torch.cat(encodings[i], dim=0)
+        encodings[i] = encodings[i] - encodings[i].mean()
+
+    heatmap = np.zeros((10, 10))
+    for i in range(10):
+        for j in range(i, 10):
+            x = encodings[i]
+            y = encodings[j]
+            cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
+            heatmap[i, j] = heatmap[j, i] = cka.item()
+    np.save("cifar_tiny10_layerwise_cka", heatmap)
 
 
 if __name__ == '__main__':
