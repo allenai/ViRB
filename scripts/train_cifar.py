@@ -83,16 +83,16 @@ def main():
 
     trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
                                             download=True, transform=transform)
-    trainloader = torch.utils.data.DataLoader(trainset, batch_size=4,
-                                              shuffle=True, num_workers=2)
+    trainloader = torch.utils.data.DataLoader(trainset, batch_size=256,
+                                              shuffle=True, num_workers=12)
 
     testset = torchvision.datasets.CIFAR10(root='./data', train=False,
                                            download=True, transform=transform)
-    testloader = torch.utils.data.DataLoader(testset, batch_size=4,
-                                             shuffle=False, num_workers=2)
+    testloader = torch.utils.data.DataLoader(testset, batch_size=256,
+                                             shuffle=False, num_workers=12)
     optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
-    for epoch in range(100):
+    for epoch in 100:
         running_loss = 0.0
         for i, data in enumerate(trainloader, 0):
             inputs, labels = data
@@ -103,12 +103,8 @@ def main():
             loss = model.loss(outputs, labels)
             loss.backward()
             optimizer.step()
-
             running_loss += loss.item()
-            if i % 2000 == 1999:
-                print('[%d, %5d] loss: %.3f' %
-                      (epoch + 1, i + 1, running_loss / 2000))
-                running_loss = 0.0
+        print('[%d] loss: %.3f' % (epoch + 1, running_loss / 2000))
 
     correct = 0
     total = 0
