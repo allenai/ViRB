@@ -163,5 +163,5 @@ def show():
 
 
 if __name__ == '__main__':
-    show()
-    # main()
+    # show()
+    main()
