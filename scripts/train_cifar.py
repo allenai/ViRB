@@ -110,13 +110,11 @@ class ResNet50Encoder(nn.Module):
         return res
 
 
-def fro_matmul(a, b, stride=1000, device="cpu"):
+def fro_matmul(a, b, stride=10000, device="cpu"):
     s = 0.0
     with torch.no_grad():
         for i in range(0, b.shape[1], stride):
-            a = a.to(device)
-            b = b.to(device)
-            s += torch.sum(torch.pow(a @ b[:, i:min(i+stride, b.shape[1])], 2)).cpu().numpy()
+            s += torch.sum(torch.pow(a.to(device) @ b[:, i:min(i+stride, b.shape[1])].to(device), 2)).cpu().numpy()
     return np.sqrt(s)
 
 
@@ -180,7 +178,7 @@ def run_cka(model, name, num_layers, im_size):
          transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
     testset = torchvision.datasets.CIFAR10(root='./data', train=False,
                                            download=True, transform=transform)
-    testloader = torch.utils.data.DataLoader(testset, batch_size=32,
+    testloader = torch.utils.data.DataLoader(testset, batch_size=256,
                                              shuffle=False, num_workers=12)
     model.to(device)
     model.eval()
