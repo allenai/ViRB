@@ -110,7 +110,7 @@ class ResNet50Encoder(nn.Module):
         return res
 
 
-def fro_matmul(a, b, stride=10000, device="cpu"):
+def fro_matmul(a, b, stride=1000, device="cpu"):
     s = 0.0
     a = a.to(device)
     b = b.to(device)
