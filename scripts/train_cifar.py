@@ -7,6 +7,7 @@ import torchvision.transforms as transforms
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import tqdm
 
 
 class Tiny10(nn.Module):
@@ -75,7 +76,41 @@ class Tiny10(nn.Module):
     def loss(self, out, label):
         return F.cross_entropy(out, label)
 
-def fro_matmul(a, b, stride=100, device="cpu"):
+
+class ResNet50Encoder(nn.Module):
+
+    def __init__(self, weights=None):
+        super().__init__()
+        if weights:
+            self.model = torchvision.models.resnet50(pretrained=False)
+            weight_dict = torch.load(weights, map_location="cpu")
+            self.load_state_dict(weight_dict, strict=False)
+        else:
+            self.model = torchvision.models.resnet50(pretrained=True)
+
+    def forward(self, x):
+        res = []
+        x = self.model.conv1(x)
+        x = self.model.bn1(x)
+        x = self.model.relu(x)
+        res.append(x.clone())
+        x = self.model.maxpool(x)
+        x = self.model.layer1(x)
+        res.append(x.clone())
+        x = self.model.layer2(x)
+        res.append(x.clone())
+        x = self.model.layer3(x)
+        res.append(x.clone())
+        x = self.model.layer4(x)
+        res.append(x.clone())
+        x = self.model.avgpool(x)
+        x = torch.flatten(x, 1)
+        res.append(x.clone())
+
+        return res
+
+
+def fro_matmul(a, b, stride=10000, device="cpu"):
     s = 0.0
     a = a.to(device)
     b = b.to(device)
@@ -84,7 +119,8 @@ def fro_matmul(a, b, stride=100, device="cpu"):
             s += torch.sum(torch.pow(a @ b[:, i:min(i+stride, b.shape[1])], 2)).cpu().numpy()
     return np.sqrt(s)
 
-def main():
+
+def train_cifar():
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
     model = Tiny10()
     model.to(device)
@@ -134,10 +170,22 @@ def main():
                 correct += (predicted == labels).sum().item()
         print('Accuracy of the network on the 10000 test images: %d %%' % (100 * correct / total))
 
+
+def run_cka(model, name, num_layers, im_size):
+    device = "cuda:0" if torch.cuda.is_available() else "cpu"
+    transform = transforms.Compose(
+        [transforms.Resize(im_size),
+         transforms.ToTensor(),
+         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+    testset = torchvision.datasets.CIFAR10(root='./data', train=False,
+                                           download=True, transform=transform)
+    testloader = torch.utils.data.DataLoader(testset, batch_size=32,
+                                             shuffle=False, num_workers=12)
     model.eval()
-    encodings = [[] for _ in range(10)]
+    encodings = [[] for _ in range(num_layers)]
+    print("Encoding")
     with torch.no_grad():
-        for data in testloader:
+        for data in tqdm.tqdm(testloader):
             images, _ = data
             images = images.to(device)
             outputs = model(images)
@@ -147,15 +195,17 @@ def main():
         encodings[i] = torch.cat(encodings[i], dim=0).flatten(start_dim=1)
         encodings[i] = encodings[i] - encodings[i].mean()
 
-    heatmap = np.zeros((10, 10))
-    for i in range(10):
-        for j in range(i, 10):
+    heatmap = np.zeros((num_layers, num_layers))
+    for i in range(num_layers):
+        for j in range(i, num_layers):
+            print("Computing block [%d][%d]" % (i,j))
             x = encodings[i]
             y = encodings[j]
             # cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
             cka = (fro_matmul(y.T, x) ** 2) / (fro_matmul(x.T, x) * fro_matmul(y.T, y))
             heatmap[i, j] = heatmap[j, i] = cka.item()
-    np.save("cifar_tiny10_layerwise_cka", heatmap)
+    np.save(name, heatmap)
+
 
 def show():
     sns.set()
@@ -165,5 +215,6 @@ def show():
 
 
 if __name__ == '__main__':
+    model = ResNet50Encoder()
+    run_cka(model, "resnet50", 6, (32, 32))
     # show()
-    main()
