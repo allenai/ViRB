@@ -101,9 +101,10 @@ def main():
                                            download=True, transform=transform)
     testloader = torch.utils.data.DataLoader(testset, batch_size=256,
                                              shuffle=False, num_workers=12)
-    optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0005)
+    optimizer = optim.SGD(model.parameters(), lr=0.1, momentum=0.9, weight_decay=0.0005)
+    scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[200, 250, 300], gamma=0.1)
 
-    for epoch in range(50):
+    for epoch in range(350):
         running_loss = 0.0
         model.train()
         for i, data in enumerate(trainloader, 0):
@@ -117,6 +118,7 @@ def main():
             optimizer.step()
             running_loss += loss.item()
         print('[%d] loss: %.3f' % (epoch + 1, running_loss / 2000))
+        scheduler.step()
 
         correct = 0
         total = 0
