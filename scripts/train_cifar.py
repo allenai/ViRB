@@ -96,11 +96,11 @@ def main():
     for epoch in range(100):
         running_loss = 0.0
         for i, data in enumerate(trainloader, 0):
-            inputs, labels = data
-            inputs = inputs.to(device)
+            images, labels = data
+            images = images.to(device)
             labels = labels.to(device)
             optimizer.zero_grad()
-            outputs = model(inputs)[-1]
+            outputs = model(images)[-1]
             loss = model.loss(outputs, labels)
             loss.backward()
             optimizer.step()
@@ -112,7 +112,7 @@ def main():
         with torch.no_grad():
             for data in testloader:
                 images, labels = data
-                inputs = inputs.to(device)
+                images = images.to(device)
                 labels = labels.to(device)
                 outputs = model(images)[-1]
                 _, predicted = torch.max(outputs.data, 1)
