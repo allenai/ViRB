@@ -190,7 +190,7 @@ def run_cka(model, name, num_layers, im_size):
             images, _ = data
             images = images.to(device)
             outputs = model(images)
-            for i in range(10):
+            for i in range(num_layers):
                 encodings[i].append(outputs[i])
     for i in range(len(encodings)):
         encodings[i] = torch.cat(encodings[i], dim=0).flatten(start_dim=1)
