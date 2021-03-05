@@ -93,7 +93,7 @@ def main():
                                              shuffle=False, num_workers=12)
     optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
-    for epoch in range(30):
+    for epoch in range(50):
         running_loss = 0.0
         model.train()
         for i, data in enumerate(trainloader, 0):
@@ -132,7 +132,7 @@ def main():
             for i in range(10):
                 encodings[i].append(outputs[i])
     for i in range(len(encodings)):
-        encodings[i] = torch.cat(encodings[i], dim=0)
+        encodings[i] = torch.cat(encodings[i].flatten(start_dim=1), dim=0)
         encodings[i] = encodings[i] - encodings[i].mean()
 
     heatmap = np.zeros((10, 10))
