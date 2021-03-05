@@ -169,6 +169,7 @@ def train_cifar():
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
         print('Accuracy of the network on the 10000 test images: %d %%' % (100 * correct / total))
+    return model
 
 
 def run_cka(model, name, num_layers, im_size):
@@ -220,6 +221,7 @@ def show(name):
 if __name__ == '__main__':
     model = ResNet50Encoder()
     run_cka(model, "resnet50", 6, (32, 32))
+    model = train_cifar()
     run_cka(model, "tiny10", 10, (32, 32))
     show("resnet50")
     show("tiny10")
