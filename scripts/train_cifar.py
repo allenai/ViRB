@@ -132,7 +132,7 @@ def main():
             for i in range(10):
                 encodings[i].append(outputs[i])
     for i in range(len(encodings)):
-        encodings[i] = torch.cat(encodings[i].flatten(start_dim=1), dim=0)
+        encodings[i] = torch.cat(encodings[i], dim=0).flatten(start_dim=1)
         encodings[i] = encodings[i] - encodings[i].mean()
 
     heatmap = np.zeros((10, 10))
