@@ -192,7 +192,7 @@ def run_cka(model, name, num_layers, im_size):
             images = images.to(device)
             outputs = model(images)
             for i in range(num_layers):
-                encodings[i].append(outputs[i])
+                encodings[i].append(outputs[i].cpu())
     for i in range(len(encodings)):
         encodings[i] = torch.cat(encodings[i], dim=0).flatten(start_dim=1)
         encodings[i] = encodings[i] - encodings[i].mean()
@@ -204,7 +204,7 @@ def run_cka(model, name, num_layers, im_size):
             x = encodings[i]
             y = encodings[j]
             # cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
-            cka = (fro_matmul(y.T, x) ** 2) / (fro_matmul(x.T, x) * fro_matmul(y.T, y))
+            cka = (fro_matmul(y.T, x, device=device) ** 2) / (fro_matmul(x.T, x, device=device) * fro_matmul(y.T, y, device=device))
             heatmap[i, j] = heatmap[j, i] = cka.item()
     np.save(name, heatmap)
 
