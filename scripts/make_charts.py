@@ -31,6 +31,7 @@ ALL_EXPERIMENTS = [
     'MoCov2UnbalancedImagenet',
     'MoCov2QuarterImagenet',
     'SWAV_200',
+    'SWAV_200_2',
     'SWAVCombination',
     'SWAVTaskonomy',
     'SWAVKinetics',
@@ -1924,70 +1925,130 @@ def make_csv():
 # plt.clf()
 
 
+####### Make Correlation Plots for Similar Datasets
+# make_csv()
+# data = pandas.read_csv("results.csv")
+# data = data.set_index("Encoder")
+# # CalTech
+# datapoints = []
+# for encoder in data.index:
+#     if data.loc[encoder]["Imagenet"] > 0.4:
+#         datapoints.append({
+#             "Encoder": encoder,
+#             "Score": data.loc[encoder]["CalTech-101"],
+#             "IN Score": data.loc[encoder]["Imagenet"],
+#             "Dataset": "Imagenet" if data.loc[encoder]["Dataset"] == "Imagenet" else "Other"
+#         })
+# sns.set()
+# plt.title("CalTech vs Imagenet Score")
+# sns.color_palette("bright")
+# sns.lmplot(x="IN Score", y="Score", hue="Dataset", data=pandas.DataFrame(datapoints))
+# plt.savefig("graphs/datasets_with_similar_end_tasks/CalTech")
+# plt.clf()
+# # SUN397
+# datapoints = []
+# for encoder in data.index:
+#     if data.loc[encoder]["Imagenet"] > 0.4:
+#         datapoints.append({
+#             "Encoder": encoder,
+#             "Score": data.loc[encoder]["SUN397"],
+#             "IN Score": data.loc[encoder]["Imagenet"],
+#             "Dataset": "Places" if data.loc[encoder]["Dataset"] == "Places" else "Other"
+#         })
+# sns.set()
+# plt.title("SUN397 vs Imagenet Score")
+# sns.color_palette("bright")
+# sns.lmplot(x="IN Score", y="Score", hue="Dataset", data=pandas.DataFrame(datapoints))
+# plt.savefig("graphs/datasets_with_similar_end_tasks/SUN397")
+# plt.clf()
+# # Kinetics
+# datapoints = []
+# for encoder in data.index:
+#     if data.loc[encoder]["Imagenet"] > 0.4:
+#         datapoints.append({
+#             "Encoder": encoder,
+#             "Score": data.loc[encoder]["KineticsActionPrediction"],
+#             "IN Score": data.loc[encoder]["Imagenet"],
+#             "Dataset": "Kinetics" if data.loc[encoder]["Dataset"] == "Kinetics" else "Other"
+#         })
+# sns.set()
+# plt.title("Kinetics vs Imagenet Score")
+# sns.color_palette("bright")
+# sns.lmplot(x="IN Score", y="Score", hue="Dataset", data=pandas.DataFrame(datapoints))
+# plt.savefig("graphs/datasets_with_similar_end_tasks/Kinetics")
+# plt.clf()
+# # Taskonomy
+# datapoints = []
+# for encoder in data.index:
+#     if data.loc[encoder]["Imagenet"] > 0.25:
+#         datapoints.append({
+#             "Encoder": encoder,
+#             "Score": data.loc[encoder]["TaskonomyDepth"],
+#             "IN Score": data.loc[encoder]["Imagenet"],
+#             "Dataset": "Taskonomy" if data.loc[encoder]["Dataset"] == "Taskonomy" else "Other"
+#         })
+# sns.set()
+# plt.title("TaskonomyDepth vs Imagenet Score")
+# sns.color_palette("bright")
+# sns.lmplot(x="IN Score", y="Score", hue="Dataset", data=pandas.DataFrame(datapoints))
+# plt.savefig("graphs/datasets_with_similar_end_tasks/TaskonomyDepth")
+# plt.clf()
+
+####### Make nuScenes Human Performance Graph
+# make_csv()
+# data = pandas.read_csv("results.csv")
+# data = data.set_index("Encoder")
+# # CalTech
+# datapoints = []
+# for encoder in data.index:
+#     if data.loc[encoder]["Imagenet"] > 0.4:
+#         datapoints.append({
+#             "Encoder": encoder,
+#             "Score": data.loc[encoder]["nuScenesActionPrediction"],
+#             "Type": "Model"
+#         })
+# datapoints.append({"Encoder": "Roozbeh", "Score": 0.725, "Type": "Human"})
+# datapoints.append({"Encoder": "Klemen", "Score": 0.84, "Type": "Human"})
+# datapoints.append({"Encoder": "Gabriel", "Score": 0.9, "Type": "Human"})
+# datapoints.sort(key=lambda x: x["Score"], reverse=True)
+# sns.set()
+# plt.title("nuScenes Action Prediction Score")
+# sns.color_palette("bright")
+# sns.barplot(x="Score", y="Encoder", hue="Type", data=pandas.DataFrame(datapoints), dodge=False)
+# plt.show()
+# plt.savefig("graphs/datasets_with_similar_end_tasks/CalTech")
+# plt.clf()
+
+
 make_csv()
 data = pandas.read_csv("results.csv")
 data = data.set_index("Encoder")
 # CalTech
 datapoints = []
-for encoder in data.index:
-    if data.loc[encoder]["Imagenet"] > 0.4:
-        datapoints.append({
-            "Encoder": encoder,
-            "Score": data.loc[encoder]["CalTech-101"],
-            "IN Score": data.loc[encoder]["Imagenet"],
-            "Dataset": "Imagenet" if data.loc[encoder]["Dataset"] == "Imagenet" else "Other"
-        })
+POINTS = [
+    "Imagenet",
+    "Pets",
+    "CIFAR-100",
+    "CalTech-101",
+    "Eurosat",
+    "dtd",
+    "SUN397",
+    "KineticsActionPrediction",
+    "CLEVERNumObjects",
+    "THORNumSteps",
+    "THORActionPrediction",
+    "nuScenesActionPrediction"
+]
+for task in POINTS:
+    datapoints.append({
+        "Task": task,
+        "Score": abs(data.loc["SWAV_200"][task] - data.loc["SWAV_200_2"][task]),
+    })
+datapoints.sort(key=lambda x: x["Score"], reverse=True)
 sns.set()
-plt.title("CalTech vs Imagenet Score")
+plt.title("nuScenes Action Prediction Score")
 sns.color_palette("bright")
-sns.lmplot(x="IN Score", y="Score", hue="Dataset", data=pandas.DataFrame(datapoints))
-plt.savefig("graphs/datasets_with_similar_end_tasks/CalTech")
-plt.clf()
-# SUN397
-datapoints = []
-for encoder in data.index:
-    if data.loc[encoder]["Imagenet"] > 0.4:
-        datapoints.append({
-            "Encoder": encoder,
-            "Score": data.loc[encoder]["SUN397"],
-            "IN Score": data.loc[encoder]["Imagenet"],
-            "Dataset": "Places" if data.loc[encoder]["Dataset"] == "Places" else "Other"
-        })
-sns.set()
-plt.title("SUN397 vs Imagenet Score")
-sns.color_palette("bright")
-sns.lmplot(x="IN Score", y="Score", hue="Dataset", data=pandas.DataFrame(datapoints))
-plt.savefig("graphs/datasets_with_similar_end_tasks/SUN397")
-plt.clf()
-# Kinetics
-datapoints = []
-for encoder in data.index:
-    if data.loc[encoder]["Imagenet"] > 0.4:
-        datapoints.append({
-            "Encoder": encoder,
-            "Score": data.loc[encoder]["KineticsActionPrediction"],
-            "IN Score": data.loc[encoder]["Imagenet"],
-            "Dataset": "Kinetics" if data.loc[encoder]["Dataset"] == "Kinetics" else "Other"
-        })
-sns.set()
-plt.title("Kinetics vs Imagenet Score")
-sns.color_palette("bright")
-sns.lmplot(x="IN Score", y="Score", hue="Dataset", data=pandas.DataFrame(datapoints))
-plt.savefig("graphs/datasets_with_similar_end_tasks/Kinetics")
-plt.clf()
-# Taskonomy
-datapoints = []
-for encoder in data.index:
-    if data.loc[encoder]["Imagenet"] > 0.25:
-        datapoints.append({
-            "Encoder": encoder,
-            "Score": data.loc[encoder]["TaskonomyDepth"],
-            "IN Score": data.loc[encoder]["Imagenet"],
-            "Dataset": "Taskonomy" if data.loc[encoder]["Dataset"] == "Taskonomy" else "Other"
-        })
-sns.set()
-plt.title("TaskonomyDepth vs Imagenet Score")
-sns.color_palette("bright")
-sns.lmplot(x="IN Score", y="Score", hue="Dataset", data=pandas.DataFrame(datapoints))
-plt.savefig("graphs/datasets_with_similar_end_tasks/TaskonomyDepth")
-plt.clf()
+sns.barplot(x="Score", y="Task", data=pandas.DataFrame(datapoints), dodge=False)
+plt.show()
+# plt.savefig("graphs/datasets_with_similar_end_tasks/CalTech")
+# plt.clf()
