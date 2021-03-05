@@ -93,8 +93,9 @@ def main():
                                              shuffle=False, num_workers=12)
     optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
-    for epoch in range(100):
+    for epoch in range(30):
         running_loss = 0.0
+        model.train()
         for i, data in enumerate(trainloader, 0):
             images, labels = data
             images = images.to(device)
@@ -109,6 +110,7 @@ def main():
 
         correct = 0
         total = 0
+        model.eval()
         with torch.no_grad():
             for data in testloader:
                 images, labels = data
@@ -120,6 +122,7 @@ def main():
                 correct += (predicted == labels).sum().item()
         print('Accuracy of the network on the 10000 test images: %d %%' % (100 * correct / total))
 
+    model.eval()
     encodings = [[] for _ in range(10)]
     with torch.no_grad():
         for data in testloader:
