@@ -4,6 +4,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 import torchvision
 import torchvision.transforms as transforms
+import numpy as np
 
 
 class Tiny10(nn.Module):
@@ -106,20 +107,25 @@ def main():
             running_loss += loss.item()
         print('[%d] loss: %.3f' % (epoch + 1, running_loss / 2000))
 
-    correct = 0
-    total = 0
-    with torch.no_grad():
-        for data in testloader:
-            images, labels = data
-            inputs = inputs.to(device)
-            labels = labels.to(device)
-            outputs = model(images)
-            _, predicted = torch.max(outputs.data, 1)
-            total += labels.size(0)
-            correct += (predicted == labels).sum().item()
-
-    print('Accuracy of the network on the 10000 test images: %d %%' % (
-            100 * correct / total))
+        correct = 0
+        total = 0
+        with torch.no_grad():
+            for data in testloader:
+                images, labels = data
+                inputs = inputs.to(device)
+                labels = labels.to(device)
+                outputs = model(images)[-1]
+                _, predicted = torch.max(outputs.data, 1)
+                total += labels.size(0)
+                correct += (predicted == labels).sum().item()
+        print('Accuracy of the network on the 10000 test images: %d %%' % (100 * correct / total))
+    #
+    # heatmap = np.zeros((n, n))
+    # for i in range(n):
+    #     for j in range(i, n):
+    #         x = distances[keys[i]]
+    #         y = distances[keys[j]]
+    #         heatmap[i, j] = heatmap[j, i] = 1 - scipy.spatial.distance.cosine(x, y)
 
 
 if __name__ == '__main__':
