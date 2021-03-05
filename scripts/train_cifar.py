@@ -181,6 +181,7 @@ def run_cka(model, name, num_layers, im_size):
                                            download=True, transform=transform)
     testloader = torch.utils.data.DataLoader(testset, batch_size=32,
                                              shuffle=False, num_workers=12)
+    model.to(device)
     model.eval()
     encodings = [[] for _ in range(num_layers)]
     print("Encoding")
