@@ -101,7 +101,7 @@ def main():
                                            download=True, transform=transform)
     testloader = torch.utils.data.DataLoader(testset, batch_size=256,
                                              shuffle=False, num_workers=12)
-    optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
+    optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0005)
 
     for epoch in range(50):
         running_loss = 0.0
