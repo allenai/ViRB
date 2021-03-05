@@ -187,16 +187,13 @@ def run_cka(model, name, num_layers, im_size):
     encodings = [[] for _ in range(num_layers)]
     print("Encoding")
     with torch.no_grad():
-        count = 0
         for data in testloader:
             images, _ = data
             images = images.to(device)
             outputs = model(images)
             for i in range(num_layers):
                 encodings[i].append(outputs[i].cpu())
-            count += 1
-            if count > 4:
-                break
+            break
     for i in range(len(encodings)):
         encodings[i] = torch.cat(encodings[i], dim=0).flatten(start_dim=1)
         encodings[i] = encodings[i] - encodings[i].mean()
