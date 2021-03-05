@@ -110,11 +110,12 @@ class ResNet50Encoder(nn.Module):
         return res
 
 
-def fro_matmul(a, b, stride=10000, device="cpu"):
+def fro_matmul(a, b, stride=1000, device="cpu"):
     s = 0.0
+    a = a.to(device)
     with torch.no_grad():
         for i in range(0, b.shape[1], stride):
-            s += torch.sum(torch.pow(a.to(device) @ b[:, i:min(i+stride, b.shape[1])].to(device), 2)).cpu().numpy()
+            s += torch.sum(torch.pow(a @ b[:, i:min(i+stride, b.shape[1])].to(device), 2)).cpu().numpy()
     return np.sqrt(s)
 
 
