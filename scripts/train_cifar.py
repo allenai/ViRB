@@ -5,6 +5,8 @@ import torch.nn.functional as F
 import torchvision
 import torchvision.transforms as transforms
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 class Tiny10(nn.Module):
@@ -73,6 +75,14 @@ class Tiny10(nn.Module):
     def loss(self, out, label):
         return F.cross_entropy(out, label)
 
+def fro_matmul(a, b, stride=100, device="cpu"):
+    s = 0.0
+    a = a.to(device)
+    b = b.to(device)
+    with torch.no_grad():
+        for i in range(0, b.shape[1], stride):
+            s += torch.sum(torch.pow(a @ b[:, i:min(i+stride, b.shape[1])], 2)).cpu().numpy()
+    return np.sqrt(s)
 
 def main():
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
@@ -140,10 +150,18 @@ def main():
         for j in range(i, 10):
             x = encodings[i]
             y = encodings[j]
-            cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
+            # cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
+            cka = (fro_matmul(y.T, x) ** 2) / (fro_matmul(x.T, x) * fro_matmul(y.T, y))
             heatmap[i, j] = heatmap[j, i] = cka.item()
     np.save("cifar_tiny10_layerwise_cka", heatmap)
 
+def show():
+    sns.set()
+    heatmap = np.load("cifar_tiny10_layerwise_cka.npy")
+    sns.heatmap(heatmap)
+    plt.show()
+
 
 if __name__ == '__main__':
-    main()
+    show()
+    # main()
