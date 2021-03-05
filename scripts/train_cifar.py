@@ -220,7 +220,7 @@ def show(name):
 
 if __name__ == '__main__':
     model = ResNet50Encoder()
-    run_cka(model, "resnet50", 6, (32, 32))
+    run_cka(model, "resnet50", 6, (224, 224))
     model = train_cifar()
     run_cka(model, "tiny10", 10, (32, 32))
     show("resnet50")
