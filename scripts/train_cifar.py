@@ -15,32 +15,32 @@ class Tiny10(nn.Module):
     def __init__(self):
         super().__init__()
         self.layer1 = nn.Sequential(
-            nn.Conv2d(3, 16, (3, 3)),
+            nn.Conv2d(3, 16, (3, 3), padding=1),
             nn.BatchNorm2d(16),
             nn.ReLU(),
         )
         self.layer2 = nn.Sequential(
-            nn.Conv2d(16, 16, (3, 3)),
+            nn.Conv2d(16, 16, (3, 3), padding=1),
             nn.BatchNorm2d(16),
             nn.ReLU(),
         )
         self.layer3 = nn.Sequential(
-            nn.Conv2d(16, 32, (3, 3), stride=2),
+            nn.Conv2d(16, 32, (3, 3), stride=2, padding=1),
             nn.BatchNorm2d(32),
             nn.ReLU(),
         )
         self.layer4 = nn.Sequential(
-            nn.Conv2d(32, 32, (3, 3)),
+            nn.Conv2d(32, 32, (3, 3), padding=1),
             nn.BatchNorm2d(32),
             nn.ReLU(),
         )
         self.layer5 = nn.Sequential(
-            nn.Conv2d(32, 32, (3, 3)),
+            nn.Conv2d(32, 32, (3, 3), padding=1),
             nn.BatchNorm2d(32),
             nn.ReLU(),
         )
         self.layer6 = nn.Sequential(
-            nn.Conv2d(32, 64, (3, 3), stride=2),
+            nn.Conv2d(32, 64, (3, 3), stride=2, padding=1),
             nn.BatchNorm2d(64),
             nn.ReLU(),
         )
@@ -110,14 +110,23 @@ class ResNet50Encoder(nn.Module):
         return res
 
 
-def fro_matmul(a, b, x_stride=1000, y_stride=256, device="cpu"):
+# def fro_matmul(a, b, x_stride=1000, y_stride=256, device="cpu"):
+#     s = 0.0
+#     with torch.no_grad():
+#         for i in tqdm.tqdm(range(0, b.shape[1], x_stride)):
+#             for j in range(0, a.shape[1], y_stride):
+#                 a_sub = a[:, j:min(j+y_stride, a.shape[1])].to(device)
+#                 b_sub = b[:, i:min(i+x_stride, b.shape[1])].to(device)
+#                 s += torch.sum(torch.pow(a_sub @ b_sub, 2)).cpu().numpy()
+#     return np.sqrt(s)
+
+def fro_matmul(a, b, stride=1000, device="cpu"):
     s = 0.0
+    a = a.to(device)
+    b = b.to(device)
     with torch.no_grad():
-        for i in tqdm.tqdm(range(0, b.shape[1], x_stride)):
-            for j in range(0, a.shape[1], y_stride):
-                a_sub = a[:, j:min(j+y_stride, a.shape[1])].to(device)
-                b_sub = b[:, i:min(i+x_stride, b.shape[1])].to(device)
-                s += torch.sum(torch.pow(a_sub @ b_sub, 2)).cpu().numpy()
+        for i in tqdm.tqdm(range(0, b.shape[1], stride)):
+            s += torch.sum(torch.pow(a @ b[:, i:min(i+stride, b.shape[1])], 2)).cpu().numpy()
     return np.sqrt(s)
 
 
@@ -220,9 +229,9 @@ def show(name):
 
 
 if __name__ == '__main__':
-    model = ResNet50Encoder()
-    run_cka(model, "resnet50", 6, (224, 224))
+    # model = ResNet50Encoder()
+    # run_cka(model, "resnet50", 6, (224, 224))
     model = train_cifar()
-    run_cka(model, "tiny10", 10, (32, 32))
-    show("resnet50")
-    show("tiny10")
+    run_cka(model, "tiny10res", 10, (32, 32))
+    # show("resnet50")
+    # show("tiny10res")
