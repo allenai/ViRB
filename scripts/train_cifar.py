@@ -158,9 +158,9 @@ def train_cifar(model):
                                              shuffle=False, num_workers=12)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0005)
-    scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[30, 60, 90], gamma=0.1)
+    scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[150, 200, 250], gamma=0.1)
 
-    for epoch in range(100):
+    for epoch in range(300):
         running_loss = 0.0
         model.train()
         for i, data in enumerate(trainloader, 0):
