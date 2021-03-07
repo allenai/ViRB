@@ -73,20 +73,26 @@ class Tiny10(nn.Module):
         l10 = self.layer10(l9)
         return [l1, l2, l3, l4, l5, l6, l7, l8, l9, l10]
 
-    def loss(self, out, label):
-        return F.cross_entropy(out, label)
-
 
 class ResNet50Encoder(nn.Module):
 
-    def __init__(self, weights=None):
+    def __init__(self, weights=None, embedding_out=None):
         super().__init__()
-        if weights:
+        if weights == 'supervised':
+            self.model = torchvision.models.resnet50(pretrained=False)
+        elif weights:
             self.model = torchvision.models.resnet50(pretrained=False)
             weight_dict = torch.load(weights, map_location="cpu")
             self.load_state_dict(weight_dict, strict=False)
         else:
             self.model = torchvision.models.resnet50(pretrained=True)
+        if embedding_out:
+            self.classifier = nn.Sequential(
+                nn.ReLU(),
+                nn.Linear(2048, embedding_out),
+            )
+        else:
+            self.classifier = None
 
     def forward(self, x):
         res = []
@@ -106,6 +112,10 @@ class ResNet50Encoder(nn.Module):
         x = self.model.avgpool(x)
         x = torch.flatten(x, 1)
         res.append(x.clone())
+
+        if self.classifier:
+            x = self.classifier(x)
+            res.append()
 
         return res
 
@@ -130,9 +140,8 @@ def fro_matmul(a, b, stride=1000, device="cpu"):
     return np.sqrt(s)
 
 
-def train_cifar():
+def train_cifar(model):
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
-    model = Tiny10()
     model.to(device)
     transform = transforms.Compose(
         [transforms.ToTensor(),
@@ -147,6 +156,7 @@ def train_cifar():
                                            download=True, transform=transform)
     testloader = torch.utils.data.DataLoader(testset, batch_size=256,
                                              shuffle=False, num_workers=12)
+    criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0005)
     scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[30, 60, 90], gamma=0.1)
 
@@ -159,7 +169,7 @@ def train_cifar():
             labels = labels.to(device)
             optimizer.zero_grad()
             outputs = model(images)[-1]
-            loss = model.loss(outputs, labels)
+            loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
             running_loss += loss.item()
@@ -229,9 +239,10 @@ def show(name):
 
 
 if __name__ == '__main__':
-    # model = ResNet50Encoder()
-    # run_cka(model, "resnet50", 6, (224, 224))
-    model = train_cifar()
-    run_cka(model, "tiny10res", 10, (32, 32))
+    model = ResNet50Encoder(weights=None)
+    model = train_cifar(model)
+    run_cka(model, "resnet50CIFAR", 6, (224, 224))
+    show("resnet50CIFAR")
+    # model = train_cifar()
+    # run_cka(model, "tiny10res", 10, (32, 32))
     # show("resnet50")
-    show("tiny10res")
