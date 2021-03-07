@@ -63,12 +63,12 @@ class Tiny10(nn.Module):
     def forward(self, x):
         l1 = self.layer1(x)
         l2 = self.layer2(l1)
-        l3 = self.layer3(l2)
+        l3 = self.layer3(l2 + l1)
         l4 = self.layer4(l3)
         l5 = self.layer5(l4)
-        l6 = self.layer6(l5)
+        l6 = self.layer6(l5 + l4)
         l7 = self.layer7(l6)
-        l8 = self.layer8(l7)
+        l8 = self.layer8(l7 + l6)
         l9 = self.layer9(l8)
         l10 = self.layer10(l9)
         return [l1, l2, l3, l4, l5, l6, l7, l8, l9, l10]
@@ -232,6 +232,6 @@ if __name__ == '__main__':
     # model = ResNet50Encoder()
     # run_cka(model, "resnet50", 6, (224, 224))
     model = train_cifar()
-    run_cka(model, "tiny10", 10, (32, 32))
+    run_cka(model, "tiny10res", 10, (32, 32))
     # show("resnet50")
     show("tiny10res")
