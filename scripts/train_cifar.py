@@ -125,9 +125,9 @@ def fro_matmul(a, b, istride=30000, jstride=30000, device="cpu"):
     print(a.shape, b.shape)
     with torch.no_grad():
         for i in tqdm.tqdm(range(0, b.shape[1], istride)):
+            b_sub = b[:, i:min(i + istride, b.shape[1])].to(device)
             for j in range(0, a.shape[0], jstride):
                 a_sub = a[j:min(j+jstride, a.shape[0]), :].to(device)
-                b_sub = b[:, i:min(i+istride, b.shape[1])].to(device)
                 s += torch.sum(torch.pow(a_sub @ b_sub, 2)).cpu().numpy()
     return np.sqrt(s)
 
