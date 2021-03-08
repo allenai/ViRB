@@ -120,7 +120,7 @@ class ResNet50Encoder(nn.Module):
         return res
 
 
-def fro_matmul(a, b, istride=30000, jstride=30000, device="cpu"):
+def fro_matmul(a, b, istride=7500, jstride=200000, device="cpu"):
     s = 0.0
     print(a.shape, b.shape)
     with torch.no_grad():
@@ -221,9 +221,6 @@ def run_cka(model, name, num_layers, im_size):
     del outputs
     del model
     torch.cuda.empty_cache()
-    import time
-    print("sleeping")
-    time.sleep(100)
 
     heatmap = np.zeros((num_layers, num_layers))
     for i in range(num_layers):
