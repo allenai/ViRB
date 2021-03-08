@@ -158,9 +158,9 @@ def train_cifar(model):
                                              shuffle=False, num_workers=12)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=0.0005)
-    scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[150, 200, 250], gamma=0.1)
+    scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[20, 25], gamma=0.1)
 
-    for epoch in range(300):
+    for epoch in range(30):
         running_loss = 0.0
         model.train()
         for i, data in enumerate(trainloader, 0):
@@ -239,13 +239,19 @@ def show(name):
 
 
 if __name__ == '__main__':
+    model = ResNet50Encoder(weights=None)
+    model = train_cifar(model)
+    run_cka(model, "resnet50CIFAR-30epochs", 6, (32, 32))
+    show("resnet50CIFAR-30epochs")
+
     # model = ResNet50Encoder(weights=None)
     # model = train_cifar(model)
-    # run_cka(model, "resnet50CIFAR", 6, (32, 32))
-    # show("resnet50CIFAR")
-    model = ResNet50Encoder(weights='supervised')
-    run_cka(model, "resnet50-fullrez", 6, (224, 224))
-    show("resnet50-fullrez")
+    # run_cka(model, "resnet50CIFAR-100epochs", 6, (32, 32))
+    # show("resnet50CIFAR-100epochs")
+
+    # model = ResNet50Encoder(weights='supervised')
+    # run_cka(model, "resnet50-fullrez", 6, (224, 224))
+    # show("resnet50-fullrez")
     # model = train_cifar()
     # run_cka(model, "tiny10res", 10, (32, 32))
     # show("resnet50")
