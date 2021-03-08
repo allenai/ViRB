@@ -217,6 +217,11 @@ def run_cka(model, name, num_layers, im_size):
     for i in range(len(encodings)):
         encodings[i] = torch.cat(encodings[i], dim=0).flatten(start_dim=1)
         encodings[i] = encodings[i] - encodings[i].mean()
+    del outputs
+    del model
+    import time
+    print("sleeping")
+    time.sleep(100)
 
     heatmap = np.zeros((num_layers, num_layers))
     for i in range(num_layers):
