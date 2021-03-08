@@ -120,24 +120,24 @@ class ResNet50Encoder(nn.Module):
         return res
 
 
-# def fro_matmul(a, b, x_stride=1000, y_stride=256, device="cpu"):
-#     s = 0.0
-#     with torch.no_grad():
-#         for i in tqdm.tqdm(range(0, b.shape[1], x_stride)):
-#             for j in range(0, a.shape[1], y_stride):
-#                 a_sub = a[:, j:min(j+y_stride, a.shape[1])].to(device)
-#                 b_sub = b[:, i:min(i+x_stride, b.shape[1])].to(device)
-#                 s += torch.sum(torch.pow(a_sub @ b_sub, 2)).cpu().numpy()
-#     return np.sqrt(s)
-
-def fro_matmul(a, b, stride=1000, device="cpu"):
+def fro_matmul(a, b, stride=10000, device="cpu"):
     s = 0.0
-    a = a.to(device)
-    b = b.to(device)
     with torch.no_grad():
         for i in tqdm.tqdm(range(0, b.shape[1], stride)):
-            s += torch.sum(torch.pow(a @ b[:, i:min(i+stride, b.shape[1])], 2)).cpu().numpy()
+            for j in range(0, a.shape[1], stride):
+                a_sub = a[j:min(j+stride, a.shape[0]), :].to(device)
+                b_sub = b[:, i:min(i+stride, b.shape[1])].to(device)
+                s += torch.sum(torch.pow(a_sub @ b_sub, 2)).cpu().numpy()
     return np.sqrt(s)
+
+# def fro_matmul(a, b, stride=1000, device="cpu"):
+#     s = 0.0
+#     a = a.to(device)
+#     b = b.to(device)
+#     with torch.no_grad():
+#         for i in tqdm.tqdm(range(0, b.shape[1], stride)):
+#             s += torch.sum(torch.pow(a @ b[:, i:min(i+stride, b.shape[1])], 2)).cpu().numpy()
+#     return np.sqrt(s)
 
 
 def train_cifar(model):
@@ -239,10 +239,13 @@ def show(name):
 
 
 if __name__ == '__main__':
-    model = ResNet50Encoder(weights=None)
-    model = train_cifar(model)
-    run_cka(model, "resnet50CIFAR", 6, (32, 32))
-    show("resnet50CIFAR")
+    # model = ResNet50Encoder(weights=None)
+    # model = train_cifar(model)
+    # run_cka(model, "resnet50CIFAR", 6, (32, 32))
+    # show("resnet50CIFAR")
+    model = ResNet50Encoder(weights='supervised')
+    run_cka(model, "resnet50-fullrez", 6, (224, 224))
+    show("resnet50-fullrez")
     # model = train_cifar()
     # run_cka(model, "tiny10res", 10, (32, 32))
     # show("resnet50")
