@@ -120,8 +120,9 @@ class ResNet50Encoder(nn.Module):
         return res
 
 
-def fro_matmul(a, b, stride=10000, device="cpu"):
+def fro_matmul(a, b, stride=100000, device="cpu"):
     s = 0.0
+    print(a.shape, b.shape)
     with torch.no_grad():
         for i in tqdm.tqdm(range(0, b.shape[1], stride)):
             for j in range(0, a.shape[0], stride):
@@ -250,7 +251,7 @@ if __name__ == '__main__':
     # show("resnet50CIFAR-100epochs")
 
     model = ResNet50Encoder(weights='supervised')
-    run_cka(model, "resnet50-fullrez", 6, (112, 112))
+    run_cka(model, "resnet50-fullrez", 6, (224, 224))
     show("resnet50-fullrez")
 
     # model = train_cifar()
