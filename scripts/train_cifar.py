@@ -120,7 +120,7 @@ class ResNet50Encoder(nn.Module):
         return res
 
 
-def fro_matmul(a, b, istride=5000, jstride=200000, device="cpu"):
+def fro_matmul(a, b, istride=30000, jstride=30000, device="cpu"):
     s = 0.0
     print(a.shape, b.shape)
     with torch.no_grad():
@@ -221,8 +221,6 @@ def run_cka(model, name, num_layers, im_size):
     del outputs
     del model
     torch.cuda.empty_cache()
-    import time
-    time.sleep(10)
 
     heatmap = np.zeros((num_layers, num_layers))
     for i in range(num_layers):
@@ -257,7 +255,7 @@ if __name__ == '__main__':
     # show("resnet50CIFAR-100epochs")
 
     model = ResNet50Encoder(weights='supervised')
-    run_cka(model, "resnet50-fullrez", 6, (224, 224))
+    run_cka(model, "resnet50-fullrez", 6, (112, 112))
     show("resnet50-fullrez")
 
     # model = train_cifar()
