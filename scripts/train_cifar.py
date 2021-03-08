@@ -250,7 +250,7 @@ if __name__ == '__main__':
     # show("resnet50CIFAR-100epochs")
 
     model = ResNet50Encoder(weights='supervised')
-    run_cka(model, "resnet50-fullrez", 6, (224, 224))
+    run_cka(model, "resnet50-fullrez", 6, (112, 112))
     show("resnet50-fullrez")
 
     # model = train_cifar()
