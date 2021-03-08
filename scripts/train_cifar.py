@@ -120,7 +120,7 @@ class ResNet50Encoder(nn.Module):
         return res
 
 
-def fro_matmul(a, b, istride=30000, jstride=30000, device="cpu"):
+def fro_matmul(a, b, istride=100000, jstride=4500, device="cpu"):
     s = 0.0
     print(a.shape, b.shape)
     with torch.no_grad():
