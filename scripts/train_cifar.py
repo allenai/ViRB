@@ -221,6 +221,8 @@ def run_cka(model, name, num_layers, im_size):
     del outputs
     del model
     torch.cuda.empty_cache()
+    import time
+    time.sleep(10)
 
     heatmap = np.zeros((num_layers, num_layers))
     for i in range(num_layers):
