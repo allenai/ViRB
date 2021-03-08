@@ -217,8 +217,10 @@ def run_cka(model, name, num_layers, im_size):
     for i in range(len(encodings)):
         encodings[i] = torch.cat(encodings[i], dim=0).flatten(start_dim=1)
         encodings[i] = encodings[i] - encodings[i].mean()
+    del images
     del outputs
     del model
+    torch.cuda.empty_cache()
     import time
     print("sleeping")
     time.sleep(100)
