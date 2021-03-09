@@ -226,10 +226,10 @@ def run_cka(model, name, num_layers, im_size):
     for i in range(num_layers):
         for j in range(i, num_layers):
             print("Computing block [%d][%d]" % (i,j))
-            x = encodings[i]
-            y = encodings[j]
-            # cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
-            cka = (fro_matmul(y.T, x, device=device) ** 2) / (fro_matmul(x.T, x, device=device) * fro_matmul(y.T, y, device=device))
+            x = encodings[i].to(device)
+            y = encodings[j].to(device)
+            cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
+            # cka = (fro_matmul(y.T, x, device=device) ** 2) / (fro_matmul(x.T, x, device=device) * fro_matmul(y.T, y, device=device))
             heatmap[i, j] = heatmap[j, i] = cka.item()
     np.save(name, heatmap)
 
