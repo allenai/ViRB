@@ -234,7 +234,7 @@ def linear_cka(dataset):
     # plt.close()
 
 
-def fro_matmul(a, b, stride=1000, device="cpu"):
+def fro_matmul(a, b, stride=10000, device="cpu"):
     s = 0.0
     a = a.to(device)
     b = b.to(device)
@@ -291,6 +291,54 @@ def layer_wise_linear_cka(model_name, path, device):
     # plt.close()
 
 
+def two_model_layer_wise_linear_cka(model_name_a, path_a, model_name_b, path_b, dataset, device):
+    model_a = ResNet50Encoder(path_a)
+    model_a = model_a.to(device).eval()
+    model_b = ResNet50Encoder(path_b)
+    model_b = model_b.to(device).eval()
+    ds = OmniDataset("ImageNet", max_imgs=10000, resize=(112, 112))
+    dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=False, num_workers=16)
+    outs_a = {}
+    outs_b = {}
+    with torch.no_grad():
+        # Encode the dataset with encoder a
+        for image in dl:
+            image = image.to(device)
+            out = model_a(image)
+            for k in out:
+                if k not in outs_a:
+                    outs_a[k] = []
+                outs_a[k].append(out[k].flatten(start_dim=1).cpu())
+        for k in outs_a:
+            outs_a[k] = torch.cat(outs_a[k], dim=0)
+            # center columns
+            outs_a[k] -= outs_a[k].mean(dim=0)
+        # Encode the dataset with encoder b
+        for image in dl:
+            image = image.to(device)
+            out = model_b(image)
+            for k in out:
+                if k not in outs_b:
+                    outs_b[k] = []
+                outs_b[k].append(out[k].flatten(start_dim=1).cpu())
+        for k in outs_b:
+            outs_b[k] = torch.cat(outs_b[k], dim=0)
+            # center columns
+            outs_b[k] -= outs_b[k].mean(dim=0)
+
+    keys = list(outs_a.keys())
+    n = len(keys)
+    heatmap = np.zeros((n, n))
+    for i in range(n):
+        for j in range(i, n):
+            x = outs_a[keys[i]]
+            y = outs_b[keys[j]]
+            cka = (fro_matmul(y.T, x, device=device) ** 2) / (fro_matmul(x.T, x, device=device) * fro_matmul(y.T, y, device=device))
+            heatmap[i, j] = heatmap[j, i] = cka
+    os.makedirs("graphs/cka/multi_model_layer_wise/%s/" % dataset, exist_ok=True)
+    np.save("graphs/cka/multi_model_layer_wise/%s/%s-%s" % (dataset, model_name_a, model_name_b), heatmap)
+
+
 def main():
     # for dataset in DATASETS:
     #     linear_cka(dataset)
@@ -328,17 +376,11 @@ def main():
             layer_wise_linear_cka(model_name, path, "cpu")
     else:
         keys = list(encoders.keys())
-        # for idx, (model_name, path) in enumerate(encoders.items()):
-        #     arg_list.append((model_name, path, "cuda:%d" % (idx % nd)))
-        # from multiprocessing import Pool, set_start_method
-        # from multiprocessing.pool import ThreadPool
-        # with ThreadPool(processes=nd) as pool:
-        #     pool.starmap(layer_wise_linear_cka, arg_list)
         import threading
         count = 0
         while count < len(keys):
             threads = []
-            for gpu_id in range(nd):
+            for gpu_id in range(min(len(keys) - count, nd)):
                 threads.append(
                     threading.Thread(
                         target=layer_wise_linear_cka,

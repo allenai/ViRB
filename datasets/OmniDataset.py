@@ -49,7 +49,7 @@ PATHS = {
 class OmniDataset:
     """Class of every dataset"""
 
-    def __init__(self, keys, max_imgs=10000):
+    def __init__(self, keys, max_imgs=10000, resize=(224, 224)):
         super().__init__()
         self.data = []
         keys = keys if isinstance(keys, list) else [keys]
@@ -63,7 +63,7 @@ class OmniDataset:
             for i in range(min(len(imgs), max_imgs)):
                 self.data.append(imgs[i])
         self.preprocessor = transforms.Compose([
-            transforms.Resize((224, 224)),
+            transforms.Resize(resize),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
         ])
