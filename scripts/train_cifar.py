@@ -134,10 +134,9 @@ class ResNet50Encoder(nn.Module):
 def fro_matmul(a, b, stride=1000, device="cpu"):
     s = 0.0
     a = a.to(device)
-    b = b.to(device)
     with torch.no_grad():
         for i in tqdm.tqdm(range(0, b.shape[1], stride)):
-            s += torch.sum(torch.pow(a @ b[:, i:min(i+stride, b.shape[1])], 2)).cpu().numpy()
+            s += torch.sum(torch.pow(a @ b[:, i:min(i+stride, b.shape[1])].to(device), 2)).cpu().numpy()
     return np.sqrt(s)
 
 
@@ -226,8 +225,8 @@ def run_cka(model, name, num_layers, im_size):
     for i in range(num_layers):
         for j in range(i, num_layers):
             print("Computing block [%d][%d]" % (i,j))
-            x = encodings[i].to(device)
-            y = encodings[j].to(device)
+            x = encodings[i]
+            y = encodings[j]
             print(x.shape, y.shape)
             # cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
             cka = (fro_matmul(y.T, x, device=device) ** 2) / (fro_matmul(x.T, x, device=device) * fro_matmul(y.T, y, device=device))
