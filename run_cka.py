@@ -305,7 +305,7 @@ def two_model_layer_wise_linear_cka(model_name_a, path_a, model_name_b, path_b, 
     model_b = ResNet50Encoder(path_b)
     model_b = model_b.to(device).eval()
     model_b.eval()
-    ds = OmniDataset(dataset, max_imgs=1000, resize=(112, 112))
+    ds = OmniDataset(dataset, max_imgs=10000, resize=(112, 112))
     dl = torch.utils.data.DataLoader(ds, batch_size=1024, shuffle=False, num_workers=16)
     outs_a = {}
     outs_b = {}
