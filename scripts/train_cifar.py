@@ -199,7 +199,7 @@ def run_cka(model, name, num_layers, im_size):
         [transforms.Resize(im_size),
          transforms.ToTensor(),
          transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-    testset = torchvision.datasets.CIFAR10(root='./data', train=False,
+    testset = torchvision.datasets.CIFAR10(root='./data', train=True,
                                            download=True, transform=transform)
     testloader = torch.utils.data.DataLoader(testset, batch_size=256,
                                              shuffle=False, num_workers=12)
