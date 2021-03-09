@@ -336,6 +336,7 @@ def two_model_layer_wise_linear_cka(model_name_a, path_a, model_name_b, path_b, 
             outs_b[k] -= outs_b[k].mean(dim=0)
     # Clear memry
     del image
+    del out
     del model_a
     del model_b
     torch.cuda.empty_cache()
