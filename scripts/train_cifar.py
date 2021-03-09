@@ -246,7 +246,7 @@ def show(name):
 if __name__ == '__main__':
     model = ResNet50Encoder(weights=None)
     model = train_cifar(model)
-    run_cka(model, "resnet50CIFAR-30epochs", 6, (32, 32))
+    run_cka(model, "resnet50CIFAR-30epochs-fullres", 6, (32, 32))
     show("resnet50CIFAR-30epochs-fullres")
 
     # model = ResNet50Encoder(weights=None)
