@@ -14,11 +14,11 @@
 #MoCov2Kinetics: 'pretrained_weights/MoCov2Kinetics.pt'
 #MoCov2Places: 'pretrained_weights/MoCov2Places.pt'
 ##### SWAV
-#SWAV_200: 'pretrained_weights/SWAV_200.pt'
-#SWAVCombination: 'pretrained_weights/SWAVCombination.pt'
-#SWAVTaskonomy: 'pretrained_weights/SWAVTaskonomy.pt'
-#SWAVKinetics: 'pretrained_weights/SWAVKinetics.pt'
-#SWAVPlaces: 'pretrained_weights/SWAVPlaces.pt'
+SWAV_200: 'pretrained_weights/SWAV_200.pt'
+SWAVCombination: 'pretrained_weights/SWAVCombination.pt'
+SWAVTaskonomy: 'pretrained_weights/SWAVTaskonomy.pt'
+SWAVKinetics: 'pretrained_weights/SWAVKinetics.pt'
+SWAVPlaces: 'pretrained_weights/SWAVPlaces.pt'
 ###### EXTRAS
 #MoCov2HalfImagenet: 'pretrained_weights/MoCov2HalfImagenet_200.pt'
 #MoCov2LogImagenet: 'pretrained_weights/MoCov2LogImagenet.pt'
@@ -36,4 +36,4 @@
 #MoCov2_50: 'pretrained_weights/MoCov2_50.pt'
 #SWAV_50: 'pretrained_weights/SWAV_50.pt'
 #SWAV_100: 'pretrained_weights/SWAV_100.pt'
-SWAV_200_2: 'pretrained_weights/SWAV_200_2.pt'
+#SWAV_200_2: 'pretrained_weights/SWAV_200_2.pt'

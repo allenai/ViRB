@@ -294,10 +294,12 @@ def layer_wise_linear_cka(model_name, path, device):
 def two_model_layer_wise_linear_cka(model_name_a, path_a, model_name_b, path_b, dataset, device):
     model_a = ResNet50Encoder(path_a)
     model_a = model_a.to(device).eval()
+    model_a.eval()
     model_b = ResNet50Encoder(path_b)
     model_b = model_b.to(device).eval()
-    ds = OmniDataset("ImageNet", max_imgs=10000, resize=(112, 112))
-    dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=False, num_workers=16)
+    model_b.eval()
+    ds = OmniDataset(dataset, max_imgs=250000, resize=(112, 112))
+    dl = torch.utils.data.DataLoader(ds, batch_size=1024, shuffle=False, num_workers=16)
     outs_a = {}
     outs_b = {}
     with torch.no_grad():
@@ -333,7 +335,8 @@ def two_model_layer_wise_linear_cka(model_name_a, path_a, model_name_b, path_b, 
         for j in range(i, n):
             x = outs_a[keys[i]]
             y = outs_b[keys[j]]
-            cka = (fro_matmul(y.T, x, device=device) ** 2) / (fro_matmul(x.T, x, device=device) * fro_matmul(y.T, y, device=device))
+            cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
+            # cka = (fro_matmul(y.T, x, device=device) ** 2) / (fro_matmul(x.T, x, device=device) * fro_matmul(y.T, y, device=device))
             heatmap[i, j] = heatmap[j, i] = cka
     os.makedirs("graphs/cka/multi_model_layer_wise/%s/" % dataset, exist_ok=True)
     np.save("graphs/cka/multi_model_layer_wise/%s/%s-%s" % (dataset, model_name_a, model_name_b), heatmap)
@@ -370,21 +373,25 @@ def main():
 
     with open('configs/experiment_lists/default.yaml') as f:
         encoders = yaml.load(f)
+    argslist = []
+    keys = list(encoders.keys())
+    for i in range(len(encoders)):
+        for j in range(len(encoders)):
+            argslist.append((keys[i], encoders[keys[i]], keys[j], encoders[keys[j]]))
     nd = torch.cuda.device_count()
     if nd == 0:
-        for model_name, path in tqdm.tqdm(encoders.items()):
-            layer_wise_linear_cka(model_name, path, "cpu")
+        for args in tqdm.tqdm(argslist):
+            layer_wise_linear_cka(*args, "ImageNet", "cpu")
     else:
-        keys = list(encoders.keys())
         import threading
         count = 0
-        while count < len(keys):
+        while count < len(argslist):
             threads = []
-            for gpu_id in range(min(len(keys) - count, nd)):
+            for gpu_id in range(min(len(argslist) - count, nd)):
                 threads.append(
                     threading.Thread(
                         target=layer_wise_linear_cka,
-                        args=(keys[count], encoders[keys[count]], "cuda:%d" % gpu_id)
+                        args=(*argslist[count], "ImageNet", "cuda:%d" % gpu_id)
                     )
                 )
                 count += 1
@@ -392,7 +399,6 @@ def main():
                 thread.start()
             for thread in threads:
                 thread.join()
-
 
 
 if __name__ == '__main__':
