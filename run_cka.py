@@ -381,7 +381,7 @@ def main():
     nd = torch.cuda.device_count()
     if nd == 0:
         for args in tqdm.tqdm(argslist):
-            layer_wise_linear_cka(*args, "ImageNet", "cpu")
+            two_model_layer_wise_linear_cka(*args, "ImageNet", "cpu")
     else:
         import threading
         count = 0
@@ -390,7 +390,7 @@ def main():
             for gpu_id in range(min(len(argslist) - count, nd)):
                 threads.append(
                     threading.Thread(
-                        target=layer_wise_linear_cka,
+                        target=two_model_layer_wise_linear_cka,
                         args=(*argslist[count], "ImageNet", "cuda:%d" % gpu_id)
                     )
                 )
