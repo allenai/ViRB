@@ -99,23 +99,23 @@ class ResNet50Encoder(nn.Module):
         x = self.model.conv1(x)
         x = self.model.bn1(x)
         x = self.model.relu(x)
-        res.append(self.model.avgpool(x.clone()))
+        res.append(x.clone())
         x = self.model.maxpool(x)
         x = self.model.layer1(x)
-        res.append(self.model.avgpool(x.clone()))
+        res.append(x.clone())
         x = self.model.layer2(x)
-        res.append(self.model.avgpool(x.clone()))
+        res.append(x.clone())
         x = self.model.layer3(x)
-        res.append(self.model.avgpool(x.clone()))
+        res.append(x.clone())
         x = self.model.layer4(x)
-        res.append(self.model.avgpool(x.clone()))
+        res.append(x.clone())
         x = self.model.avgpool(x)
         x = torch.flatten(x, 1)
         res.append(x.clone())
 
         if self.classifier:
             x = self.classifier(x)
-            res.append()
+            res.append(x.clone())
 
         return res
 
@@ -229,8 +229,8 @@ def run_cka(model, name, num_layers, im_size):
             x = encodings[i].to(device)
             y = encodings[j].to(device)
             print(x.shape, y.shape)
-            cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
-            # cka = (fro_matmul(y.T, x, device=device) ** 2) / (fro_matmul(x.T, x, device=device) * fro_matmul(y.T, y, device=device))
+            # cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
+            cka = (fro_matmul(y.T, x, device=device) ** 2) / (fro_matmul(x.T, x, device=device) * fro_matmul(y.T, y, device=device))
             heatmap[i, j] = heatmap[j, i] = cka.item()
     np.save(name, heatmap)
 
