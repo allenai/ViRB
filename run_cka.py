@@ -305,7 +305,7 @@ def two_model_layer_wise_linear_cka(model_name_a, path_a, model_name_b, path_b, 
     model_b = ResNet50Encoder(path_b)
     model_b = model_b.to(device).eval()
     model_b.eval()
-    ds = OmniDataset(dataset, max_imgs=10000, resize=(112, 112))
+    ds = OmniDataset(dataset, max_imgs=10, resize=(112, 112))
     dl = torch.utils.data.DataLoader(ds, batch_size=1024, shuffle=False, num_workers=16)
     outs_a = {}
     outs_b = {}
@@ -347,7 +347,7 @@ def two_model_layer_wise_linear_cka(model_name_a, path_a, model_name_b, path_b, 
     for i in range(n):
         for j in range(i, n):
             x = outs_a[keys[i]]
-            y = outs_a[keys[j]]
+            y = outs_b[keys[j]]
             # cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
             cka = (fro_matmul(y.T, x, device=device) ** 2) / (fro_matmul(x.T, x, device=device) * fro_matmul(y.T, y, device=device))
             heatmap[i, j] = heatmap[j, i] = cka
@@ -389,7 +389,7 @@ def main():
     argslist = []
     keys = list(encoders.keys())
     for i in range(len(encoders)):
-        for j in range(len(encoders)):
+        for j in range(i, len(encoders)):
             argslist.append((keys[i], encoders[keys[i]], keys[j], encoders[keys[j]]))
     nd = torch.cuda.device_count()
     if nd == 0:
