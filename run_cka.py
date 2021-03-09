@@ -234,11 +234,19 @@ def linear_cka(dataset):
     # plt.close()
 
 
+# def fro_matmul(a, b, stride=1000, device="cpu"):
+#     s = 0.0
+#     a = a.to(device)
+#     with torch.no_grad():
+#         for i in tqdm.tqdm(range(0, b.shape[1], stride)):
+#             s += torch.sum(torch.pow(a @ b[:, i:min(i+stride, b.shape[1])].to(device), 2)).cpu().numpy()
+#     return np.sqrt(s)
+
 def fro_matmul(a, b, stride=1000, device="cpu"):
     s = 0.0
     a = a.to(device)
     with torch.no_grad():
-        for i in tqdm.tqdm(range(0, b.shape[1], stride)):
+        for i in range(0, b.shape[1], stride):
             s += torch.sum(torch.pow(a @ b[:, i:min(i+stride, b.shape[1])].to(device), 2)).cpu().numpy()
     return np.sqrt(s)
 
@@ -334,6 +342,7 @@ def two_model_layer_wise_linear_cka(model_name_a, path_a, model_name_b, path_b, 
         for j in range(i, n):
             x = outs_a[keys[i]]
             y = outs_b[keys[j]]
+            print(x.shape, y.shape)
             # cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
             cka = (fro_matmul(y.T, x, device=device) ** 2) / (fro_matmul(x.T, x, device=device) * fro_matmul(y.T, y, device=device))
             heatmap[i, j] = heatmap[j, i] = cka
