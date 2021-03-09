@@ -120,24 +120,24 @@ class ResNet50Encoder(nn.Module):
         return res
 
 
-# def fro_matmul(a, b, istride=100000, jstride=5000, device="cpu"):
-#     s = 0.0
-#     print(a.shape, b.shape)
-#     with torch.no_grad():
-#         for i in tqdm.tqdm(range(0, b.shape[1], istride)):
-#             b_sub = b[:, i:min(i + istride, b.shape[1])].to(device)
-#             for j in range(0, a.shape[0], jstride):
-#                 a_sub = a[j:min(j+jstride, a.shape[0]), :].to(device)
-#                 s += torch.sum(torch.pow(a_sub @ b_sub, 2)).cpu().numpy()
-#     return np.sqrt(s)
-
-def fro_matmul(a, b, stride=4000, device="cpu"):
+def fro_matmul(a, b, istride=30000, jstride=30000, device="cpu"):
     s = 0.0
-    a = a.to(device)
+    print(a.shape, b.shape)
     with torch.no_grad():
-        for i in tqdm.tqdm(range(0, b.shape[1], stride)):
-            s += torch.sum(torch.pow(a @ b[:, i:min(i+stride, b.shape[1])].to(device), 2)).cpu().numpy()
+        for i in tqdm.tqdm(range(0, b.shape[1], istride)):
+            b_sub = b[:, i:min(i + istride, b.shape[1])].to(device)
+            for j in range(0, a.shape[0], jstride):
+                a_sub = a[j:min(j+jstride, a.shape[0]), :].to(device)
+                s += torch.sum(torch.pow(a_sub @ b_sub, 2)).cpu().numpy()
     return np.sqrt(s)
+
+# def fro_matmul(a, b, stride=1000, device="cpu"):
+#     s = 0.0
+#     a = a.to(device)
+#     with torch.no_grad():
+#         for i in tqdm.tqdm(range(0, b.shape[1], stride)):
+#             s += torch.sum(torch.pow(a @ b[:, i:min(i+stride, b.shape[1])].to(device), 2)).cpu().numpy()
+#     return np.sqrt(s)
 
 
 def train_cifar(model):
