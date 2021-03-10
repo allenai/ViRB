@@ -264,6 +264,7 @@ Imagenetv2:
     adam-0.0003:
       optimizer: "adam"
       lr: 0.0003
+  batch_size: 32
 
 #
 #KineticsActionPrediction:
