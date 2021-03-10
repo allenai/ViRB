@@ -191,19 +191,6 @@
 #  num_epochs: 100
 #  batch_size: 32
 #
-Pets-Detection:
-  task: "Pets-Detection"
-  pre_encode: false
-  training_configs:
-    adam-0.0003:
-      optimizer: "adam"
-      lr: 0.0003
-#    sgd-0.001:
-#      optimizer: "sgd"
-#      lr: 0.001
-  num_epochs: 100
-  batch_size: 16
-#
 #THORDepth:
 #  task: "THORDepth"
 #  pre_encode: false
@@ -233,23 +220,6 @@ Pets-Detection:
 ##        gamma: 0.1
 #  num_epochs: 250
 #  batch_size: 16
-
-NYUWalkable:
-  task: "NYUWalkable"
-  pre_encode: false
-  training_configs:
-    adam-0.0003:
-      optimizer: "adam"
-      lr: 0.0003
-#    sgd-0.001-no-step-l1:
-#      optimizer: "sgd"
-#      lr: 0.001
-#      scheduler:
-#        type: "StepLR"
-#        step_size: 40
-#        gamma: 0.1
-  num_epochs: 250
-  batch_size: 16
 
 #TaskonomyInpainting:
 #  task: "TaskonomyInpainting"
@@ -287,46 +257,14 @@ NYUWalkable:
 ##      lr: 0.001
 #  num_epochs: 25
 
-CityscapesSemanticSegmentation:
-  task: "CityscapesSemanticSegmentation"
-  pre_encode: false
+Imagenetv2:
+  task: "Imagenetv2"
+  task_head_weights_path: "out/%s/Imagenet*/model_head.pt"
   training_configs:
     adam-0.0003:
       optimizer: "adam"
       lr: 0.0003
-      scheduler:
-        type: "Poly"
-        exponent: 0.9
-#    sgd-0.01:
-#      optimizer: "sgd"
-#      lr: 0.001
-#      scheduler:
-#        type: "StepLR"
-#        step_size: 25
-#        gamma: 0.3
-  num_epochs: 100
-  batch_size: 16
-#
-#Imagenetv2:
-#  task: "Imagenetv2"
-#  task_head_weights_path: "out/%s/Imagenet*/model_head.pt"
-#  training_configs:
-#    adam-0.0003:
-#      optimizer: "adam"
-#      lr: 0.0003
 
-TaskonomyDepth:
-  task: "TaskonomyDepth"
-  pre_encode: false
-  training_configs:
-    adam-0.0001:
-      optimizer: "adam"
-      lr: 0.0003
-#    sgd-0.01-l1:
-#      optimizer: "sgd"
-#      lr: 0.01
-  num_epochs: 50
-  batch_size: 16
 #
 #KineticsActionPrediction:
 #  task: "KineticsActionPrediction"
@@ -373,20 +311,88 @@ TaskonomyDepth:
 #  num_epochs: 250
 #  batch_size: 16
 
-nuScenesActionPrediction:
-  task: "nuScenesActionPrediction"
-  training_configs:
-    adam-0.0001:
-      optimizer: "adam"
-      lr: 0.0001
-#    adam-0.001:
+
+
+
+#### FIX THESE
+#
+#nuScenesActionPrediction:
+#  task: "nuScenesActionPrediction"
+#  training_configs:
+#    adam-0.0001:
 #      optimizer: "adam"
-#      lr: 0.001
-#    sgd-0.01:
-#      optimizer: "sgd"
-#      lr: 0.01
-#    sgd-0.001:
-#      optimizer: "sgd"
-#      lr: 0.001
-  num_epochs: 100
-  batch_size: 32
+#      lr: 0.0001
+##    adam-0.001:
+##      optimizer: "adam"
+##      lr: 0.001
+##    sgd-0.01:
+##      optimizer: "sgd"
+##      lr: 0.01
+##    sgd-0.001:
+##      optimizer: "sgd"
+##      lr: 0.001
+#  num_epochs: 100
+#  batch_size: 32
+#
+#TaskonomyDepth:
+#  task: "TaskonomyDepth"
+#  pre_encode: false
+#  training_configs:
+#    adam-0.0001:
+#      optimizer: "adam"
+#      lr: 0.0003
+##    sgd-0.01-l1:
+##      optimizer: "sgd"
+##      lr: 0.01
+#  num_epochs: 50
+#  batch_size: 16
+#
+#CityscapesSemanticSegmentation:
+#  task: "CityscapesSemanticSegmentation"
+#  pre_encode: false
+#  training_configs:
+#    adam-0.0003:
+#      optimizer: "adam"
+#      lr: 0.0003
+#      scheduler:
+#        type: "Poly"
+#        exponent: 0.9
+##    sgd-0.01:
+##      optimizer: "sgd"
+##      lr: 0.001
+##      scheduler:
+##        type: "StepLR"
+##        step_size: 25
+##        gamma: 0.3
+#  num_epochs: 100
+#  batch_size: 16
+#
+#NYUWalkable:
+#  task: "NYUWalkable"
+#  pre_encode: false
+#  training_configs:
+#    adam-0.0003:
+#      optimizer: "adam"
+#      lr: 0.0003
+##    sgd-0.001-no-step-l1:
+##      optimizer: "sgd"
+##      lr: 0.001
+##      scheduler:
+##        type: "StepLR"
+##        step_size: 40
+##        gamma: 0.1
+#  num_epochs: 250
+#  batch_size: 16
+#
+#Pets-Detection:
+#  task: "Pets-Detection"
+#  pre_encode: false
+#  training_configs:
+#    adam-0.0003:
+#      optimizer: "adam"
+#      lr: 0.0003
+##    sgd-0.001:
+##      optimizer: "sgd"
+##      lr: 0.001
+#  num_epochs: 100
+#  batch_size: 16
