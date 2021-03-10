@@ -423,38 +423,41 @@ def make_csv():
 
 
 #### Generating Pearson and Spearman Correlations
-make_csv()
-data = pandas.read_csv("results.csv")
-tasks = ["Imagenet", "Imagenetv2", "CalTech-101", "Pets", "PetsDetection", "dtd", "CIFAR-100", "Cityscapes", "Egohands",
-         "SUN397", "Eurosat", "CLEVERNumObjects", "THORNumSteps", "THORDepth", "NYUDepth",
-         "TaskonomyDepth", "NYUWalkable", "THORActionPrediction","nuScenesActionPrediction", "KITTI"]
-n = len(tasks)
-spearman = np.zeros((n,n))
-pearson = np.zeros((n,n))
-spearman_pval = np.zeros((n,n))
-pearson_pval = np.zeros((n,n))
-for i in range(n):
-    for j in range(n):
-        print(tasks[i], tasks[j])
-        values_i = data[tasks[i]]
-        values_j = data[tasks[j]]
-        s, sp = scipy.stats.spearmanr(values_i, values_j)
-        p, pp = scipy.stats.pearsonr(values_i, values_j)
-        spearman[i][j] = s
-        pearson[i][j] = p
-        spearman_pval[i][j] = sp
-        pearson_pval[i][j] = pp
+# make_csv()
+# data = pandas.read_csv("results.csv")
+# tasks = ["Imagenet", "Imagenetv2", "CalTech-101", "Pets", "dtd", "CIFAR-100", "SUN397", "Eurosat",
+#          "THORNumSteps", "CLEVERNumObjects", "nuScenesActionPrediction", "THORActionPrediction",
+#          "TaskonomyDepth", "NYUWalkable", "NYUDepth", "THORDepth",
+#          "EgoHands", "CityscapesSemanticSegmentation"]
+# n = len(tasks)
+# spearman = np.zeros((n,n))
+# pearson = np.zeros((n,n))
+# spearman_pval = np.zeros((n,n))
+# pearson_pval = np.zeros((n,n))
+# for i in range(n):
+#     for j in range(n):
+#         print(tasks[i], tasks[j])
+#         values_i = data[tasks[i]]
+#         values_j = data[tasks[j]]
+#         s, sp = scipy.stats.spearmanr(values_i, values_j)
+#         p, pp = scipy.stats.pearsonr(values_i, values_j)
+#         spearman[i][j] = s
+#         pearson[i][j] = p
+#         spearman_pval[i][j] = sp
+#         pearson_pval[i][j] = pp
+# tasks = [t.replace("ActionPrediction", "").replace("SemanticSegmentation", "") for t in tasks]
+# fig, axes = plt.subplots(1, 2, figsize=(16, 7))
+# fig.suptitle("Correlation of End Task Performance Between Tasks")
+# ax = sns.heatmap(spearman, annot=False, ax=axes[0])
+# ax.set_title("Spearman")
+# ax.set_xticks([])
+# ax.set_yticks([])
+# ax = sns.heatmap(pearson, annot=False, ax=axes[1])
+# ax.set_title("Pearson")
+# ax.set_xticks([])
+# ax.set_yticks([])
+# plt.savefig("graphs/task_correlations/both.png")
 
-plt.figure(figsize=(20, 20))
-title = "Spearman Correlation on Performance Between Tasks"
-plt.title(title)
-ax = sns.heatmap(spearman, annot=True)
-ax.set_yticklabels(tasks, rotation=0)
-ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
-plt.show()
-exit()
-plt.savefig("graphs/task_correlations/spearman.png")
-plt.clf()
 # title = "Spearman Correlation p-values on Performance Between Tasks"
 # plt.title(title)
 # ax = sns.heatmap(spearman_pval, annot=True)
@@ -462,13 +465,13 @@ plt.clf()
 # ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
 # plt.savefig("graphs/task_correlations/spearman-pval.png")
 # plt.clf()
-title = "Pearson Correlation on Performance Between Tasks"
-plt.title(title)
-ax = sns.heatmap(pearson, annot=True)
-ax.set_yticklabels(tasks, rotation=0)
-ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
-plt.savefig("graphs/task_correlations/pearson.png")
-plt.clf()
+# title = "Pearson Correlation on Performance Between Tasks"
+# plt.title(title)
+# ax = sns.heatmap(pearson, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
+# plt.savefig("graphs/task_correlations/pearson.png")
+# plt.clf()
 # title = "Pearson Correlation p-values on Performance Between Tasks"
 # plt.title(title)
 # ax = sns.heatmap(pearson_pval, annot=True)
@@ -885,48 +888,49 @@ plt.clf()
 
 
 ##### Make Per Task Vategory Violin Plot of Scores for MoCo and SWAV 200
-# data = pandas.read_csv("results.csv")
-# ms_data = data[(data["Method"] == "MoCo") | (data["Method"] == "SWAV")]
-# ms_200_data = ms_data[ms_data["Epochs"] == 200]
-# ms_200_full_data = ms_data[ms_data["Updates"] == int(1e6 * 200)]
-#
-# sns.set_theme()
-# colors = sns.color_palette()
-# # palette = {method: colors[i] for i, method in enumerate(set(data["Dataset"]))}
-# plt.figure(figsize=(20, 10))
-#
-# ee = ms_200_full_data.set_index("Encoder")
-# per_task_ms_200_full = []
-# for task in PIXELWISE_SEMANTIC_TASKS + EMBEDDING_SEMANTIC_TASKS + PIXELWISE_STRUCTURAL_TASKS + EMBEDDING_STRUCTURAL_TASKS:
-#     for encoder in ms_200_full_data["Encoder"]:
-#         if encoder == "SWAVKinetics" and task == "THORDepth":
-#             continue
-#
-#         if task in EMBEDDING_SEMANTIC_TASKS:
-#             ttype = "Embedding-Semantic"
-#         elif task in EMBEDDING_STRUCTURAL_TASKS:
-#             ttype = "Embedding-Structural"
-#         elif task in PIXELWISE_SEMANTIC_TASKS:
-#             ttype = "Pixelwise-Semantic"
-#         elif task in PIXELWISE_STRUCTURAL_TASKS:
-#             ttype = "Pixelwise-Structural"
-#         else:
-#             ttype = "Other"
-#
-#         per_task_ms_200_full.append({
-#             "Encoder": encoder,
-#             "Task": task,
-#             "Method": ee.loc[encoder, "Method"],
-#             "Dataset": ee.loc[encoder, "Dataset"],
-#             "NormalizedScore": ee.loc[encoder, task+"-normalized"],
-#             "TaskType": ttype
-#         })
-#
-# plt.title("SWAV and MoCov2 200 Modles, 1.3M Image Datasets Performance")
-# df = pandas.DataFrame(per_task_ms_200_full)
-# sns.violinplot(x="Task", y="NormalizedScore", hue="TaskType", data=df)
-# plt.savefig("graphs/mocov2_and_swav_200_different_datasets/violin.png", dpi=100)
-# plt.clf()
+data = pandas.read_csv("results.csv")
+ms_data = data[(data["Method"] == "MoCo") | (data["Method"] == "SWAV")]
+ms_200_data = ms_data[ms_data["Epochs"] == 200]
+ms_200_full_data = ms_data[ms_data["Updates"] == int(1e6 * 200)]
+
+sns.set_theme()
+colors = sns.color_palette()
+# palette = {method: colors[i] for i, method in enumerate(set(data["Dataset"]))}
+plt.figure(figsize=(10, 5))
+
+ee = ms_200_full_data.set_index("Encoder")
+per_task_ms_200_full = []
+for task in PIXELWISE_SEMANTIC_TASKS + EMBEDDING_SEMANTIC_TASKS + PIXELWISE_STRUCTURAL_TASKS + EMBEDDING_STRUCTURAL_TASKS:
+    for encoder in ms_200_full_data["Encoder"]:
+        if encoder == "SWAVKinetics" and task == "THORDepth":
+            continue
+
+        if task in EMBEDDING_SEMANTIC_TASKS:
+            ttype = "Embedding-Semantic"
+        elif task in EMBEDDING_STRUCTURAL_TASKS:
+            ttype = "Embedding-Structural"
+        elif task in PIXELWISE_SEMANTIC_TASKS:
+            ttype = "Pixelwise-Semantic"
+        elif task in PIXELWISE_STRUCTURAL_TASKS:
+            ttype = "Pixelwise-Structural"
+        else:
+            ttype = "Other"
+
+        per_task_ms_200_full.append({
+            "Encoder": encoder,
+            "Task": task,
+            "Method": ee.loc[encoder, "Method"],
+            "Dataset": ee.loc[encoder, "Dataset"],
+            "NormalizedScore": ee.loc[encoder, task+"-normalized"],
+            "TaskType": ttype
+        })
+
+plt.title("Normalized Performance of SWAV and MoCov2 Encoders trained on 1.3M Image Datasets")
+df = pandas.DataFrame(per_task_ms_200_full)
+order = ["Embedding-Semantic", "Pixelwise-Semantic", "Embedding-Structural", "Pixelwise-Structural"]
+ax = sns.violinplot(x="TaskType", y="NormalizedScore", hue="TaskType", data=df, dodge=False, order=order)
+plt.savefig("graphs/mocov2_and_swav_200_different_task_types/violin.png", dpi=100)
+plt.clf()
 
 ##### Make Per Task Vategory Violin Plot of Scores for MoCo 200
 # data = pandas.read_csv("results.csv")
