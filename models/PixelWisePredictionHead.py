@@ -20,14 +20,14 @@ class PixelWisePredictionHead(nn.Module):
         self.up5 = upshufflenorelu(64, output_size, 2)
 
     def forward(self, x):
-        d5 = self.up1(x["layer5"].float())
-        d5_ = _upsample_add(d5, x["layer4"].float())
+        d5 = self.up1(x["block4"].float())
+        d5_ = _upsample_add(d5, x["block3"].float())
         d4 = self.up2(d5_)
-        d4_ = _upsample_add(d4, x["layer3"].float())
+        d4_ = _upsample_add(d4, x["block2"].float())
         d3 = self.up3(d4_)
-        d3_ = _upsample_add(d3, x["layer2"].float())
+        d3_ = _upsample_add(d3, x["block1"].float())
         d2 = self.up4(d3_)
-        d2_ = _upsample_add(d2, x["layer1"].float())
+        d2_ = _upsample_add(d2, x["conv"].float())
         out = self.up5(d2_)
         return out
 
@@ -39,16 +39,7 @@ class PixelWisePredictionHead(nn.Module):
         # return out
 
     def required_encoding(self):
-        return ["layer1", "layer2", "layer3", "layer4", "layer5"]
-
-    # def pca_embedding_sizes(self):
-    #     return {
-    #         "layer1": 4,
-    #         "layer2": 4,
-    #         "layer3": 4,
-    #         "layer4": 4,
-    #         "layer5": 128
-    #     }
+        return ["conv", "block1", "block2", "block3", "block4"]
 
 
 def _upsample_add(x, y):
