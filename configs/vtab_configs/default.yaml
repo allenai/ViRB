@@ -147,31 +147,40 @@
 #  num_epochs: 100
 #  batch_size: 32
 #
-#Imagenet:
-#  task: "Imagenet"
-#  training_configs:
-#    adam-0.0001:
-#      optimizer: "adam"
-#      lr: 0.0001
-##    adam-0.001:
-##      optimizer: "adam"
-##      lr: 0.001
-##    sgd-0.01:
-##      optimizer: "sgd"
-##      lr: 0.01
-##      scheduler:
-##        type: "StepLR"
-##        step_size: 50
-##        gamma: 0.1
-##    sgd-0.001:
-##      optimizer: "sgd"
-##      lr: 0.001
-##      scheduler:
-##        type: "StepLR"
-##        step_size: 50
-##        gamma: 0.1
-#  num_epochs: 100
-#  batch_size: 32
+Imagenet:
+  task: "Imagenet"
+  training_configs:
+    adam-1:
+      optimizer: "adam"
+      lr: 1
+    adam-0.1:
+      optimizer: "adam"
+      lr: 0.1
+    adam-0.01:
+      optimizer: "adam"
+      lr: 0.01
+    adam-0.001:
+      optimizer: "adam"
+      lr: 0.001
+    adam-0.0001:
+      optimizer: "adam"
+      lr: 0.0001
+#    sgd-0.01:
+#      optimizer: "sgd"
+#      lr: 0.01
+#      scheduler:
+#        type: "StepLR"
+#        step_size: 50
+#        gamma: 0.1
+#    sgd-0.001:
+#      optimizer: "sgd"
+#      lr: 0.001
+#      scheduler:
+#        type: "StepLR"
+#        step_size: 50
+#        gamma: 0.1
+  num_epochs: 100
+  batch_size: 32
 #
 #THORActionPrediction:
 #  task: "THORActionPrediction"
@@ -257,14 +266,14 @@
 ##      lr: 0.001
 #  num_epochs: 25
 
-Imagenetv2:
-  task: "Imagenetv2"
-  task_head_weights_path: "out/%s/Imagenet*/model_head.pt"
-  training_configs:
-    adam-0.0003:
-      optimizer: "adam"
-      lr: 0.0003
-  batch_size: 32
+#Imagenetv2:
+#  task: "Imagenetv2"
+#  task_head_weights_path: "out/%s/Imagenet*/model_head.pt"
+#  training_configs:
+#    adam-0.0003:
+#      optimizer: "adam"
+#      lr: 0.0003
+#  batch_size: 32
 
 #
 #KineticsActionPrediction:

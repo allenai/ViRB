@@ -30,10 +30,12 @@ for file in glob.glob("../graphs/cka/multi_model_layer_wise/ImageNet/*.npy"):
     names.add(name.split("-")[1])
 names = list(names)
 names.sort()
+# names = ['SWAVImageNet', 'SWAVPlaces', 'SWAVCombination', 'SWAVTaskonomy', 'SWAVKinetics']
+names = ['MoCov2ImageNet', 'MoCov2Places', 'MoCov2Combination', 'MoCov2Taskonomy', 'MoCov2Kinetics']
 sns.set()
 n = len(names)
 fig, axes = plt.subplots(n, n, figsize=(15, 10))
-fig.suptitle("SWAV Layer by Layer Different Datasets")
+fig.suptitle("MoCov2 Layer by Layer Different Datasets")
 print(names)
 for i in range(n):
     for j in range(n):
@@ -49,5 +51,61 @@ for i in range(n):
             axes[i][j].set_ylabel(names[i])
         axes[i][j].get_xaxis().set_ticks([])
         axes[i][j].get_yaxis().set_ticks([])
+# plt.savefig("../graphs/cka/datasets/mocov2.pdf")
 plt.show()
 
+# heatmaps = {}
+# names = set()
+# for file in glob.glob("../graphs/cka/multi_model_layer_wise/ImageNet/*.npy"):
+#     name = file.split("/")[-1].replace(".npy", "")
+#     if "MoCov2_" in name.split("-")[0] and "MoCov2_" in name.split("-")[1]:
+#         heatmaps[name] = np.load(file)
+# names = ["MoCov2_50", "MoCov2_100", "MoCov2_200"]
+# sns.set()
+# n = len(names)
+# fig, axes = plt.subplots(n, n, figsize=(15, 10))
+# fig.suptitle("SWAV Layer by Layer Different Datasets")
+# print(names)
+# for i in range(n):
+#     for j in range(n):
+#         if "-".join((names[i], names[j])) in heatmaps:
+#             hm = heatmaps["-".join((names[i], names[j]))]
+#             sns.heatmap(hm, ax=axes[i][j], vmin=0, vmax=1)
+#         elif "-".join((names[j], names[i])) in heatmaps:
+#             hm = heatmaps["-".join((names[j], names[i]))]
+#             sns.heatmap(hm, ax=axes[i][j], vmin=0, vmax=1)
+#         if i == n-1:
+#             axes[i][j].set_xlabel(names[j])
+#         if j == 0:
+#             axes[i][j].set_ylabel(names[i])
+#         axes[i][j].get_xaxis().set_ticks([])
+#         axes[i][j].get_yaxis().set_ticks([])
+# plt.savefig("../graphs/cka/num_training_steps/mocov2.pdf")
+# plt.clf()
+
+# heatmaps = {}
+# names = set()
+# for file in glob.glob("../graphs/cka/multi_model_layer_wise/ImageNet/*.npy"):
+#     name = file.split("/")[-1].replace(".npy", "")
+#     heatmaps[name] = np.load(file)
+# names = ["SWAV_50", "SWAV_100", "SWAV_200"]
+# sns.set()
+# n = len(names)
+# fig, axes = plt.subplots(n, n, figsize=(15, 10))
+# fig.suptitle("SWAV Layer by Layer Different Datasets")
+# print(names)
+# for i in range(n):
+#     for j in range(n):
+#         if "-".join((names[i], names[j])) in heatmaps:
+#             hm = heatmaps["-".join((names[i], names[j]))]
+#             sns.heatmap(hm, ax=axes[i][j], vmin=0, vmax=1)
+#         elif "-".join((names[j], names[i])) in heatmaps:
+#             hm = heatmaps["-".join((names[j], names[i]))]
+#             sns.heatmap(hm, ax=axes[i][j], vmin=0, vmax=1)
+#         if i == n-1:
+#             axes[i][j].set_xlabel(names[j])
+#         if j == 0:
+#             axes[i][j].set_ylabel(names[i])
+#         axes[i][j].get_xaxis().set_ticks([])
+#         axes[i][j].get_yaxis().set_ticks([])
+# plt.savefig("../graphs/cka/num_training_steps/swav.pdf")
