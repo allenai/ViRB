@@ -2272,67 +2272,141 @@ def make_csv():
 # # plt.clf()
 
 
-make_csv()
-data = pandas.read_csv("results.csv")
-data = data.set_index("Encoder")
-# CalTech
-datapoints = []
-for encoder in data.index:
-    if data.loc[encoder]["Imagenet"] < 0.4:
-        print(encoder)
-    for task in ALL_TASKS:
-        if data.loc[encoder]["Imagenet"] > 0.0:
-            if task in EMBEDDING_SEMANTIC_TASKS:
-                ttype = "Semantic"
-                otype = "Embedding"
-            elif task in EMBEDDING_STRUCTURAL_TASKS:
-                ttype = "Structural"
-                otype = "Embedding"
-            elif task in PIXELWISE_SEMANTIC_TASKS:
-                ttype = "Semantic"
-                otype = "Pixelwise"
-            elif task in PIXELWISE_STRUCTURAL_TASKS:
-                ttype = "Structural"
-                otype = "Pixelwise"
-            datapoints.append({
-                "Encoder": encoder,
-                "Task": task,
-                "TaskType": ttype,
-                "OutputType": otype,
-                "Score": data.loc[encoder][task],
-                "IN Score": data.loc[encoder]["Imagenet"],
-                "Dataset": "Imagenet" if data.loc[encoder]["Dataset"] == "Imagenet" else "Other"
-            })
-sns.set()
-sns.color_palette("bright")
-datapoints.sort(key=lambda x: x["Score"])
-ax = sns.lmplot(x="IN Score", y="Score", hue="Task", row="TaskType", col="OutputType", data=pandas.DataFrame(datapoints))
-# ax.set_ylabel("Score")
-# ax.get_xaxis().set_visible(False)
-# ax.set_title("CalTech Classification Top-1 Accuracy")
-plt.show()
-
-#
 # make_csv()
 # data = pandas.read_csv("results.csv")
 # data = data.set_index("Encoder")
+# # CalTech
 # datapoints = []
 # for encoder in data.index:
-#     for task in PIXELWISE_SEMANTIC_TASKS:
-#         datapoints.append({
-#             "Encoder": encoder,
-#             "Random": "True" if encoder == "Random" else "False",
-#             "Task": task,
-#             "Score": data.loc[encoder][task],
-#             "IN Score": data.loc[encoder]["Imagenet"],
-#             "Dataset": "Imagenet" if data.loc[encoder]["Dataset"] == "Imagenet" else "Other"
-#         })
+#     if data.loc[encoder]["Imagenet"] < 0.4:
+#         print(encoder)
+#     for task in ALL_TASKS:
+#         if data.loc[encoder]["Imagenet"] > 0.0:
+#             if task in EMBEDDING_SEMANTIC_TASKS:
+#                 ttype = "Semantic"
+#                 otype = "Embedding"
+#             elif task in EMBEDDING_STRUCTURAL_TASKS:
+#                 ttype = "Structural"
+#                 otype = "Embedding"
+#             elif task in PIXELWISE_SEMANTIC_TASKS:
+#                 ttype = "Semantic"
+#                 otype = "Pixelwise"
+#             elif task in PIXELWISE_STRUCTURAL_TASKS:
+#                 ttype = "Structural"
+#                 otype = "Pixelwise"
+#             datapoints.append({
+#                 "Encoder": encoder,
+#                 "Task": task,
+#                 "TaskType": ttype,
+#                 "OutputType": otype,
+#                 "Score": data.loc[encoder][task],
+#                 "IN Score": data.loc[encoder]["Imagenet"],
+#                 "Dataset": "Imagenet" if data.loc[encoder]["Dataset"] == "Imagenet" else "Other"
+#             })
 # sns.set()
 # sns.color_palette("bright")
 # datapoints.sort(key=lambda x: x["Score"])
-# ax = sns.lmplot(x="IN Score", y="Score", hue="Task", col="Task", data=pandas.DataFrame(datapoints))
-# ax.set(xlim=(0, 1))
+# ax = sns.lmplot(x="IN Score", y="Score", hue="Task", row="TaskType", col="OutputType", data=pandas.DataFrame(datapoints))
 # # ax.set_ylabel("Score")
 # # ax.get_xaxis().set_visible(False)
 # # ax.set_title("CalTech Classification Top-1 Accuracy")
 # plt.show()
+
+
+# make_csv()
+# sns.set()
+# sns.color_palette("bright")
+# data = pandas.read_csv("results.csv")
+# data = data.set_index("Encoder")
+# fig, axes = plt.subplots(4, 1)
+# fig.suptitle("Similar Datasets")
+#
+# datapoints = []
+# for encoder in data.index:
+#     datapoints.append({
+#         "Encoder": encoder,
+#         "Score": data.loc[encoder]["CalTech-101"],
+#         "Dataset": "Imagenet" if data.loc[encoder]["Dataset"] == "Imagenet" else "Other"
+#     })
+# ax = sns.kdeplot(x="Score", hue="Dataset", data=pandas.DataFrame(datapoints), ax=axes[0], fill=True,
+#                   common_norm=False)
+# datapoints = []
+# for encoder in data.index:
+#     datapoints.append({
+#         "Encoder": encoder,
+#         "Score": data.loc[encoder]["KineticsActionPrediction"],
+#         "Dataset": "Kinetics" if data.loc[encoder]["Dataset"] == "Kinetics" else "Other"
+#     })
+# ax = sns.kdeplot(x="Score", hue="Dataset", data=pandas.DataFrame(datapoints), ax=axes[1], fill=True,
+#                   common_norm=False)
+# datapoints = []
+# for encoder in data.index:
+#     datapoints.append({
+#         "Encoder": encoder,
+#         "Score": data.loc[encoder]["SUN397"],
+#         "Dataset": "Places" if data.loc[encoder]["Dataset"] == "Places" else "Other"
+#     })
+# ax = sns.kdeplot(x="Score", hue="Dataset", data=pandas.DataFrame(datapoints), ax=axes[2], fill=True,
+#                   common_norm=False)
+# datapoints = []
+# for encoder in data.index:
+#     datapoints.append({
+#         "Encoder": encoder,
+#         "Score": data.loc[encoder]["TaskonomyDepth"],
+#         "Dataset": "Taskonomy" if data.loc[encoder]["Dataset"] == "Taskonomy" else "Other"
+#     })
+# ax = sns.kdeplot(x="Score", hue="Dataset", data=pandas.DataFrame(datapoints), ax=axes[3], fill=True,
+#                   common_norm=False)
+# plt.show()
+
+
+# make_csv()
+# sns.set()
+# sns.color_palette("bright")
+# data = pandas.read_csv("results.csv")
+# data = data.set_index("Encoder")
+# fig, axes = plt.subplots(1, 4)
+# fig.suptitle("Similar Datasets")
+#
+# datapoints = []
+# for encoder in data.index:
+#     datapoints.append({
+#         "Encoder": encoder,
+#         "Score": data.loc[encoder]["CalTech-101"],
+#         "Dataset": "Imagenet" if data.loc[encoder]["Dataset"] == "Imagenet" else "Other"
+#     })
+# datapoints.sort(key=lambda x: x["Score"], reverse=True)
+# ax = sns.barplot(y="Encoder", x="Score", dodge=False, hue="Dataset", data=pandas.DataFrame(datapoints), ax=axes[0])
+# ax.get_yaxis().set_visible(False)
+# datapoints = []
+# for encoder in data.index:
+#     datapoints.append({
+#         "Encoder": encoder,
+#         "Score": data.loc[encoder]["KineticsActionPrediction"],
+#         "Dataset": "Kinetics" if data.loc[encoder]["Dataset"] == "Kinetics" else "Other"
+#     })
+# datapoints.sort(key=lambda x: x["Score"], reverse=True)
+# ax = sns.barplot(y="Encoder", x="Score", dodge=False, hue="Dataset", data=pandas.DataFrame(datapoints), ax=axes[1])
+# ax.get_yaxis().set_visible(False)
+# datapoints = []
+# for encoder in data.index:
+#     datapoints.append({
+#         "Encoder": encoder,
+#         "Score": data.loc[encoder]["SUN397"],
+#         "Dataset": "Places" if data.loc[encoder]["Dataset"] == "Places" else "Other"
+#     })
+# datapoints.sort(key=lambda x: x["Score"], reverse=True)
+# ax = sns.barplot(y="Encoder", x="Score", dodge=False, hue="Dataset", data=pandas.DataFrame(datapoints), ax=axes[2])
+# ax.get_yaxis().set_visible(False)
+# datapoints = []
+# for encoder in data.index:
+#     datapoints.append({
+#         "Encoder": encoder,
+#         "Score": data.loc[encoder]["TaskonomyDepth"],
+#         "Dataset": "Taskonomy" if data.loc[encoder]["Dataset"] == "Taskonomy" else "Other"
+#     })
+#     datapoints.sort(key=lambda x: x["Score"], reverse=True)
+# ax = sns.barplot(y="Encoder", x="Score", dodge=False, hue="Dataset", data=pandas.DataFrame(datapoints), ax=axes[3])
+# ax.get_yaxis().set_visible(False)
+# plt.show()
+
