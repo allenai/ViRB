@@ -82,10 +82,16 @@ def compute_cka(a, b):
 # sns.barplot(x="name", y="norm", data=data)
 # plt.show()
 
+# DATASETS = [
+#     'Caltech', 'Cityscapes', 'CLEVR', 'dtd', 'Egohands', 'Eurosat',
+#     'ImageNet', 'Kinetics', 'nuScenes', 'NYU', 'Pets',
+#     'SUN397', 'Taskonomy', 'Thor'
+# ]
+
 DATASETS = [
-    'Caltech', 'Cityscapes', 'CLEVR', 'dtd', 'Egohands', 'Eurosat',
-    'ImageNet', 'Kinetics', 'nuScenes', 'NYU', 'Pets',
-    'SUN397', 'Taskonomy', 'Thor'
+    'Caltech', 'CLEVR', 'dtd', 'Eurosat',
+    'ImageNet', 'Kinetics', 'nuScenes', 'Pets',
+    'SUN397', 'Thor'
 ]
 
 # device = "cuda:0" if torch.cuda.is_available() else "cpu"
