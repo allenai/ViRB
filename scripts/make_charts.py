@@ -12,6 +12,30 @@ import scipy
 import scipy.stats
 import os
 
+REAL_NAMES = {
+    "Imagenet": "ImageNet Cls.",
+    "Imagenetv2": "ImageNet v2 Cls.",
+    "Pets": "Pets Cls.",
+    "CIFAR-100": "CIFAR-100 Cls.",
+    "CalTech-101": "CalTech Cls.",
+    "Eurosat": "Eurosat Cls.",
+    "dtd": "dtd Cls.",
+    "SUN397": "SUN Scene Cls.",
+    "KineticsActionPrediction": "Kinetics Action Pred.",
+    "CLEVERNumObjects": "CLEVR Count",
+    "THORNumSteps": "THOR Num. Steps",
+    "THORActionPrediction": "THOR Egomotion",
+    "nuScenesActionPrediction": "nuScenes Egomotion",
+    "PetsDetection": "Pets Instance Det.",
+    "CityscapesSemanticSegmentation": "Cityscapes Seg.",
+    "EgoHands": "EgoHands Seg.",
+    "NYUDepth": "NYU Walkable",
+    "NYUWalkable": "NYU Depth",
+    "THORDepth": "THOR Depth",
+    "TaskonomyDepth": "Taskonomy Depth",
+    "KITTI": "KITTI Opt. Flow"
+}
+
 
 ALL_EXPERIMENTS = [
     'Random',
@@ -31,7 +55,7 @@ ALL_EXPERIMENTS = [
     'MoCov2UnbalancedImagenet',
     'MoCov2QuarterImagenet',
     'SWAV_200',
-    # 'SWAV_200_2',
+    'SWAV_200_2',
     'SWAVCombination',
     'SWAVTaskonomy',
     'SWAVKinetics',
@@ -46,7 +70,8 @@ ALL_EXPERIMENTS = [
     'MoCov2UnbalancedImagenet_100',
     'MoCov2_100',
     'MoCov2_50',
-    'SWAV_50'
+    'SWAV_50',
+    'SWAV_100'
 ]
 
 MOCOV2_EXPERIMENTS = [
@@ -2312,7 +2337,7 @@ def make_csv():
 # # ax.set_title("CalTech Classification Top-1 Accuracy")
 # plt.show()
 
-
+#
 # make_csv()
 # sns.set()
 # sns.color_palette("bright")
@@ -2329,7 +2354,7 @@ def make_csv():
 #         "Dataset": "Imagenet" if data.loc[encoder]["Dataset"] == "Imagenet" else "Other"
 #     })
 # ax = sns.kdeplot(x="Score", hue="Dataset", data=pandas.DataFrame(datapoints), ax=axes[0], fill=True,
-#                   common_norm=False)
+#                   common_norm=False, bw_adjust=0.8)
 # datapoints = []
 # for encoder in data.index:
 #     datapoints.append({
@@ -2338,7 +2363,7 @@ def make_csv():
 #         "Dataset": "Kinetics" if data.loc[encoder]["Dataset"] == "Kinetics" else "Other"
 #     })
 # ax = sns.kdeplot(x="Score", hue="Dataset", data=pandas.DataFrame(datapoints), ax=axes[1], fill=True,
-#                   common_norm=False)
+#                   common_norm=False, bw_adjust=0.8)
 # datapoints = []
 # for encoder in data.index:
 #     datapoints.append({
@@ -2347,7 +2372,7 @@ def make_csv():
 #         "Dataset": "Places" if data.loc[encoder]["Dataset"] == "Places" else "Other"
 #     })
 # ax = sns.kdeplot(x="Score", hue="Dataset", data=pandas.DataFrame(datapoints), ax=axes[2], fill=True,
-#                   common_norm=False)
+#                   common_norm=False, bw_adjust=0.8)
 # datapoints = []
 # for encoder in data.index:
 #     datapoints.append({
@@ -2356,10 +2381,10 @@ def make_csv():
 #         "Dataset": "Taskonomy" if data.loc[encoder]["Dataset"] == "Taskonomy" else "Other"
 #     })
 # ax = sns.kdeplot(x="Score", hue="Dataset", data=pandas.DataFrame(datapoints), ax=axes[3], fill=True,
-#                   common_norm=False)
+#                   common_norm=False, bw_adjust=0.8)
 # plt.show()
 
-
+#
 # make_csv()
 # sns.set()
 # sns.color_palette("bright")
@@ -2409,4 +2434,158 @@ def make_csv():
 # ax = sns.barplot(y="Encoder", x="Score", dodge=False, hue="Dataset", data=pandas.DataFrame(datapoints), ax=axes[3])
 # ax.get_yaxis().set_visible(False)
 # plt.show()
+#
+# make_csv()
+# data = pandas.read_csv("results.csv")
+# data = data.set_index("Encoder")
+# # CalTech
+# datapoints = []
+# for encoder in ["SWAV_800", "SWAVPlaces", "MoCov2_800", "MoCov2Places", "PIRL", "Supervised"]:
+#     for task in ALL_TASKS:
+#         if data.loc[encoder]["Imagenet"] > 0.4:
+#             if task in EMBEDDING_SEMANTIC_TASKS:
+#                 ttype = "Semantic Image-level"
+#             elif task in EMBEDDING_STRUCTURAL_TASKS:
+#                 ttype = "Structural Image-level"
+#             elif task in PIXELWISE_SEMANTIC_TASKS:
+#                 ttype = "Semantic Pixelwise"
+#             elif task in PIXELWISE_STRUCTURAL_TASKS:
+#                 ttype = "Structural  Pixelwise"
+#             datapoints.append({
+#                 "Encoder": encoder,
+#                 "Task": REAL_NAMES[task],
+#                 "TaskType": ttype,
+#                 "Score": data.loc[encoder][task],
+#                 "IN Score": data.loc[encoder]["Imagenet"],
+#                 "Dataset": "Imagenet" if data.loc[encoder]["Dataset"] == "Imagenet" else "Other",
+#                 "NormalizedScore": data.loc[encoder, task + "-normalized"],
+#             })
+# sns.set()
+# sns.color_palette("bright")
+# sns.set_theme(style="whitegrid", font_scale=1.8)
+# plt.figure(figsize=(20, 15))
+# datapoints.sort(key=lambda x: x["Score"])
+# ax = sns.lmplot(x="IN Score", y="Score", col="TaskType", hue="Task", sharex=True, sharey=False, data=pandas.DataFrame(datapoints))
+# plt.legend(loc='right', ncol=4)
+# # ax.set_ylabel("Score")
+# # ax.get_xaxis().set_visible(False)
+# # ax.set_title("CalTech Classification Top-1 Accuracy")
+# plt.savefig("graphs/in_vs_tasks/omni.pdf")
+# plt.show()
 
+# make_csv()
+# data = pandas.read_csv("results.csv")
+# data = data.set_index("Encoder")
+# # CalTech
+# datapoints = []
+# table = []
+# for encoder in ["SWAV_800", "SWAVPlaces", "MoCov2_800", "Supervised"]:
+#     for task in ALL_TASKS:
+#         datapoints.append({
+#             "Encoder": encoder,
+#             "Task": REAL_NAMES[task],
+#             "Score": data.loc[encoder][task],
+#             "SupervisedScore": data.loc["Supervised"][task],
+#             "Dataset": data.loc[encoder]["Dataset"],
+#             "Method": data.loc[encoder]["Method"],
+#             "NormalizedScore": data.loc[encoder, task + "-normalized"],
+#         })
+# for task in ALL_TASKS:
+#     if task in REVERSED_SUCCESS_TASKS:
+#         c = -1.0
+#     else:
+#         c= 1.0
+#     task = REAL_NAMES[task]
+#     tdps = [p for p in datapoints if p["Task"] == task]
+#     tdps.sort(key=lambda x: x["Score"], reverse=True)
+#     table.append({
+#         "Task": task,
+#         "Score": tdps[0]["Score"],
+#         "Method": tdps[0]["Method"],
+#         "Supervised Score": tdps[0]["SupervisedScore"],
+#         "Performance Improvement": 100 * c * (tdps[0]["Score"] - tdps[0]["SupervisedScore"]) / (tdps[0]["SupervisedScore"]),
+#         "Best Method": tdps[0]["Method"],
+#         "Best Dataset": tdps[0]["Dataset"]
+#     })
+# table.sort(key=lambda x: x["Performance Improvement"])
+# df = pandas.DataFrame(table)
+# df.to_csv("best_encoder_per_task.csv")
+#
+# sns.set(font_scale=10)
+# sns.color_palette("bright")
+# datapoints.sort(key=lambda x: x["Score"])
+# sns.set_theme(style="whitegrid", font_scale=1.8)
+#
+# plt.figure(figsize=(8, 8))
+#
+# ax = sns.barplot(x="Performance Improvement", y="Task", hue="Best Dataset", dodge=False, data=df, palette="pastel")
+# ax.set_xlabel("Percent Performance Improvement Over Supervised ImageNet")
+# # ax2 = ax.twinx()
+# # ax2.set_ylim(ax.get_ylim())
+# # ax2.set_yticks(np.arange(len(table)))
+# # ax2.set_yticklabels([t["Method"] for t in table])
+#
+# # ax.get_xaxis().set_visible(False)
+# # ax.set_title("CalTech Classification Top-1 Accuracy")
+# plt.savefig("graphs/best_encoder/best_encoder.pdf", bbox_inches='tight')
+# # plt.show()
+
+#### Generating Pearson and Spearman Correlations
+make_csv()
+data = pandas.read_csv("results.csv")
+tasks = ["Imagenet", "Imagenetv2", "CalTech-101", "Pets", "dtd", "CIFAR-100", "SUN397", "Eurosat",
+         "THORNumSteps", "CLEVERNumObjects", "nuScenesActionPrediction", "THORActionPrediction",
+         "TaskonomyDepth", "NYUWalkable", "NYUDepth", "THORDepth",
+         "EgoHands", "CityscapesSemanticSegmentation"]
+
+n = len(tasks)
+m = 15
+
+encoders = []
+cka = []
+for f in glob.glob("graphs/cka/multi_model_layer_wise/ImageNet/*.npy"):
+    name = f.split("/")[-1].replace(".npy", "")
+    if name.split("-")[0] != name.split("-")[1]:
+        continue
+    name = name.split("-")[0]
+    if name in ["SWAV_100", "SWAV_200_2"]:
+        continue
+    cka.append(np.load(f))
+    encoders.append(name)
+cka = np.stack(cka, axis=2)
+cka = cka[np.array([0,0,0,0,0,1,1,1,1,2,2,2,3,3,4]), np.array([1,2,3,4,5,2,3,4,5,3,4,5,4,5,5])]
+
+data = data.set_index("Encoder")
+data = data.loc[encoders]
+
+spearman = np.zeros((n,m))
+pearson = np.zeros((n,m))
+spearman_pval = np.zeros((n,m))
+pearson_pval = np.zeros((n,m))
+
+for i in range(n):
+    for j in range(m):
+        values_i = data[tasks[i]]
+        values_j = cka[j]
+        s, sp = scipy.stats.spearmanr(values_i, values_j)
+        p, pp = scipy.stats.pearsonr(values_i, values_j)
+        spearman[i][j] = s
+        pearson[i][j] = p
+        spearman_pval[i][j] = sp
+        pearson_pval[i][j] = pp
+
+tasks = [t.replace("ActionPrediction", "").replace("SemanticSegmentation", "") for t in tasks]
+# fig, axes = plt.subplots(1, 2, figsize=(16, 7))
+# fig.suptitle("Correlation of End Task Performance and CKA Values")
+ax = sns.heatmap(pearson, annot=True)
+ax.set_title("Spearman")
+# ax = sns.heatmap(spearman, annot=True, ax=axes[1])
+# ax.set_title("Pearson")
+# ax.set_xticks([])
+# ax.set_yticks([])
+# ax = sns.heatmap(pearson, annot=True)
+ax.set_yticklabels(tasks, rotation=0)
+corr_names = ["c-1", "c-2", "c-3", "c-4", "c-e", "1-2", "1-3", "1-4", "1-e", "2-3", "2-4", "2-e", "3-4", "3-e", "4-e"]
+ax.set_xticklabels(corr_names, rotation=30, rotation_mode="anchor", ha='right', va="center")
+
+plt.show()

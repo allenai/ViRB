@@ -194,7 +194,37 @@ def sort_heatmap_by_keys(heatmap, keys, corner="Supervised"):
     return new_keys, mat
 
 
-def linear_cka(dataset):
+def linear_cka_model_wise(model_name, path, device):
+    model = ResNet50Encoder(path)
+    model = model.to(device).eval()
+    data = {}
+    for dataset in DATASETS:
+        ds = OmniDataset(dataset, max_imgs=10000)
+        dl = torch.utils.data.DataLoader(ds, batch_size=256, shuffle=False, num_workers=16)
+        outs = []
+        with torch.no_grad():
+            for image in dl:
+                image = image.to(device)
+                out = model(image)
+                outs.append(out["embedding"])
+            outs = torch.cat(outs, dim=0)
+            # center columns
+            outs -= outs.mean(dim=0)
+            data[dataset] = outs
+    keys = list(data.keys())
+    n = len(keys)
+    heatmap = np.zeros((n, n))
+    for i in range(n):
+        for j in range(i, n):
+            x = data[keys[i]]
+            y = data[keys[j]]
+            cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
+            heatmap[i, j] = heatmap[j, i] = cka
+    os.makedirs("graphs/cka/final_layer_dataset_wise/", exist_ok=True)
+    np.save("graphs/cka/final_layer_dataset_wise/%s" % model_name, heatmap)
+
+
+def linear_cka(model):
     with open('configs/experiment_lists/default.yaml') as f:
         encoders = yaml.load(f)
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
@@ -224,14 +254,6 @@ def linear_cka(dataset):
             cka = (torch.norm(y.T @ x) ** 2) / (torch.norm(x.T @ x) * torch.norm(y.T @ y))
             heatmap[i, j] = heatmap[j, i] = cka
     np.save("graphs/cka/%s" % dataset, heatmap)
-    # new_keys, mat = sort_heatmap_by_keys(heatmap, keys, corner="Supervised")
-    # plt.figure(figsize=(20, 15))
-    # ax = sns.heatmap(mat, annot=True)
-    # plt.title(dataset)
-    # ax.set_xticklabels(new_keys, rotation=30)
-    # ax.set_yticklabels(new_keys, rotation=0)
-    # plt.savefig("graphs/cka/%s" % dataset)
-    # plt.close()
 
 
 # def fro_matmul(a, b, stride=1000, device="cpu"):
@@ -384,13 +406,41 @@ def main():
     # print("Distance Time: %02d:%02d" % (dist_time // 60, dist_time % 60))
     # print("Distance Shape", distance.shape)
 
+    # with open('configs/experiment_lists/default.yaml') as f:
+    #     encoders = yaml.load(f)
+    # argslist = []
+    # keys = list(encoders.keys())
+    # for i in range(len(encoders)):
+    #     for j in range(i, len(encoders)):
+    #         argslist.append((keys[i], encoders[keys[i]], keys[j], encoders[keys[j]]))
+    # nd = torch.cuda.device_count()
+    # if nd == 0:
+    #     for args in tqdm.tqdm(argslist):
+    #         two_model_layer_wise_linear_cka(*args, "ImageNet", "cpu")
+    # else:
+    #     import threading
+    #     count = 0
+    #     while count < len(argslist):
+    #         threads = []
+    #         for gpu_id in range(min(len(argslist) - count, nd)):
+    #             threads.append(
+    #                 threading.Thread(
+    #                     target=two_model_layer_wise_linear_cka,
+    #                     args=(*argslist[count], "ImageNet", "cuda:%d" % gpu_id)
+    #                 )
+    #             )
+    #             count += 1
+    #         for thread in threads:
+    #             thread.start()
+    #         for thread in threads:
+    #             thread.join()
+
     with open('configs/experiment_lists/default.yaml') as f:
         encoders = yaml.load(f)
     argslist = []
     keys = list(encoders.keys())
     for i in range(len(encoders)):
-        for j in range(i, len(encoders)):
-            argslist.append((keys[i], encoders[keys[i]], keys[j], encoders[keys[j]]))
+        argslist.append((keys[i], encoders[keys[i]]))
     nd = torch.cuda.device_count()
     if nd == 0:
         for args in tqdm.tqdm(argslist):
@@ -403,8 +453,8 @@ def main():
             for gpu_id in range(min(len(argslist) - count, nd)):
                 threads.append(
                     threading.Thread(
-                        target=two_model_layer_wise_linear_cka,
-                        args=(*argslist[count], "ImageNet", "cuda:%d" % gpu_id)
+                        target=linear_cka_model_wise,
+                        args=(*argslist[count], "cuda:%d" % gpu_id)
                     )
                 )
                 count += 1
