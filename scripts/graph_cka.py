@@ -176,21 +176,21 @@ import tqdm
 # plt.title("MoCov2")
 # sns.heatmap(heatmap, annot=True)
 # plt.show()
-
-heatmaps = {}
-names = set()
-for file in glob.glob("../graphs/cka/multi_model_layer_wise/ImageNet/*.npy"):
-    name = file.split("/")[-1].replace("_200", "ImageNet").replace(".npy", "")
-    heatmaps[name] = np.load(file)
-fig, axes = plt.subplots(3, 3)
-fig.suptitle("MoCo vs SWAV Same Dataset Different Method")
-for i, corr in enumerate(['MoCov2ImageNet-MoCov2Combination', 'MoCov2ImageNet-MoCov2Places', 'MoCov2ImageNet-MoCov2ImageNet']):
-    ax = sns.heatmap(heatmaps[corr], annot=True, vmin=0, vmax=1, ax=axes[0,i])
-    ax.set_title(corr)
-for i, corr in enumerate(['MoCov2Combination-SWAVCombination', 'MoCov2Places-SWAVPlaces', 'MoCov2ImageNet-SWAVImageNet']):
-    ax = sns.heatmap(heatmaps[corr], annot=True, vmin=0, vmax=1, ax=axes[1,i])
-    ax.set_title(corr)
-for i, corr in enumerate(['SWAVImageNet-SWAVCombination', 'SWAVImageNet-SWAVPlaces', 'SWAVImageNet-SWAVImageNet']):
-    ax = sns.heatmap(heatmaps[corr], annot=True, vmin=0, vmax=1, ax=axes[2,i])
-    ax.set_title(corr)
-plt.show()
+#
+# heatmaps = {}
+# names = set()
+# for file in glob.glob("../graphs/cka/multi_model_layer_wise/ImageNet/*.npy"):
+#     name = file.split("/")[-1].replace("_200", "ImageNet").replace(".npy", "")
+#     heatmaps[name] = np.load(file)
+# fig, axes = plt.subplots(3, 3)
+# fig.suptitle("MoCo vs SWAV Same Dataset Different Method")
+# for i, corr in enumerate(['MoCov2ImageNet-MoCov2Combination', 'MoCov2ImageNet-MoCov2Places', 'MoCov2ImageNet-MoCov2ImageNet']):
+#     ax = sns.heatmap(heatmaps[corr], annot=True, vmin=0, vmax=1, ax=axes[0,i])
+#     ax.set_title(corr)
+# for i, corr in enumerate(['MoCov2Combination-SWAVCombination', 'MoCov2Places-SWAVPlaces', 'MoCov2ImageNet-SWAVImageNet']):
+#     ax = sns.heatmap(heatmaps[corr], annot=True, vmin=0, vmax=1, ax=axes[1,i])
+#     ax.set_title(corr)
+# for i, corr in enumerate(['SWAVImageNet-SWAVCombination', 'SWAVImageNet-SWAVPlaces', 'SWAVImageNet-SWAVImageNet']):
+#     ax = sns.heatmap(heatmaps[corr], annot=True, vmin=0, vmax=1, ax=axes[2,i])
+#     ax.set_title(corr)
+# plt.savefig("../graphs/cka/method_vs_dataset/cross_cka.pdf", )

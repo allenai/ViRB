@@ -7,6 +7,7 @@ import seaborn as sns
 import numpy as np
 import pandas
 import scipy
+import math
 
 import scipy
 import scipy.stats
@@ -26,7 +27,7 @@ REAL_NAMES = {
     "THORNumSteps": "THOR Num. Steps",
     "THORActionPrediction": "THOR Egomotion",
     "nuScenesActionPrediction": "nuScenes Egomotion",
-    "PetsDetection": "Pets Instance Det.",
+    "PetsDetection": "Pets Instance Seg.",
     "CityscapesSemanticSegmentation": "Cityscapes Seg.",
     "EgoHands": "EgoHands Seg.",
     "NYUDepth": "NYU Walkable",
@@ -213,6 +214,10 @@ ALL_TASKS = EMBEDDING_SEMANTIC_TASKS + EMBEDDING_STRUCTURAL_TASKS + PIXELWISE_SE
 EMBEDDING_TASKS = EMBEDDING_SEMANTIC_TASKS + EMBEDDING_STRUCTURAL_TASKS
 PIXEL_TASKS = PIXELWISE_STRUCTURAL_TASKS + PIXELWISE_SEMANTIC_TASKS
 
+ACC_TASKS = EMBEDDING_TASKS
+MIOU_TASKS = PIXELWISE_SEMANTIC_TASKS + ["NYUWalkable"]
+L1_TASKS = ["NYUDepth", "THORDepth", "TaskonomyDepth", "KITTI"]
+
 REVERSED_SUCCESS_TASKS = [
     "TaskonomyInpainting",
     "TaskonomyEdges",
@@ -326,7 +331,7 @@ def make_csv():
             experiment_results[sn][task+"-normalized"] = (number - mean) / std
 
     with open('results.csv', mode='w') as csv_file:
-        fieldnames = ["Encoder", "Method", "Dataset", "Epochs", "Updates", "DatasetSize"] + ALL_TASKS + \
+        fieldnames = ["Encoder", "Method", "Dataset", "Balance", "Epochs", "Updates", "DatasetSize"] + ALL_TASKS + \
                      [task+"-normalized" for task in ALL_TASKS] + [task+"-rank" for task in ALL_TASKS]
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
@@ -366,9 +371,16 @@ def make_csv():
             else:
                 dataset = "Imagenet"
 
+            if "Log" in name:
+                balance = "Log"
+            elif "Unbalanced" in name:
+                balance = "Linear"
+            else:
+                balance = "Balanced"
+
             if "_1000" in name:
                 epochs = 1000
-            elif "_800" in name:
+            elif "_800" in name or name == "PIRL":
                 epochs = 800
             elif "_100" in name:
                 epochs = 100
@@ -392,6 +404,7 @@ def make_csv():
                 "Encoder": name,
                 "Method": method,
                 "Dataset": dataset,
+                "Balance": balance,
                 "Epochs": epochs,
                 "Updates": epochs * dataset_size,
                 "DatasetSize": dataset_size
@@ -909,16 +922,17 @@ def make_csv():
 # plt.clf()
 
 
-# ##### Make Per Task Vategory Violin Plot of Scores for MoCo and SWAV 200
+#$##### Figure 6. Make Per Task Vategory Violin Plot of Scores for MoCo and SWAV 200
 # data = pandas.read_csv("results.csv")
-# ms_data = data[(data["Method"] == "MoCo") | (data["Method"] == "SWAV")]
-# ms_200_data = ms_data[ms_data["Epochs"] == 200]
-# ms_200_full_data = ms_data[ms_data["Updates"] == int(1e6 * 200)]
+# ms_data = data[(data["Method"] == "MoCo") | (data["Method"] == "SWAV") | (data["Method"] == "PIRL")]
+# ms_200_data = ms_data[(ms_data["Epochs"] == 200) | (ms_data["Epochs"] == 800)]
+# ms_200_full_data = ms_200_data[ms_200_data["Updates"] == int(1e6 * 200)]
+#
 #
 # sns.set_theme()
 # colors = sns.color_palette()
 # # palette = {method: colors[i] for i, method in enumerate(set(data["Dataset"]))}
-# plt.figure(figsize=(10, 5))
+# plt.figure(figsize=(10, 10))
 #
 # ee = ms_200_full_data.set_index("Encoder")
 # per_task_ms_200_full = []
@@ -928,13 +942,13 @@ def make_csv():
 #             continue
 #
 #         if task in EMBEDDING_SEMANTIC_TASKS:
-#             ttype = "Embedding-Semantic"
+#             ttype = "Image-Level Semantic"
 #         elif task in EMBEDDING_STRUCTURAL_TASKS:
-#             ttype = "Embedding-Structural"
+#             ttype = "Image-Level Structural"
 #         elif task in PIXELWISE_SEMANTIC_TASKS:
-#             ttype = "Pixelwise-Semantic"
+#             ttype = "Pixelwise Semantic"
 #         elif task in PIXELWISE_STRUCTURAL_TASKS:
-#             ttype = "Pixelwise-Structural"
+#             ttype = "Pixelwise Structural"
 #         else:
 #             ttype = "Other"
 #
@@ -943,16 +957,31 @@ def make_csv():
 #             "Task": task,
 #             "Method": ee.loc[encoder, "Method"],
 #             "Dataset": ee.loc[encoder, "Dataset"],
-#             "NormalizedScore": ee.loc[encoder, task+"-normalized"],
-#             "TaskType": ttype
+#             "Normalized End Task Performance": ee.loc[encoder, task+"-normalized"],
+#             "Task Type": ttype
 #         })
 #
-# plt.title("Normalized Performance of SWAV and MoCov2 Encoders trained on 1.3M Image Datasets")
+# sns.set_theme(style="whitegrid", font_scale=1.5)
+# pal = sns.color_palette("GnBu")
 # df = pandas.DataFrame(per_task_ms_200_full)
-# order = ["Embedding-Semantic", "Pixelwise-Semantic", "Embedding-Structural", "Pixelwise-Structural"]
-# ax = sns.violinplot(x="TaskType", y="NormalizedScore", hue="TaskType", data=df, dodge=False, order=order)
-# plt.savefig("graphs/mocov2_and_swav_200_different_task_types/violin.png", dpi=100)
-# plt.clf()
+# order = ["Image-Level Semantic", "Pixelwise Semantic", "Image-Level Structural", "Pixelwise Structural"]
+# ax = sns.violinplot(x="Task Type", y="Normalized End Task Performance", hue="Task Type", data=df, dodge=False, order=order,
+#                     palette={"Image-Level Semantic": pal[0], "Pixelwise Semantic": pal[1],
+#                              "Image-Level Structural": pal[4], "Pixelwise Structural": pal[5]}
+#                     )
+# ax = sns.lineplot(x=[-1,4], y=[0,0], hue=["Supervised ImageNet", "Supervised ImageNet"], linewidth=3,
+#                   style=["Supervised ImageNet", "Supervised ImageNet"],
+#                   dashes=[(2,2)],
+#                   palette={"Supervised ImageNet": 'red'})
+# ax.set_xlim(-1,4)
+# ax.set(xticklabels=[])
+# # ax.axhline(0.0)
+# ax.legend(loc='upper left')
+#
+#
+# # plt.show()
+# plt.savefig("graphs/mocov2_and_swav_200_different_task_types/violin.pdf", bbox_inches='tight')
+# # plt.clf()
 
 
 ##### Make Per Task Type Violin Plot of Scores for MoCo and SWAV 200
@@ -1019,7 +1048,7 @@ def make_csv():
 
 
 
-####### Make SWAV vs MoCo Performance Plots
+# ####### Figure 5. Make SWAV vs MoCo Performance Plots
 # make_csv()
 # data = pandas.read_csv("results.csv")
 # ms_data = data[(data["Method"] == "MoCo") | (data["Method"] == "SWAV")]
@@ -1030,7 +1059,11 @@ def make_csv():
 # for task in PIXELWISE_SEMANTIC_TASKS + EMBEDDING_SEMANTIC_TASKS + PIXELWISE_STRUCTURAL_TASKS + EMBEDDING_STRUCTURAL_TASKS:
 #     moco = []
 #     swav = []
+#     if task == "Imagenetv2":
+#         continue
 #     for encoder in ms_data["Encoder"]:
+#         if math.isnan(ee.loc[encoder, task]):
+#             continue
 #         if encoder == "SWAVKinetics" and task == "THORDepth":
 #             continue
 #         if ee.loc[encoder, "Method"] == "MoCo":
@@ -1039,9 +1072,9 @@ def make_csv():
 #             swav.append(ee.loc[encoder, task])
 #
 #     if task in EMBEDDING_SEMANTIC_TASKS:
-#         ttype = "Embedding"
+#         ttype = "Image-level"
 #     elif task in EMBEDDING_STRUCTURAL_TASKS:
-#         ttype = "Embedding"
+#         ttype = "Image-level"
 #     elif task in PIXELWISE_SEMANTIC_TASKS:
 #         ttype = "PixelWise"
 #     elif task in PIXELWISE_STRUCTURAL_TASKS:
@@ -1057,43 +1090,52 @@ def make_csv():
 #         metric = "Top 1 Accuracy"
 #
 #     diffs.append({
-#         "Task": task.replace("SemanticSegmentation", ""),
+#         "Task": REAL_NAMES[task],
 #         "Method": "MoCo",
 #         "AverageScore": (np.mean(moco) - np.mean(swav)) / np.abs(np.mean(swav)) * 100,
 #         "TaskType": ttype,
 #         "Metric": metric
 #     })
 #
-#     diffs.append({
-#         "Task": task.replace("SemanticSegmentation", ""),
-#         "Method": "SWAV",
-#         "AverageScore": np.mean(swav),
-#         "TaskType": ttype,
-#         "Metric": metric
-#     })
+#     # diffs.append({
+#     #     "Task": task.replace("SemanticSegmentation", ""),
+#     #     "Method": "SWAV",
+#     #     "AverageScore": np.mean(swav),
+#     #     "TaskType": ttype,
+#     #     "Metric": metric
+#     # })
 #
-# plt.figure(figsize=(14, 5))
-# plt.title("Average Performance of MoCov2 and SWAV Encoders on End Tasks", fontsize=15)
-# order = ["Cityscapes", "TaskonomyDepth", "PetsDetection", "NYUDepth", "EgoHands", "NYUWalkable", "THORDepth", "KITTI",
-#          "CLEVERNumObjects", "dtd", "SUN397", "CIFAR-100", "nuScenesActionPrediction", "THORNumSteps", "Imagenet",
-#          "Pets", "Imagenetv2", "Eurosat", "CalTech-101", "THORActionPrediction", 'KineticsActionPrediction']
+# sns.set()
+# sns.set_theme(style="whitegrid", font_scale=1.8, palette="pastel")
+# plt.figure(figsize=(10, 10))
+# # plt.title("Average Performance of MoCov2 and SWAV Encoders on End Tasks")
+# order = ["CityscapesSemanticSegmentation", "TaskonomyDepth", "PetsDetection",
+#          "NYUWalkable", "NYUDepth", "EgoHands", "KITTI", "THORDepth",
+#          'KineticsActionPrediction', "CLEVERNumObjects", "dtd", "Imagenet", "SUN397", "CIFAR-100", "Pets",
+#          "nuScenesActionPrediction", "THORNumSteps", "CalTech-101", "Eurosat", "THORActionPrediction"]
+# order = [REAL_NAMES[o] for o in order]
 # diffs.sort(key=lambda x: order.index(x["Task"]))
 # df = pandas.DataFrame(diffs)
-# ax = sns.barplot(x="AverageScore", y="Task", hue="TaskType", data=df)
-# plt.xlabel("Percentage difference between average MoCo and SWAV Score")
-# plt.show()
-# plt.savefig("graphs/mocov2_and_swav_200_different_task_types/diff.png", dpi=100)
-# plt.clf()
+# ax = sns.barplot(x="AverageScore", y="Task", hue="TaskType", dodge=False, data=df)
+# ax.arrow(-9, 18, -1.5, 0, color="black", width=0.1)
+# ax.text(-8.8, 18.3, "SwAV Better")
+# ax.arrow(8, 1, 1.5, 0, color="black", width=0.1)
+# ax.text(1.5, 1.3, "MoCov2 Better")
+# plt.ylabel("End Task")
+# plt.xlabel("Relative percentage difference between average MoCov2 and SwAV Score")
+# # plt.show()
+# plt.savefig("graphs/mocov2_and_swav_200_different_task_types/diff.pdf", bbox_inches='tight')
+# # plt.clf()
 
 
 ##### Make Per Task Vategory Violin Plot of Scores for MoCo 200
 # data = pandas.read_csv("results.csv")
 # ms_data = data[(data["Method"] == "MoCo")]
 # ms_200_data = ms_data[ms_data["Epochs"] == 200]
-# ms_200_full_data = ms_data[ms_data["Updates"] == int(1e6 * 200)]
+# ms_200_full_data = ms_200_data[ms_200_data["Updates"] == int(1e6 * 200)]
 #
 # sns.set_theme()
-# colors = sns.color_palette()
+# sns.set_theme(style="whitegrid", font_scale=1.8, palette='pastel')
 # plt.figure(figsize=(20, 10))
 #
 # ee = ms_200_full_data.set_index("Encoder")
@@ -1125,10 +1167,11 @@ def make_csv():
 #
 # plt.title("MoCov2 200 Models, 1.3M Image Datasets Per Category Performance")
 # df = pandas.DataFrame(per_task_ms_200_full)
-# sns.violinplot(x="Task", y="NormalizedScore", hue="TaskType", data=df)
+# sns.boxplot(x="Task", y="NormalizedScore", hue="TaskType", data=df)
+# plt.show()
 # plt.savefig("graphs/mocov2_200_different_datasets/violin.png", dpi=100)
 # plt.clf()
-#
+
 ##### Make Per Task Vategory Violin Plot of Scores for SWAV 200
 # data = pandas.read_csv("results.csv")
 # ms_data = data[(data["Method"] == "SWAV")]
@@ -2295,8 +2338,8 @@ def make_csv():
 # plt.show()
 # # plt.savefig("graphs/mocov2_and_swav_200_different_task_types/violin.png", dpi=100)
 # # plt.clf()
-
-
+#
+#
 # make_csv()
 # data = pandas.read_csv("results.csv")
 # data = data.set_index("Encoder")
@@ -2336,7 +2379,7 @@ def make_csv():
 # # ax.get_xaxis().set_visible(False)
 # # ax.set_title("CalTech Classification Top-1 Accuracy")
 # plt.show()
-
+#
 #
 # make_csv()
 # sns.set()
@@ -2384,64 +2427,182 @@ def make_csv():
 #                   common_norm=False, bw_adjust=0.8)
 # plt.show()
 
-#
+
+
+######## Figure 7. Performance of Encoders with Similar Datasets
 # make_csv()
+# data = pandas.read_csv("results.csv")
+# data = data[data["Epochs"] == 200]
+# data = data[data["Updates"] == int(1e6 * 200)]
+# data = data.set_index("Encoder")
+# data = data.drop("MoCov1_200")
+# data = data.drop("SWAV_200_2")
+# # data = data.drop("Supervised")
+# data = data.drop("Random")
+# pastels = sns.color_palette("pastel")
+#
 # sns.set()
 # sns.color_palette("bright")
-# data = pandas.read_csv("results.csv")
-# data = data.set_index("Encoder")
-# fig, axes = plt.subplots(1, 4)
-# fig.suptitle("Similar Datasets")
+# sns.set_theme(style="whitegrid", font_scale=1.8)
+# fig, axes = plt.subplots(1, 4, figsize=(12, 8))
+# # fig.suptitle("Performance of Encoders on End Tasks With Similar Datasets")
 #
 # datapoints = []
 # for encoder in data.index:
-#     datapoints.append({
-#         "Encoder": encoder,
-#         "Score": data.loc[encoder]["CalTech-101"],
-#         "Dataset": "Imagenet" if data.loc[encoder]["Dataset"] == "Imagenet" else "Other"
-#     })
+#     if not math.isnan(data.loc[encoder]["CalTech-101"]):
+#         if data.loc[encoder]["Dataset"] == "Imagenet":
+#             ds = "ImageNet"
+#         elif data.loc[encoder]["Dataset"] == "Combination":
+#             ds = "Combination"
+#         else:
+#             ds = "Other"
+#         datapoints.append({
+#             "Encoder": encoder,
+#             "Score": data.loc[encoder]["CalTech-101"],
+#             "Encoder Dataset": ds
+#         })
 # datapoints.sort(key=lambda x: x["Score"], reverse=True)
-# ax = sns.barplot(y="Encoder", x="Score", dodge=False, hue="Dataset", data=pandas.DataFrame(datapoints), ax=axes[0])
-# ax.get_yaxis().set_visible(False)
+# ax = sns.barplot(y="Encoder", x="Score", dodge=False, hue="Encoder Dataset", data=pandas.DataFrame(datapoints), ax=axes[0],
+#                  palette={"ImageNet": pastels[2],  "Combination": pastels[4], "Other": pastels[7]},
+#                  hue_order=["ImageNet", "Combination", "Other"])
+# ax.set_title("CalTech Cls.")
+# # ax.get_yaxis().set_visible(False)
+# ax.set_yticks([])
+# ax.set_ylabel("Performance of Encoders on End Task")
+# ax.set_xlabel("Top-1 Accuracy")
+# # ax.legend(loc='lower center', prop={'size': 17})
+# ax.legend(bbox_to_anchor=(1.05, -0.13),borderaxespad=0, prop={'size': 17})
+#
+# # datapoints = []
+# # for encoder in data.index:
+# #     if not math.isnan(data.loc[encoder]["nuScenesActionPrediction"]):
+# #         if data.loc[encoder]["Dataset"] == "Kinetics":
+# #             ds = "Kinetics"
+# #         elif data.loc[encoder]["Dataset"] == "Combination":
+# #             ds = "Combination"
+# #         else:
+# #             ds = "Other"
+# #         datapoints.append({
+# #             "Encoder": encoder,
+# #             "Score": data.loc[encoder]["nuScenesActionPrediction"],
+# #             "Encoder Dataset": ds
+# #         })
+# # datapoints.sort(key=lambda x: x["Score"], reverse=True)
+# # ax = sns.barplot(y="Encoder", x="Score", dodge=False, hue="Encoder Dataset", data=pandas.DataFrame(datapoints), ax=axes[1],
+# #                  palette={"Kinetics": pastels[2], "Combination": pastels[4], "Other": pastels[7]},
+# #                  hue_order=["Kinetics", "Combination", "Other"])
+# # ax.set_title("nuScenes")
+# # ax.get_yaxis().set_visible(False)
+# # ax.set_xlabel("Top-1 Accuracy")
+# # ax.legend(loc='lower center')
+#
 # datapoints = []
 # for encoder in data.index:
-#     datapoints.append({
-#         "Encoder": encoder,
-#         "Score": data.loc[encoder]["KineticsActionPrediction"],
-#         "Dataset": "Kinetics" if data.loc[encoder]["Dataset"] == "Kinetics" else "Other"
-#     })
+#     if not math.isnan(data.loc[encoder]["KineticsActionPrediction"]):
+#         if data.loc[encoder]["Dataset"] == "Kinetics":
+#             ds = "Kinetics"
+#         elif data.loc[encoder]["Dataset"] == "Combination":
+#             ds = "Combination"
+#         else:
+#             ds = "Other"
+#         datapoints.append({
+#             "Encoder": encoder,
+#             "Score": data.loc[encoder]["KineticsActionPrediction"],
+#             "Encoder Dataset": ds
+#         })
 # datapoints.sort(key=lambda x: x["Score"], reverse=True)
-# ax = sns.barplot(y="Encoder", x="Score", dodge=False, hue="Dataset", data=pandas.DataFrame(datapoints), ax=axes[1])
+# ax = sns.barplot(y="Encoder", x="Score", dodge=False, hue="Encoder Dataset", data=pandas.DataFrame(datapoints), ax=axes[1],
+#                  palette={"Kinetics": pastels[2], "Combination": pastels[4], "Other": pastels[7]},
+#                  hue_order=["Kinetics", "Combination", "Other"])
+# ax.set_title("Kinetics Act. Pred.")
 # ax.get_yaxis().set_visible(False)
+# ax.set_xlabel("Top-1 Accuracy")
+# # ax.legend(loc='lower center', prop={'size': 17})
+# ax.legend(bbox_to_anchor=(1.05, -0.13),borderaxespad=0, prop={'size': 17})
+#
 # datapoints = []
 # for encoder in data.index:
-#     datapoints.append({
-#         "Encoder": encoder,
-#         "Score": data.loc[encoder]["SUN397"],
-#         "Dataset": "Places" if data.loc[encoder]["Dataset"] == "Places" else "Other"
-#     })
+#     if not math.isnan(data.loc[encoder]["SUN397"]):
+#         if data.loc[encoder]["Dataset"] == "Places":
+#             ds = "Places"
+#         elif data.loc[encoder]["Dataset"] == "Combination":
+#             ds = "Combination"
+#         else:
+#             ds = "Other"
+#         datapoints.append({
+#             "Encoder": encoder,
+#             "Score": data.loc[encoder]["SUN397"],
+#             "Encoder Dataset": ds
+#         })
 # datapoints.sort(key=lambda x: x["Score"], reverse=True)
-# ax = sns.barplot(y="Encoder", x="Score", dodge=False, hue="Dataset", data=pandas.DataFrame(datapoints), ax=axes[2])
+# ax = sns.barplot(y="Encoder", x="Score", dodge=False, hue="Encoder Dataset", data=pandas.DataFrame(datapoints), ax=axes[2],
+#                  palette={"Places": pastels[2], "Combination": pastels[4], "Other": pastels[7]},
+#                  hue_order=["Places", "Combination", "Other"])
+# ax.set_title("SUN Scene Cls.")
 # ax.get_yaxis().set_visible(False)
+# ax.set_xlabel("Top-1 Accuracy")
+# # ax.legend(loc='lower center', prop={'size': 17})
+# ax.legend(bbox_to_anchor=(1.05, -0.13),borderaxespad=0, prop={'size': 17})
+#
 # datapoints = []
 # for encoder in data.index:
-#     datapoints.append({
-#         "Encoder": encoder,
-#         "Score": data.loc[encoder]["TaskonomyDepth"],
-#         "Dataset": "Taskonomy" if data.loc[encoder]["Dataset"] == "Taskonomy" else "Other"
-#     })
-#     datapoints.sort(key=lambda x: x["Score"], reverse=True)
-# ax = sns.barplot(y="Encoder", x="Score", dodge=False, hue="Dataset", data=pandas.DataFrame(datapoints), ax=axes[3])
+#     if not math.isnan(data.loc[encoder]["TaskonomyDepth"]):
+#         if data.loc[encoder]["Dataset"] == "Taskonomy":
+#             ds = "Taskonomy"
+#         elif data.loc[encoder]["Dataset"] == "Combination":
+#             ds = "Combination"
+#         else:
+#             ds = "Other"
+#         datapoints.append({
+#             "Encoder": encoder,
+#             "Score": data.loc[encoder]["TaskonomyDepth"],
+#             "Encoder Dataset": ds
+#         })
+# datapoints.sort(key=lambda x: x["Score"], reverse=True)
+# ax = sns.barplot(y="Encoder", x="Score", dodge=False, hue="Encoder Dataset", data=pandas.DataFrame(datapoints), ax=axes[3],
+#                  palette={"Taskonomy": pastels[2], "Combination": pastels[4], "Other": pastels[7]},
+#                  hue_order=["Taskonomy", "Combination", "Other"])
+# ax.set_title("Taskonomy Depth")
 # ax.get_yaxis().set_visible(False)
+# ax.set_xlabel("Negative L1 Error")
+# # ax.legend(loc='lower center', prop={'size': 17})
+# ax.legend(bbox_to_anchor=(1.05, -0.13),borderaxespad=0, prop={'size': 17})
+
+# datapoints = []
+# for encoder in data.index:
+#     if not math.isnan(data.loc[encoder]["NYUDepth"]):
+#         if data.loc[encoder]["Dataset"] == "Taskonomy":
+#             ds = "Taskonomy"
+#         elif data.loc[encoder]["Dataset"] == "Combination":
+#             ds = "Combination"
+#         else:
+#             ds = "Other"
+#         datapoints.append({
+#             "Encoder": encoder,
+#             "Score": data.loc[encoder]["NYUDepth"],
+#             "Encoder Dataset": ds
+#         })
+# datapoints.sort(key=lambda x: x["Score"], reverse=True)
+# ax = sns.barplot(y="Encoder", x="Score", dodge=False, hue="Encoder Dataset", data=pandas.DataFrame(datapoints), ax=axes[3],
+#                  palette={"Taskonomy": pastels[2], "Combination": pastels[4], "Other": pastels[7]},
+#                  hue_order=["Taskonomy", "Combination", "Other"])
+# ax.set_title("NYU Depth")
+# ax.get_yaxis().set_visible(False)
+# ax.set_xlabel("L1 Error")
+# ax.legend(loc='lower center')
+
 # plt.show()
-#
+# plt.savefig("graphs/datasets_with_similar_end_tasks/similar_tasks.pdf", bbox_inches='tight')
+
+
+####### Figure 4. Omni
 # make_csv()
 # data = pandas.read_csv("results.csv")
 # data = data.set_index("Encoder")
 # # CalTech
 # datapoints = []
-# for encoder in ["SWAV_800", "SWAVPlaces", "MoCov2_800", "MoCov2Places", "PIRL", "Supervised"]:
-#     for task in ALL_TASKS:
+# for encoder in data.index:
+#     for task in PIXELWISE_SEMANTIC_TASKS + PIXELWISE_STRUCTURAL_TASKS + EMBEDDING_SEMANTIC_TASKS + EMBEDDING_STRUCTURAL_TASKS:
 #         if data.loc[encoder]["Imagenet"] > 0.4:
 #             if task in EMBEDDING_SEMANTIC_TASKS:
 #                 ttype = "Semantic Image-level"
@@ -2456,136 +2617,484 @@ def make_csv():
 #                 "Task": REAL_NAMES[task],
 #                 "TaskType": ttype,
 #                 "Score": data.loc[encoder][task],
-#                 "IN Score": data.loc[encoder]["Imagenet"],
+#                 "ImageNet Accuracy": data.loc[encoder]["Imagenet"],
 #                 "Dataset": "Imagenet" if data.loc[encoder]["Dataset"] == "Imagenet" else "Other",
 #                 "NormalizedScore": data.loc[encoder, task + "-normalized"],
 #             })
-# sns.set()
-# sns.color_palette("bright")
-# sns.set_theme(style="whitegrid", font_scale=1.8)
-# plt.figure(figsize=(20, 15))
-# datapoints.sort(key=lambda x: x["Score"])
-# ax = sns.lmplot(x="IN Score", y="Score", col="TaskType", hue="Task", sharex=True, sharey=False, data=pandas.DataFrame(datapoints))
-# plt.legend(loc='right', ncol=4)
+# # sns.set()
+# pal = sns.color_palette("deep", 21)
+# sns.set_theme(style="whitegrid", font_scale=2)
+# # datapoints.sort(key=lambda x: x["Score"])
+# lm = sns.lmplot(
+#     x="ImageNet Accuracy",
+#     y="Score",
+#     col="TaskType",
+#     hue="Task",
+#     sharex=True,
+#     sharey=False,
+#     legend_out=True,
+#     height=10,
+#     aspect=0.7,
+#     palette=pal,
+#     scatter_kws={"s": 100},
+#     markers=[ "^", "^", "^", "X", "X", "X", "X", "X", "o", "o", "o", "o", "o", "o", "o", "o", "o", "s", "s", "s", "s"],
+#     data=pandas.DataFrame(datapoints),
+# )
+# fig = lm.fig
+#
+# fig.axes[0].set_title("Pixelwise Semantic")
+# fig.axes[0].set_ylabel("mIOU")
+#
+# fig.axes[1].set_title("Pixelwise Structural")
+# fig.axes[1].set_ylabel("Negative L1 Error                                       mIOU")
+#
+# fig.axes[2].set_title("Image-Level Semantic")
+# fig.axes[2].set_ylabel("Top-1 Accuracy")
+#
+# fig.axes[3].set_title("Image-Level Structural")
+# fig.axes[3].set_ylabel("Top-1 Accuracy")
+#
+# # plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=21, mode="expand", borderaxespad=0.)
 # # ax.set_ylabel("Score")
 # # ax.get_xaxis().set_visible(False)
 # # ax.set_title("CalTech Classification Top-1 Accuracy")
-# plt.savefig("graphs/in_vs_tasks/omni.pdf")
+# plt.savefig("graphs/in_vs_tasks/omni.pdf", bbox_inches='tight')
+# # plt.show()
+
+
+######### Figure 3. Percentage improvement of Best Encoder over Supervised ImageNet
+make_csv()
+data = pandas.read_csv("results.csv")
+data = data.set_index("Encoder")
+# CalTech
+datapoints = []
+table = []
+for encoder in data.index:
+    if encoder == "Supervised":
+        continue
+    for task in ALL_TASKS:
+        if not math.isnan(data.loc[encoder][task]):
+            datapoints.append({
+                "Encoder": encoder,
+                "Task": REAL_NAMES[task],
+                "Score": data.loc[encoder][task],
+                "SupervisedScore": data.loc["Supervised"][task],
+                "Dataset": data.loc[encoder]["Dataset"],
+                "Method": data.loc[encoder]["Method"],
+                "NormalizedScore": data.loc[encoder, task + "-normalized"],
+            })
+for task in ALL_TASKS:
+    if task in REVERSED_SUCCESS_TASKS:
+        c = -1.0
+    else:
+        c= 1.0
+    task = REAL_NAMES[task]
+    tdps = [p for p in datapoints if p["Task"] == task]
+    tdps.sort(key=lambda x: x["Score"], reverse=True)
+    table.append({
+        "Task": task,
+        "Score": tdps[0]["Score"],
+        "Method": tdps[0]["Method"],
+        "Supervised Score": tdps[0]["SupervisedScore"],
+        "Performance Improvement": 100 * c * (tdps[0]["Score"] - tdps[0]["SupervisedScore"]) / (tdps[0]["SupervisedScore"]),
+        "Best Method": tdps[0]["Method"],
+        "Best Dataset": tdps[0]["Dataset"].replace("Log", "").replace("Quarter", "")
+    })
+table.sort(key=lambda x: x["Performance Improvement"])
+df = pandas.DataFrame(table)
+# df.to_csv("best_encoder_per_task.csv")
+
+sns.set(font_scale=10)
+sns.color_palette("bright")
+datapoints.sort(key=lambda x: x["Score"])
+sns.set_theme(style="whitegrid", font_scale=1.8)
+
+# plt.figure(figsize=(8, 8))
+fig, ax1 = plt.subplots(figsize=(8, 10))
+sns.barplot(x="Performance Improvement", y="Task", hue="Best Dataset", dodge=False, data=df, palette="pastel", ax=ax1)
+ax1.set_ylabel("End Task")
+ax1.set_xlabel("Percent Relative Performance Improvement\nOver Supervised Baseline")
+# ax2 = ax1.twinx()
+
+table = []
+for task in ALL_TASKS:
+    if task in REVERSED_SUCCESS_TASKS:
+        c = -1.0
+    else:
+        c= 1.0
+    task = REAL_NAMES[task]
+    tdps = [p for p in datapoints if p["Task"] == task]
+    tdps.sort(key=lambda x: x["Score"], reverse=True)
+    score = (100 * c * ((tdps[0]["Score"] - tdps[0]["SupervisedScore"]) / (tdps[0]["SupervisedScore"])))
+    table.append({
+        "Task": task,
+        "Score": tdps[0]["Score"],
+        "Method": "MoCov2" if tdps[0]["Method"] == "MoCo" else "SwAV",
+        "Supervised Score": tdps[0]["SupervisedScore"],
+        "Performance Improvement": score + 1 if score > 0 else score - 1,
+        "Best Dataset": tdps[0]["Dataset"].replace("Log", "").replace("Quarter", "")
+    })
+table.sort(key=lambda x: x["Performance Improvement"])
+df = pandas.DataFrame(table)
+
+# ax2 = sns.scatterplot(x="Performance Improvement", y="Task", style="Method", data=df, ax=ax2, s=50)
+# ax2.legend(title="   Best Method   ", loc=[0.59, 0.54])
+# ax2.set_ylim(ax1.get_ylim())
+# ax2.get_yaxis().set_visible(False)
+# ax.legend(title="Best Encoder Method\nand Training Set")
+# ax2.set_ylabel("End Task")
+
+
+# ax.get_xaxis().set_visible(False)
+# ax.set_title("CalTech Classification Top-1 Accuracy")
+plt.savefig("graphs/best_encoder/best_encoder.pdf", bbox_inches='tight')
 # plt.show()
 
+#### Generating Pearson and Spearman Correlations for the relation between cka realtions and task scores
 # make_csv()
 # data = pandas.read_csv("results.csv")
+# tasks = ["Imagenet", "Imagenetv2", "CalTech-101", "Pets", "dtd", "CIFAR-100", "SUN397", "Eurosat",
+#          "EgoHands", "CityscapesSemanticSegmentation", "PetsDetection",
+#          "THORNumSteps", "CLEVERNumObjects", "nuScenesActionPrediction", "THORActionPrediction",
+#          "TaskonomyDepth", "NYUWalkable", "NYUDepth", "THORDepth",]
+#
+# n = len(tasks)
+# m = 15
+#
+# encoders = []
+# cka = []
+# for f in glob.glob("graphs/cka/multi_model_layer_wise/ImageNet/*.npy"):
+#     name = f.split("/")[-1].replace(".npy", "")
+#     if name.split("-")[0] != name.split("-")[1]:
+#         continue
+#     name = name.split("-")[0]
+#     if name in ["SWAV_100", "SWAV_200_2"]:
+#         continue
+#     cka.append(np.load(f))
+#     encoders.append(name)
+# cka = np.stack(cka, axis=2)
+# cka = cka[np.array([0,0,0,0,0,1,1,1,1,2,2,2,3,3,4]), np.array([1,2,3,4,5,2,3,4,5,3,4,5,4,5,5])]
+#
 # data = data.set_index("Encoder")
-# # CalTech
+# data = data.loc[encoders]
+#
+# spearman = np.zeros((n,m))
+# pearson = np.zeros((n,m))
+# spearman_pval = np.zeros((n,m))
+# pearson_pval = np.zeros((n,m))
+#
+# for i in range(n):
+#     for j in range(m):
+#         values_i = data[tasks[i]]
+#         values_j = cka[j]
+#         s, sp = scipy.stats.spearmanr(values_i, values_j)
+#         p, pp = scipy.stats.pearsonr(values_i, values_j)
+#         spearman[i][j] = s
+#         pearson[i][j] = p
+#         spearman_pval[i][j] = sp
+#         pearson_pval[i][j] = pp
+#
+# tasks = [t.replace("ActionPrediction", "").replace("SemanticSegmentation", "") for t in tasks]
+# # fig, axes = plt.subplots(1, 2, figsize=(16, 7))
+# # fig.suptitle("Correlation of End Task Performance and CKA Values")
+# ax = sns.heatmap(pearson, annot=True)
+# ax.set_title("Spearman")
+# # ax = sns.heatmap(spearman, annot=True, ax=axes[1])
+# # ax.set_title("Pearson")
+# # ax.set_xticks([])
+# # ax.set_yticks([])
+# # ax = sns.heatmap(pearson, annot=True)
+# ax.set_yticklabels(tasks, rotation=0)
+# corr_names = ["c-1", "c-2", "c-3", "c-4", "c-e", "1-2", "1-3", "1-4", "1-e", "2-3", "2-4", "2-e", "3-4", "3-e", "4-e"]
+# ax.set_xticklabels(corr_names, rotation=30, rotation_mode="anchor", ha='right', va="center")
+#
+# plt.show()
+#
+
+###### Figure 8.
+# make_csv()
+# data = pandas.read_csv("results.csv")
+# # data = data[data["Method"] == "SWAV"]
+# # data = data[data["Epochs"] == 200]
+# data = data[data["Updates"] == int(1e6 * 50)]
+# data = data[data["Epochs"] == 200]
+# data = data.set_index("Encoder")
+#
 # datapoints = []
-# table = []
-# for encoder in ["SWAV_800", "SWAVPlaces", "MoCov2_800", "Supervised"]:
+# for encoder in data.index:
 #     for task in ALL_TASKS:
-#         datapoints.append({
-#             "Encoder": encoder,
-#             "Task": REAL_NAMES[task],
-#             "Score": data.loc[encoder][task],
-#             "SupervisedScore": data.loc["Supervised"][task],
-#             "Dataset": data.loc[encoder]["Dataset"],
-#             "Method": data.loc[encoder]["Method"],
-#             "NormalizedScore": data.loc[encoder, task + "-normalized"],
-#         })
-# for task in ALL_TASKS:
-#     if task in REVERSED_SUCCESS_TASKS:
-#         c = -1.0
-#     else:
-#         c= 1.0
-#     task = REAL_NAMES[task]
-#     tdps = [p for p in datapoints if p["Task"] == task]
-#     tdps.sort(key=lambda x: x["Score"], reverse=True)
-#     table.append({
+#         if not math.isnan(data.loc[encoder][task]):
+#             if task in EMBEDDING_SEMANTIC_TASKS:
+#                 ttype = "Semantic Image-level"
+#             elif task in EMBEDDING_STRUCTURAL_TASKS:
+#                 ttype = "Structural Image-level"
+#             elif task in PIXELWISE_SEMANTIC_TASKS:
+#                 ttype = "Semantic Pixelwise"
+#             elif task in PIXELWISE_STRUCTURAL_TASKS:
+#                 ttype = "Structural  Pixelwise"
+#             datapoints.append({
+#                 "Encoder": encoder,
+#                 "Task": REAL_NAMES[task],
+#                 "End Task Score": data.loc[encoder][task],
+#                 "ImageNet Score": data.loc[encoder]["Imagenet"],
+#                 "Balance": data.loc[encoder]["Balance"],
+#                 # "Supervised Score": data.loc["Supervised"][task],
+#                 "Dataset": data.loc[encoder]["Dataset"],
+#                 "Method": data.loc[encoder]["Method"],
+#                 "Normalized Score": data.loc[encoder, task + "-normalized"],
+#                 "Task Type": ttype
+#             })
+#
+# differences = []
+# for task in REAL_NAMES.values():
+#     log_means = []
+#     balanced_means = []
+#     for dp in datapoints:
+#         if dp["Task"] == task:
+#             if dp["Balance"] == "Log":
+#                 log_means.append(dp["End Task Score"])
+#             if dp["Balance"] == "Balanced":
+#                 balanced_means.append(dp["End Task Score"])
+#             ttype = dp["Task Type"]
+#     print(task, np.mean(log_means), np.mean(balanced_means))
+#     differences.append({
+#         "Percentage Improvement of Log-Unbalanced vs. Balanced": (np.mean(log_means) - np.mean(balanced_means)) / np.mean(balanced_means),
 #         "Task": task,
-#         "Score": tdps[0]["Score"],
-#         "Method": tdps[0]["Method"],
-#         "Supervised Score": tdps[0]["SupervisedScore"],
-#         "Performance Improvement": 100 * c * (tdps[0]["Score"] - tdps[0]["SupervisedScore"]) / (tdps[0]["SupervisedScore"]),
-#         "Best Method": tdps[0]["Method"],
-#         "Best Dataset": tdps[0]["Dataset"]
-#     })
-# table.sort(key=lambda x: x["Performance Improvement"])
-# df = pandas.DataFrame(table)
-# df.to_csv("best_encoder_per_task.csv")
+#         "Task Type": ttype}
+#     )
+#
+# # datapoints.sort(key=lambda x: x["Score"])
+# df = pandas.DataFrame(datapoints)
 #
 # sns.set(font_scale=10)
 # sns.color_palette("bright")
-# datapoints.sort(key=lambda x: x["Score"])
 # sns.set_theme(style="whitegrid", font_scale=1.8)
 #
+#
 # plt.figure(figsize=(8, 8))
-#
-# ax = sns.barplot(x="Performance Improvement", y="Task", hue="Best Dataset", dodge=False, data=df, palette="pastel")
+# # differences.sort(key=lambda x: x["Difference of Means"])
+# plt.title("Percentage Improvement of Encoders Trained on\nLog-Unbalanced ImageNet vs. Encoders Trained on Balanced ImageNet")
+# ax = sns.barplot(x="Percentage Improvement of Log-Unbalanced vs. Balanced", y="Task", hue="Task Type", dodge=False, palette="pastel", data=pandas.DataFrame(differences))
+# ax.legend(loc='lower right')
+# ax = sns.scatterplot(y="Task", x="End Task Score", hue="Balance", data=df, palette="pastel")
 # ax.set_xlabel("Percent Performance Improvement Over Supervised ImageNet")
-# # ax2 = ax.twinx()
-# # ax2.set_ylim(ax.get_ylim())
-# # ax2.set_yticks(np.arange(len(table)))
-# # ax2.set_yticklabels([t["Method"] for t in table])
+# ax2 = ax.twinx()
+# ax2.set_ylim(ax.get_ylim())
+# ax2.set_yticks(np.arange(len(table)))
+# ax2.set_yticklabels([t["Method"] for t in table])
+
+# ax.get_xaxis().set_visible(False)
+# ax.set_title("CalTech Classification Top-1 Accuracy")
+# plt.savefig("graphs/IN_balance/log_vs_balanced.pdf", bbox_inches='tight')
 #
-# # ax.get_xaxis().set_visible(False)
-# # ax.set_title("CalTech Classification Top-1 Accuracy")
-# plt.savefig("graphs/best_encoder/best_encoder.pdf", bbox_inches='tight')
-# # plt.show()
+#
+#
+# make_csv()
+# data = pandas.read_csv("results.csv")
+# data = data[data["Updates"] == int(1e6 * 100)]
+# data = data[data["Epochs"] == 200]
+# data = data.set_index("Encoder")
+#
+# datapoints = []
+# for encoder in data.index:
+#     for task in ALL_TASKS:
+#         if not math.isnan(data.loc[encoder][task]):
+#             if task in EMBEDDING_SEMANTIC_TASKS:
+#                 ttype = "Semantic Image-level"
+#             elif task in EMBEDDING_STRUCTURAL_TASKS:
+#                 ttype = "Structural Image-level"
+#             elif task in PIXELWISE_SEMANTIC_TASKS:
+#                 ttype = "Semantic Pixelwise"
+#             elif task in PIXELWISE_STRUCTURAL_TASKS:
+#                 ttype = "Structural  Pixelwise"
+#             datapoints.append({
+#                 "Encoder": encoder,
+#                 "Task": REAL_NAMES[task],
+#                 "End Task Score": data.loc[encoder][task],
+#                 "ImageNet Score": data.loc[encoder]["Imagenet"],
+#                 "Balance": data.loc[encoder]["Balance"],
+#                 "Dataset": data.loc[encoder]["Dataset"],
+#                 "Method": data.loc[encoder]["Method"],
+#                 "Normalized Score": data.loc[encoder, task + "-normalized"],
+#                 "Task Type": ttype
+#             })
+#
+# differences = []
+# for task in REAL_NAMES.values():
+#     linear_means = []
+#     balanced_means = []
+#     for dp in datapoints:
+#         if dp["Task"] == task:
+#             if dp["Balance"] == "Linear":
+#                 linear_means.append(dp["End Task Score"])
+#             if dp["Balance"] == "Balanced":
+#                 balanced_means.append(dp["End Task Score"])
+#             ttype = dp["Task Type"]
+#     print(task, np.mean(linear_means), np.mean(balanced_means))
+#     differences.append({
+#         "Percentage Improvement of Linear-Unbalanced vs. Balanced": (np.mean(linear_means) - np.mean(balanced_means)) / np.mean(balanced_means),
+#         "Task": task,
+#         "Task Type": ttype}
+#     )
+#
+# df = pandas.DataFrame(datapoints)
+#
+# sns.set(font_scale=10)
+# sns.color_palette("bright")
+# sns.set_theme(style="whitegrid", font_scale=1.8)
+#
+#
+# plt.figure(figsize=(8, 8))
+# plt.title("Percentage Improvement of Encoders Trained on\nLinear-Unbalanced ImageNet vs. Encoders Trained on Balanced ImageNet")
+# ax = sns.barplot(x="Percentage Improvement of Linear-Unbalanced vs. Balanced", y="Task", hue="Task Type", dodge=False, palette="pastel", data=pandas.DataFrame(differences))
+# ax.legend(loc='lower left')
+# plt.savefig("graphs/IN_balance/linear_vs_balanced.pdf", bbox_inches='tight')
+#
+#
 
-#### Generating Pearson and Spearman Correlations
-make_csv()
-data = pandas.read_csv("results.csv")
-tasks = ["Imagenet", "Imagenetv2", "CalTech-101", "Pets", "dtd", "CIFAR-100", "SUN397", "Eurosat",
-         "THORNumSteps", "CLEVERNumObjects", "nuScenesActionPrediction", "THORActionPrediction",
-         "TaskonomyDepth", "NYUWalkable", "NYUDepth", "THORDepth",
-         "EgoHands", "CityscapesSemanticSegmentation"]
 
-n = len(tasks)
-m = 15
+# log = [dp["End Task Score"] for dp in datapoints if dp["Balance"] == "Log"]
+# linear = [dp["End Task Score"] for dp in datapoints if dp["Balance"] == "Linear"]
+# balanced = [dp["End Task Score"] for dp in datapoints if dp["Balance"] == "Balanced"]
+# print()
+#
+# x = scipy.stats.kstest(log, balanced, N=len(log))
+# print(x)
 
-encoders = []
-cka = []
-for f in glob.glob("graphs/cka/multi_model_layer_wise/ImageNet/*.npy"):
-    name = f.split("/")[-1].replace(".npy", "")
-    if name.split("-")[0] != name.split("-")[1]:
-        continue
-    name = name.split("-")[0]
-    if name in ["SWAV_100", "SWAV_200_2"]:
-        continue
-    cka.append(np.load(f))
-    encoders.append(name)
-cka = np.stack(cka, axis=2)
-cka = cka[np.array([0,0,0,0,0,1,1,1,1,2,2,2,3,3,4]), np.array([1,2,3,4,5,2,3,4,5,3,4,5,4,5,5])]
+# for task in REAL_NAMES.values():
+#     log = [dp["End Task Score"] for dp in datapoints if dp["Balance"] == "Log" and dp["Task"] == task]
+#     linear = [dp["End Task Score"] for dp in datapoints if dp["Balance"] == "Linear" and dp["Task"] == task]
+#     balanced = [dp["End Task Score"] for dp in datapoints if dp["Balance"] == "Balanced" and dp["Task"] == task]
+#     F, p = scipy.stats.f_oneway(log, linear, balanced)
+#     print(task, F, p)
 
-data = data.set_index("Encoder")
-data = data.loc[encoders]
 
-spearman = np.zeros((n,m))
-pearson = np.zeros((n,m))
-spearman_pval = np.zeros((n,m))
-pearson_pval = np.zeros((n,m))
+############ Table 1.
 
-for i in range(n):
-    for j in range(m):
-        values_i = data[tasks[i]]
-        values_j = cka[j]
-        s, sp = scipy.stats.spearmanr(values_i, values_j)
-        p, pp = scipy.stats.pearsonr(values_i, values_j)
-        spearman[i][j] = s
-        pearson[i][j] = p
-        spearman_pval[i][j] = sp
-        pearson_pval[i][j] = pp
-
-tasks = [t.replace("ActionPrediction", "").replace("SemanticSegmentation", "") for t in tasks]
-# fig, axes = plt.subplots(1, 2, figsize=(16, 7))
-# fig.suptitle("Correlation of End Task Performance and CKA Values")
-ax = sns.heatmap(pearson, annot=True)
-ax.set_title("Spearman")
-# ax = sns.heatmap(spearman, annot=True, ax=axes[1])
-# ax.set_title("Pearson")
-# ax.set_xticks([])
-# ax.set_yticks([])
-# ax = sns.heatmap(pearson, annot=True)
-ax.set_yticklabels(tasks, rotation=0)
-corr_names = ["c-1", "c-2", "c-3", "c-4", "c-e", "1-2", "1-3", "1-4", "1-e", "2-3", "2-4", "2-e", "3-4", "3-e", "4-e"]
-ax.set_xticklabels(corr_names, rotation=30, rotation_mode="anchor", ha='right', va="center")
-
-plt.show()
+# make_csv()
+# data = pandas.read_csv("results.csv")
+# # data = data[data["Method"] == "SWAV"]
+# data = data[data["Epochs"] == 200]
+# # data = data[data["Updates"] == int(1e6 * 50)]
+# # data = data[data["Epochs"] == 200]
+# data = data.set_index("Encoder")
+#
+# l1_log = []
+# miou_log = []
+# acc_log = []
+#
+# l1_balanced = []
+# miou_balanced  = []
+# acc_balanced  = []
+#
+# for task in ALL_TASKS:
+#     means = []
+#     for encoder in data.index:
+#         if not math.isnan(data.loc[encoder][task]):
+#             means.append(data.loc[encoder][task])
+#     mean = np.mean(means)
+#     for encoder in data.index:
+#         if not math.isnan(data.loc[encoder][task]):
+#             if data.loc[encoder]["Balance"] == "Log":
+#                 if task in L1_TASKS:
+#                     l1_log.append(data.loc[encoder][task])
+#                 if task in MIOU_TASKS:
+#                     miou_log.append(data.loc[encoder][task])
+#                 if task in ACC_TASKS:
+#                     acc_log.append(data.loc[encoder][task])
+#             if data.loc[encoder]["Balance"] == "Balanced":
+#                 if task in L1_TASKS:
+#                     l1_balanced.append(data.loc[encoder][task])
+#                 if task in MIOU_TASKS:
+#                     miou_balanced.append(data.loc[encoder][task])
+#                 if task in ACC_TASKS:
+#                     acc_balanced.append(data.loc[encoder][task])
+#
+# print("Log vs Balanced")
+# print("Accuracy:", scipy.stats.f_oneway(acc_log, acc_balanced ))
+# print("mIOU:", scipy.stats.f_oneway(miou_log, miou_balanced ))
+# print("L1", scipy.stats.f_oneway(l1_log, l1_balanced))
+#
+#
+# make_csv()
+# data = pandas.read_csv("results.csv")
+# data = data[data["Updates"] == int(1e6 * 100)]
+# data = data.set_index("Encoder")
+#
+# l1_linear = []
+# miou_linear = []
+# acc_linear = []
+#
+# l1_balanced = []
+# miou_balanced  = []
+# acc_balanced  = []
+#
+# for task in ALL_TASKS:
+#     means = []
+#     for encoder in data.index:
+#         if not math.isnan(data.loc[encoder][task]):
+#             means.append(data.loc[encoder][task])
+#     mean = np.mean(means)
+#     for encoder in data.index:
+#         if not math.isnan(data.loc[encoder][task]):
+#             if data.loc[encoder]["Balance"] == "Linear":
+#                 if task in L1_TASKS:
+#                     l1_linear.append(data.loc[encoder][task])
+#                 if task in MIOU_TASKS:
+#                     miou_linear.append(data.loc[encoder][task])
+#                 if task in ACC_TASKS:
+#                     acc_linear.append(data.loc[encoder][task])
+#             if data.loc[encoder]["Balance"] == "Balanced":
+#                 if task in L1_TASKS:
+#                     l1_balanced.append(data.loc[encoder][task])
+#                 if task in MIOU_TASKS:
+#                     miou_balanced.append(data.loc[encoder][task])
+#                 if task in ACC_TASKS:
+#                     acc_balanced.append(data.loc[encoder][task])
+#
+# print("Linear vs Balanced")
+# print("Accuracy:", scipy.stats.f_oneway(acc_linear, acc_balanced ))
+# print("mIOU:", scipy.stats.f_oneway(miou_linear, miou_balanced ))
+# print("L1", scipy.stats.f_oneway(l1_linear, l1_balanced))
+#
+#
+# make_csv()
+# data = pandas.read_csv("results.csv")
+# # data = data[data["Method"] == "SWAV"]
+# # data = data[data["Epochs"] == 200]
+# data = data[(data["Updates"] == int(1e6 * 50)) | (data["Updates"] == int(1e6 * 100))]
+# data = data.set_index("Encoder")
+#
+# datapoints = []
+# for model in data.index:
+#     for task in ALL_TASKS:
+#         if not math.isnan(data.loc[model][task]):
+#             datapoints.append({
+#                 "Method": data.loc[model]["Method"],
+#                 "Balance": data.loc[model]["Balance"],
+#                 "Updates": data.loc[model]["Updates"],
+#                 "Dataset Size": data.loc[model]["DatasetSize"],
+#                 "Task": REAL_NAMES[task],
+#                 "Score": data.loc[model][task]
+#             })
+# df = pandas.DataFrame(datapoints)
+# df.to_csv("log_vs_balanced.csv")
+#
+# make_csv()
+# data = pandas.read_csv("results.csv")
+# # data = data[data["Method"] == "SWAV"]
+# data = data[data["Epochs"] == 200]
+# data = data[data["Updates"] == int(1e6 * 100)]
+# data = data.set_index("Encoder")
+#
+# datapoints = []
+# for model in data.index:
+#     for task in ALL_TASKS:
+#         datapoints.append({
+#             "Method": data.loc[model]["Method"],
+#             "Balance": data.loc[model]["Balance"],
+#             "Task": REAL_NAMES[task],
+#             "Score": data.loc[model][task]
+#         })
+# df = pandas.DataFrame(datapoints)
+# df.to_csv("linear_vs_balanced.csv")
