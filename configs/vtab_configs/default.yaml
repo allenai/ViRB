@@ -320,42 +320,39 @@
 #  num_epochs: 250
 #  batch_size: 16
 
-
-
-
-#### FIX THESE
-
-nuScenesActionPrediction:
-  task: "nuScenesActionPrediction"
-  training_configs:
-    adam-0.0001:
-      optimizer: "adam"
-      lr: 0.0001
-#    adam-0.001:
-#      optimizer: "adam"
-#      lr: 0.001
-#    sgd-0.01:
-#      optimizer: "sgd"
-#      lr: 0.01
-#    sgd-0.001:
-#      optimizer: "sgd"
-#      lr: 0.001
-  num_epochs: 100
-  batch_size: 32
-
-#TaskonomyDepth:
-#  task: "TaskonomyDepth"
-#  pre_encode: false
+#nuScenesActionPrediction:
+#  task: "nuScenesActionPrediction"
 #  training_configs:
 #    adam-0.0001:
 #      optimizer: "adam"
-#      lr: 0.0003
-##    sgd-0.01-l1:
+#      lr: 0.0001
+##    adam-0.001:
+##      optimizer: "adam"
+##      lr: 0.001
+##    sgd-0.01:
 ##      optimizer: "sgd"
 ##      lr: 0.01
-#  num_epochs: 50
-#  batch_size: 16
-#
+##    sgd-0.001:
+##      optimizer: "sgd"
+##      lr: 0.001
+#  num_epochs: 100
+#  batch_size: 32
+
+#### FIX THESE
+
+TaskonomyDepth:
+  task: "TaskonomyDepth"
+  pre_encode: false
+  training_configs:
+    adam-0.0001:
+      optimizer: "adam"
+      lr: 0.0003
+#    sgd-0.01-l1:
+#      optimizer: "sgd"
+#      lr: 0.01
+  num_epochs: 50
+  batch_size: 16
+
 #CityscapesSemanticSegmentation:
 #  task: "CityscapesSemanticSegmentation"
 #  pre_encode: false
