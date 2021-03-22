@@ -339,39 +339,39 @@
 #  batch_size: 32
 
 #### FIX THESE
-
-TaskonomyDepth:
-  task: "TaskonomyDepth"
-  pre_encode: false
-  training_configs:
-    adam-0.0001:
-      optimizer: "adam"
-      lr: 0.0003
-#    sgd-0.01-l1:
-#      optimizer: "sgd"
-#      lr: 0.01
-  num_epochs: 50
-  batch_size: 16
-
-#CityscapesSemanticSegmentation:
-#  task: "CityscapesSemanticSegmentation"
+#
+#TaskonomyDepth:
+#  task: "TaskonomyDepth"
 #  pre_encode: false
 #  training_configs:
-#    adam-0.0003:
+#    adam-0.0001:
 #      optimizer: "adam"
 #      lr: 0.0003
-#      scheduler:
-#        type: "Poly"
-#        exponent: 0.9
-##    sgd-0.01:
+##    sgd-0.01-l1:
 ##      optimizer: "sgd"
-##      lr: 0.001
-##      scheduler:
-##        type: "StepLR"
-##        step_size: 25
-##        gamma: 0.3
-#  num_epochs: 100
+##      lr: 0.01
+#  num_epochs: 50
 #  batch_size: 16
+
+CityscapesSemanticSegmentation:
+  task: "CityscapesSemanticSegmentation"
+  pre_encode: false
+  training_configs:
+    adam-0.0003:
+      optimizer: "adam"
+      lr: 0.0003
+      scheduler:
+        type: "Poly"
+        exponent: 0.9
+#    sgd-0.01:
+#      optimizer: "sgd"
+#      lr: 0.001
+#      scheduler:
+#        type: "StepLR"
+#        step_size: 25
+#        gamma: 0.3
+  num_epochs: 100
+  batch_size: 16
 #
 #NYUWalkable:
 #  task: "NYUWalkable"
