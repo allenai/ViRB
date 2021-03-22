@@ -352,53 +352,53 @@
 ##      lr: 0.01
 #  num_epochs: 50
 #  batch_size: 16
+#
+#CityscapesSemanticSegmentation:
+#  task: "CityscapesSemanticSegmentation"
+#  pre_encode: false
+#  training_configs:
+#    adam-0.0003:
+#      optimizer: "adam"
+#      lr: 0.0003
+#      scheduler:
+#        type: "Poly"
+#        exponent: 0.9
+##    sgd-0.01:
+##      optimizer: "sgd"
+##      lr: 0.001
+##      scheduler:
+##        type: "StepLR"
+##        step_size: 25
+##        gamma: 0.3
+#  num_epochs: 100
+#  batch_size: 16
 
-CityscapesSemanticSegmentation:
-  task: "CityscapesSemanticSegmentation"
+NYUWalkable:
+  task: "NYUWalkable"
   pre_encode: false
   training_configs:
     adam-0.0003:
       optimizer: "adam"
       lr: 0.0003
-      scheduler:
-        type: "Poly"
-        exponent: 0.9
-#    sgd-0.01:
+#    sgd-0.001-no-step-l1:
 #      optimizer: "sgd"
 #      lr: 0.001
 #      scheduler:
 #        type: "StepLR"
-#        step_size: 25
-#        gamma: 0.3
+#        step_size: 40
+#        gamma: 0.1
+  num_epochs: 250
+  batch_size: 16
+
+Pets-Detection:
+  task: "Pets-Detection"
+  pre_encode: false
+  training_configs:
+    adam-0.0003:
+      optimizer: "adam"
+      lr: 0.0003
+#    sgd-0.001:
+#      optimizer: "sgd"
+#      lr: 0.001
   num_epochs: 100
   batch_size: 16
-#
-#NYUWalkable:
-#  task: "NYUWalkable"
-#  pre_encode: false
-#  training_configs:
-#    adam-0.0003:
-#      optimizer: "adam"
-#      lr: 0.0003
-##    sgd-0.001-no-step-l1:
-##      optimizer: "sgd"
-##      lr: 0.001
-##      scheduler:
-##        type: "StepLR"
-##        step_size: 40
-##        gamma: 0.1
-#  num_epochs: 250
-#  batch_size: 16
-#
-#Pets-Detection:
-#  task: "Pets-Detection"
-#  pre_encode: false
-#  training_configs:
-#    adam-0.0003:
-#      optimizer: "adam"
-#      lr: 0.0003
-##    sgd-0.001:
-##      optimizer: "sgd"
-##      lr: 0.001
-#  num_epochs: 100
-#  batch_size: 16
