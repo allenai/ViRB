@@ -28,20 +28,20 @@ class NyuWalkableEncodableDataset(EncodableDataset):
         self.labels.sort()
         if train:
             self.img_preprocessor = transforms.Compose([
-                # transforms.Resize((224, 224)),
-                # transforms.ColorJitter(.4, .4, .4, .2),
-                # transforms.RandomGrayscale(p=0.2),
+                transforms.Resize((224, 224)),
+                transforms.ColorJitter(.4, .4, .4, .2),
+                transforms.RandomGrayscale(p=0.2),
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
         else:
             self.img_preprocessor = transforms.Compose([
-                # transforms.Resize((224, 224)),
+                transforms.Resize((224, 224)),
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
         self.label_preprocessor = transforms.Compose([
-            # transforms.Resize((224, 224)),
+            transforms.Resize((224, 224)),
             transforms.ToTensor(),
             transforms.Normalize(mean=0.5, std=0.25)
         ])
@@ -53,29 +53,29 @@ class NyuWalkableEncodableDataset(EncodableDataset):
         img_path = self.data[idx]
         label_path = self.labels[idx]
 
-        img = Image.open(img_path).convert('RGB')
-        mask = Image.open(label_path)
-        if self.train:
-            # Add random crop to image
-            ogw, ogh = img.size
-            cw = 412
-            ch = 412
-            x = random.randint(0, ogw - cw)
-            y = random.randint(0, ogh - ch)
-            img = img.crop((x, y, x+cw, y+ch))
-            mask = mask.crop((x, y, x+cw, y+ch))
-        img = self.img_preprocessor(img)
-        mask = np.array(mask, dtype=np.float)
-        mask[mask != 0.0] = 1.0
-        mask = torch.tensor(mask, dtype=torch.float)
-        mask = mask.unsqueeze(0)
-
-        # img = self.img_preprocessor(Image.open(img_path).convert('RGB'))
-        # mask = np.array(Image.open(label_path).resize((224, 224)), dtype=np.float)
+        # img = Image.open(img_path).convert('RGB')
+        # mask = Image.open(label_path)
+        # if self.train:
+        #     # Add random crop to image
+        #     ogw, ogh = img.size
+        #     cw = 412
+        #     ch = 412
+        #     x = random.randint(0, ogw - cw)
+        #     y = random.randint(0, ogh - ch)
+        #     img = img.crop((x, y, x+cw, y+ch))
+        #     mask = mask.crop((x, y, x+cw, y+ch))
+        # img = self.img_preprocessor(img)
+        # mask = np.array(mask, dtype=np.float)
         # mask[mask != 0.0] = 1.0
-        #
         # mask = torch.tensor(mask, dtype=torch.float)
         # mask = mask.unsqueeze(0)
+
+        img = self.img_preprocessor(Image.open(img_path).convert('RGB'))
+        mask = np.array(Image.open(label_path).resize((224, 224)), dtype=np.float)
+        mask[mask != 0.0] = 1.0
+
+        mask = torch.tensor(mask, dtype=torch.float)
+        mask = mask.unsqueeze(0)
 
         return img, mask
 
