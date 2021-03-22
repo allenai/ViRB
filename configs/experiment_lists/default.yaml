@@ -36,4 +36,5 @@
 #MoCov2_50: 'pretrained_weights/MoCov2_50.pt'
 #SWAV_50: 'pretrained_weights/SWAV_50.pt'
 #SWAV_100: 'pretrained_weights/SWAV_100.pt'
-SWAV_200_2: 'pretrained_weights/SWAV_200_2.pt'
+#SWAV_200_2: 'pretrained_weights/SWAV_200_2.pt'
+SWAVLogImagenet_2: 'pretrained_weights/SWAVLogImagenet_2.pt'
