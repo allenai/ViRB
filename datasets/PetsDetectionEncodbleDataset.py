@@ -61,6 +61,9 @@ class PetsDetectionEncodableDataset(EncodableDataset):
     def __len__(self):
         return len(self.data)
 
+    def num_classes(self):
+        return 1
+
     def encode(self, model):
         model.to(self.device)
         model.eval()
