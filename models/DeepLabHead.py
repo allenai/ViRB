@@ -45,18 +45,18 @@ class DeepLabHead(nn.Module):
         # self.block7.load_state_dict(renamed_weights)
 
     def forward(self, x):
-        l2_size = tuple(x["layer2"].shape[-2:])
+        l2_size = tuple(x["block1"].shape[-2:])
         label_size = tuple(x["img"].shape[-2:])
 
         #x_backbone = x["layer5"]
-        x_backbone = self.block4(x["layer4"])
+        x_backbone = self.block4(x["block3"])
         # x_backbone = self.block5(x["layer4"], backbone=x_backbone)
         # x_backbone = self.block6(x["layer4"], backbone=x_backbone)
         # x_backbone = self.block7(x["layer4"], backbone=x_backbone)
 
         x_aspp = self.aspp(x_backbone)
         x_aspp = nn.Upsample(l2_size, mode='bilinear', align_corners=True)(x_aspp)
-        x = torch.cat((self.low_level_feature_reducer(x["layer2"]), x_aspp), dim=1)
+        x = torch.cat((self.low_level_feature_reducer(x["block1"]), x_aspp), dim=1)
         x = self.decoder(x)
         x = nn.Upsample(label_size, mode='bilinear', align_corners=True)(x)
         return x

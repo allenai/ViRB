@@ -23,7 +23,7 @@ class ResNet50Encoder(nn.Module):
             x = x.view(-1, x.size(2), x.size(3), x.size(4))
 
         res = {}
-        # res["img"] = x
+        res["img"] = x
         x = self.model.conv1(x)
         x = self.model.bn1(x)
         x = self.model.relu(x)

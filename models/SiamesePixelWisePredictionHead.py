@@ -21,24 +21,24 @@ class SiamesePixelWisePredictionHead(nn.Module):
         self.fusion5 = nn.Conv2d(128, 64, 1)
 
     def forward(self, x):
-        x["layer5"] = self.fusion1(x["layer5"].view(x["layer5"].size(0), -1, x["layer5"].size(3), x["layer5"].size(4)))
-        x["layer4"] = self.fusion2(x["layer4"].view(x["layer4"].size(0), -1, x["layer4"].size(3), x["layer4"].size(4)))
-        x["layer3"] = self.fusion3(x["layer3"].view(x["layer3"].size(0), -1, x["layer3"].size(3), x["layer3"].size(4)))
-        x["layer2"] = self.fusion4(x["layer2"].view(x["layer2"].size(0), -1, x["layer2"].size(3), x["layer2"].size(4)))
-        x["layer1"] = self.fusion5(x["layer1"].view(x["layer1"].size(0), -1, x["layer1"].size(3), x["layer1"].size(4)))
-        d5 = self.up1(x["layer5"])
-        d5_ = _upsample_add(d5, x["layer4"])
+        x["block4"] = self.fusion1(x["block4"].view(x["block4"].size(0), -1, x["block4"].size(3), x["block4"].size(4)))
+        x["block3"] = self.fusion2(x["block3"].view(x["block3"].size(0), -1, x["block3"].size(3), x["block3"].size(4)))
+        x["block2"] = self.fusion3(x["block2"].view(x["block2"].size(0), -1, x["block2"].size(3), x["block2"].size(4)))
+        x["block1"] = self.fusion4(x["block1"].view(x["block1"].size(0), -1, x["block1"].size(3), x["block1"].size(4)))
+        x["conv"] = self.fusion5(x["conv"].view(x["conv"].size(0), -1, x["conv"].size(3), x["conv"].size(4)))
+        d5 = self.up1(x["block4"])
+        d5_ = _upsample_add(d5, x["block3"])
         d4 = self.up2(d5_)
-        d4_ = _upsample_add(d4, x["layer3"])
+        d4_ = _upsample_add(d4, x["block2"])
         d3 = self.up3(d4_)
-        d3_ = _upsample_add(d3, x["layer2"])
+        d3_ = _upsample_add(d3, x["block1"])
         d2 = self.up4(d3_)
-        d2_ = _upsample_add(d2, x["layer1"])
+        d2_ = _upsample_add(d2, x["conv"])
         out = self.up5(d2_)
         return out
 
     def required_encoding(self):
-        return ["layer1", "layer2", "layer3", "layer4", "layer5"]
+        return ["block4", "block3", "block2", "block1", "conv"]
 
 
 def _upsample_add(x, y):
