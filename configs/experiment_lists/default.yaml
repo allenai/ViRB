@@ -37,5 +37,6 @@
 #SWAV_50: 'pretrained_weights/SWAV_50.pt'
 #SWAV_100: 'pretrained_weights/SWAV_100.pt'
 #SWAV_200_2: 'pretrained_weights/SWAV_200_2.pt'
-SWAVLogImagenet_2: 'pretrained_weights/SWAVLogImagenet_2.pt'
-SWAVLogImagenet_3: 'pretrained_weights/SWAVLogImagenet_3.pt'
+SWAV_200_3: 'pretrained_weights/SWAV_200_3.pt'
+#SWAVLogImagenet_2: 'pretrained_weights/SWAVLogImagenet_2.pt'
+#SWAVLogImagenet_3: 'pretrained_weights/SWAVLogImagenet_3.pt'

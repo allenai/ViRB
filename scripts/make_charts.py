@@ -72,7 +72,7 @@ ALL_EXPERIMENTS = [
     'MoCov2_100',
     'MoCov2_50',
     'SWAV_50',
-    'SWAV_100'
+    # 'SWAV_100'
 ]
 
 MOCOV2_EXPERIMENTS = [
@@ -460,10 +460,10 @@ def make_csv():
 #### Generating Pearson and Spearman Correlations
 # make_csv()
 # data = pandas.read_csv("results.csv")
-# tasks = ["Imagenet", "Imagenetv2", "CalTech-101", "Pets", "dtd", "CIFAR-100", "SUN397", "Eurosat",
+# tasks = ["Imagenet", "Imagenetv2", "CalTech-101", "Pets", "dtd", "CIFAR-100", "SUN397", "KineticsActionPrediction", "Eurosat",
 #          "THORNumSteps", "CLEVERNumObjects", "nuScenesActionPrediction", "THORActionPrediction",
 #          "TaskonomyDepth", "NYUWalkable", "NYUDepth", "THORDepth",
-#          "EgoHands", "CityscapesSemanticSegmentation"]
+#          "PetsDetection", "EgoHands", "CityscapesSemanticSegmentation"]
 # n = len(tasks)
 # spearman = np.zeros((n,n))
 # pearson = np.zeros((n,n))
@@ -480,39 +480,35 @@ def make_csv():
 #         pearson[i][j] = p
 #         spearman_pval[i][j] = sp
 #         pearson_pval[i][j] = pp
-# tasks = [t.replace("ActionPrediction", "").replace("SemanticSegmentation", "") for t in tasks]
-# fig, axes = plt.subplots(1, 2, figsize=(16, 7))
-# fig.suptitle("Correlation of End Task Performance Between Tasks")
-# ax = sns.heatmap(spearman, annot=False, ax=axes[0])
-# ax.set_title("Spearman")
-# ax.set_xticks([])
-# ax.set_yticks([])
-# ax = sns.heatmap(pearson, annot=False, ax=axes[1])
-# ax.set_title("Pearson")
-# ax.set_xticks([])
-# ax.set_yticks([])
-# plt.savefig("graphs/task_correlations/both.png")
-
-# title = "Spearman Correlation p-values on Performance Between Tasks"
+# # tasks = [t.replace("ActionPrediction", "").replace("SemanticSegmentation", "") for t in tasks]
+# tasks = [REAL_NAMES[t] for t in tasks]
+# # fig, axes = plt.subplots(1, 2, figsize=(16, 7))
+# # fig.suptitle("Correlation of End Task Performance Between Tasks")
+# # ax = sns.heatmap(spearman, annot=False, ax=axes[0])
+# # ax.set_title("Spearman")
+# # ax.set_xticks([])
+# # ax.set_yticks([])
+# # ax = sns.heatmap(pearson, annot=False, ax=axes[1])
+# # ax.set_title("Pearson")
+# # ax.set_xticks([])
+# # ax.set_yticks([])
+# # plt.savefig("graphs/task_correlations/both.png")
+#
+# title = "Spearman Correlation on Performance Between Tasks"
+# plt.figure(figsize=(13, 13))
 # plt.title(title)
-# ax = sns.heatmap(spearman_pval, annot=True)
+# ax = sns.heatmap(spearman, annot=True)
 # ax.set_yticklabels(tasks, rotation=0)
 # ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
-# plt.savefig("graphs/task_correlations/spearman-pval.png")
+# plt.savefig("graphs/task_correlations/spearman.pdf", bbox_inches='tight')
 # plt.clf()
 # title = "Pearson Correlation on Performance Between Tasks"
+# plt.figure(figsize=(13, 13))
 # plt.title(title)
 # ax = sns.heatmap(pearson, annot=True)
 # ax.set_yticklabels(tasks, rotation=0)
 # ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
-# plt.savefig("graphs/task_correlations/pearson.png")
-# plt.clf()
-# title = "Pearson Correlation p-values on Performance Between Tasks"
-# plt.title(title)
-# ax = sns.heatmap(pearson_pval, annot=True)
-# ax.set_yticklabels(tasks, rotation=0)
-# ax.set_xticklabels(tasks, rotation=30, rotation_mode="anchor", ha='right', va="center")
-# plt.savefig("graphs/task_correlations/pearson-pval.png")
+# plt.savefig("graphs/task_correlations/pearson.pdf", bbox_inches='tight')
 # plt.clf()
 
 # #### Generating Pearson and Spearman Correlations on Encoders Trained for 200 epochs
@@ -2233,36 +2229,36 @@ def make_csv():
 # plt.clf()
 
 
-# make_csv()
-# data = pandas.read_csv("results.csv")
-# data = data.set_index("Encoder")
-# # CalTech
-# datapoints = []
-# POINTS = [
-#     "Imagenet",
-#     "Pets",
-#     "CIFAR-100",
-#     "CalTech-101",
-#     "Eurosat",
-#     "dtd",
-#     "SUN397",
-#     "KineticsActionPrediction",
-#     "CLEVERNumObjects",
-#     "THORNumSteps",
-#     "THORActionPrediction",
-#     "nuScenesActionPrediction"
-# ]
-# for task in POINTS:
-#     datapoints.append({
-#         "Task": task,
-#         "Score": abs(data.loc["SWAV_200"][task] - data.loc["SWAV_200_2"][task]),
-#     })
-# datapoints.sort(key=lambda x: x["Score"], reverse=True)
-# sns.set()
-# plt.title("nuScenes Action Prediction Score")
-# sns.color_palette("bright")
-# sns.barplot(x="Score", y="Task", data=pandas.DataFrame(datapoints), dodge=False)
-# plt.show()
+make_csv()
+data = pandas.read_csv("results.csv")
+data = data.set_index("Encoder")
+# CalTech
+datapoints = []
+POINTS = [
+    "Imagenet",
+    "Pets",
+    "CIFAR-100",
+    "CalTech-101",
+    "Eurosat",
+    "dtd",
+    "SUN397",
+    "KineticsActionPrediction",
+    "CLEVERNumObjects",
+    "THORNumSteps",
+    "THORActionPrediction",
+    "nuScenesActionPrediction"
+]
+for task in POINTS:
+    datapoints.append({
+        "Task": task,
+        "Score": abs(data.loc["SWAV_200"][task] - data.loc["SWAV_200_2"][task]),
+    })
+datapoints.sort(key=lambda x: x["Score"], reverse=True)
+sns.set()
+plt.title("nuScenes Action Prediction Score")
+sns.color_palette("bright")
+sns.barplot(x="Score", y="Task", data=pandas.DataFrame(datapoints), dodge=False)
+plt.show()
 # plt.savefig("graphs/datasets_with_similar_end_tasks/CalTech")
 # plt.clf()
 
@@ -2663,92 +2659,92 @@ def make_csv():
 
 
 ######### Figure 3. Percentage improvement of Best Encoder over Supervised ImageNet
-make_csv()
-data = pandas.read_csv("results.csv")
-data = data.set_index("Encoder")
-# CalTech
-datapoints = []
-table = []
-for encoder in data.index:
-    if encoder == "Supervised":
-        continue
-    for task in ALL_TASKS:
-        if not math.isnan(data.loc[encoder][task]):
-            datapoints.append({
-                "Encoder": encoder,
-                "Task": REAL_NAMES[task],
-                "Score": data.loc[encoder][task],
-                "SupervisedScore": data.loc["Supervised"][task],
-                "Dataset": data.loc[encoder]["Dataset"],
-                "Method": data.loc[encoder]["Method"],
-                "NormalizedScore": data.loc[encoder, task + "-normalized"],
-            })
-for task in ALL_TASKS:
-    if task in REVERSED_SUCCESS_TASKS:
-        c = -1.0
-    else:
-        c= 1.0
-    task = REAL_NAMES[task]
-    tdps = [p for p in datapoints if p["Task"] == task]
-    tdps.sort(key=lambda x: x["Score"], reverse=True)
-    table.append({
-        "Task": task,
-        "Score": tdps[0]["Score"],
-        "Method": tdps[0]["Method"],
-        "Supervised Score": tdps[0]["SupervisedScore"],
-        "Performance Improvement": 100 * c * (tdps[0]["Score"] - tdps[0]["SupervisedScore"]) / (tdps[0]["SupervisedScore"]),
-        "Best Method": tdps[0]["Method"],
-        "Best Dataset": tdps[0]["Dataset"].replace("Log", "").replace("Quarter", "")
-    })
-table.sort(key=lambda x: x["Performance Improvement"])
-df = pandas.DataFrame(table)
-# df.to_csv("best_encoder_per_task.csv")
-
-sns.set(font_scale=10)
-sns.color_palette("bright")
-datapoints.sort(key=lambda x: x["Score"])
-sns.set_theme(style="whitegrid", font_scale=1.8)
-
-# plt.figure(figsize=(8, 8))
-fig, ax1 = plt.subplots(figsize=(8, 10))
-sns.barplot(x="Performance Improvement", y="Task", hue="Best Dataset", dodge=False, data=df, palette="pastel", ax=ax1)
-ax1.set_ylabel("End Task")
-ax1.set_xlabel("Percent Relative Performance Improvement\nOver Supervised Baseline")
-# ax2 = ax1.twinx()
-
-table = []
-for task in ALL_TASKS:
-    if task in REVERSED_SUCCESS_TASKS:
-        c = -1.0
-    else:
-        c= 1.0
-    task = REAL_NAMES[task]
-    tdps = [p for p in datapoints if p["Task"] == task]
-    tdps.sort(key=lambda x: x["Score"], reverse=True)
-    score = (100 * c * ((tdps[0]["Score"] - tdps[0]["SupervisedScore"]) / (tdps[0]["SupervisedScore"])))
-    table.append({
-        "Task": task,
-        "Score": tdps[0]["Score"],
-        "Method": "MoCov2" if tdps[0]["Method"] == "MoCo" else "SwAV",
-        "Supervised Score": tdps[0]["SupervisedScore"],
-        "Performance Improvement": score + 1 if score > 0 else score - 1,
-        "Best Dataset": tdps[0]["Dataset"].replace("Log", "").replace("Quarter", "")
-    })
-table.sort(key=lambda x: x["Performance Improvement"])
-df = pandas.DataFrame(table)
-
-# ax2 = sns.scatterplot(x="Performance Improvement", y="Task", style="Method", data=df, ax=ax2, s=50)
-# ax2.legend(title="   Best Method   ", loc=[0.59, 0.54])
-# ax2.set_ylim(ax1.get_ylim())
-# ax2.get_yaxis().set_visible(False)
-# ax.legend(title="Best Encoder Method\nand Training Set")
-# ax2.set_ylabel("End Task")
-
-
-# ax.get_xaxis().set_visible(False)
-# ax.set_title("CalTech Classification Top-1 Accuracy")
-plt.savefig("graphs/best_encoder/best_encoder.pdf", bbox_inches='tight')
-# plt.show()
+# make_csv()
+# data = pandas.read_csv("results.csv")
+# data = data.set_index("Encoder")
+# # CalTech
+# datapoints = []
+# table = []
+# for encoder in data.index:
+#     if encoder == "Supervised":
+#         continue
+#     for task in ALL_TASKS:
+#         if not math.isnan(data.loc[encoder][task]):
+#             datapoints.append({
+#                 "Encoder": encoder,
+#                 "Task": REAL_NAMES[task],
+#                 "Score": data.loc[encoder][task],
+#                 "SupervisedScore": data.loc["Supervised"][task],
+#                 "Dataset": data.loc[encoder]["Dataset"],
+#                 "Method": data.loc[encoder]["Method"],
+#                 "NormalizedScore": data.loc[encoder, task + "-normalized"],
+#             })
+# for task in ALL_TASKS:
+#     if task in REVERSED_SUCCESS_TASKS:
+#         c = -1.0
+#     else:
+#         c= 1.0
+#     task = REAL_NAMES[task]
+#     tdps = [p for p in datapoints if p["Task"] == task]
+#     tdps.sort(key=lambda x: x["Score"], reverse=True)
+#     table.append({
+#         "Task": task,
+#         "Score": tdps[0]["Score"],
+#         "Method": tdps[0]["Method"],
+#         "Supervised Score": tdps[0]["SupervisedScore"],
+#         "Performance Improvement": 100 * c * (tdps[0]["Score"] - tdps[0]["SupervisedScore"]) / (tdps[0]["SupervisedScore"]),
+#         "Best Method": tdps[0]["Method"],
+#         "Best Dataset": tdps[0]["Dataset"].replace("Log", "").replace("Quarter", "")
+#     })
+# table.sort(key=lambda x: x["Performance Improvement"])
+# df = pandas.DataFrame(table)
+# # df.to_csv("best_encoder_per_task.csv")
+#
+# sns.set(font_scale=10)
+# sns.color_palette("bright")
+# datapoints.sort(key=lambda x: x["Score"])
+# sns.set_theme(style="whitegrid", font_scale=1.8)
+#
+# # plt.figure(figsize=(8, 8))
+# fig, ax1 = plt.subplots(figsize=(8, 10))
+# sns.barplot(x="Performance Improvement", y="Task", hue="Best Dataset", dodge=False, data=df, palette="pastel", ax=ax1)
+# ax1.set_ylabel("End Task")
+# ax1.set_xlabel("Percent Relative Performance Improvement\nOver Supervised Baseline")
+# # ax2 = ax1.twinx()
+#
+# table = []
+# for task in ALL_TASKS:
+#     if task in REVERSED_SUCCESS_TASKS:
+#         c = -1.0
+#     else:
+#         c= 1.0
+#     task = REAL_NAMES[task]
+#     tdps = [p for p in datapoints if p["Task"] == task]
+#     tdps.sort(key=lambda x: x["Score"], reverse=True)
+#     score = (100 * c * ((tdps[0]["Score"] - tdps[0]["SupervisedScore"]) / (tdps[0]["SupervisedScore"])))
+#     table.append({
+#         "Task": task,
+#         "Score": tdps[0]["Score"],
+#         "Method": "MoCov2" if tdps[0]["Method"] == "MoCo" else "SwAV",
+#         "Supervised Score": tdps[0]["SupervisedScore"],
+#         "Performance Improvement": score + 1 if score > 0 else score - 1,
+#         "Best Dataset": tdps[0]["Dataset"].replace("Log", "").replace("Quarter", "")
+#     })
+# table.sort(key=lambda x: x["Performance Improvement"])
+# df = pandas.DataFrame(table)
+#
+# # ax2 = sns.scatterplot(x="Performance Improvement", y="Task", style="Method", data=df, ax=ax2, s=50)
+# # ax2.legend(title="   Best Method   ", loc=[0.59, 0.54])
+# # ax2.set_ylim(ax1.get_ylim())
+# # ax2.get_yaxis().set_visible(False)
+# # ax.legend(title="Best Encoder Method\nand Training Set")
+# # ax2.set_ylabel("End Task")
+#
+#
+# # ax.get_xaxis().set_visible(False)
+# # ax.set_title("CalTech Classification Top-1 Accuracy")
+# plt.savefig("graphs/best_encoder/best_encoder.pdf", bbox_inches='tight')
+# # plt.show()
 
 #### Generating Pearson and Spearman Correlations for the relation between cka realtions and task scores
 # make_csv()
