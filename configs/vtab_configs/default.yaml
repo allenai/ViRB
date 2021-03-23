@@ -230,41 +230,41 @@ NYUDepth:
   num_epochs: 250
   batch_size: 16
 
-TaskonomyInpainting:
-  task: "TaskonomyInpainting"
-  pre_encode: false
-  training_configs:
-    adam-0.0003:
-      optimizer: "adam"
-      lr: 0.0003
-#    sgd-0.01-l1:
-#      optimizer: "sgd"
-#      lr: 0.001
-  num_epochs: 25
-
-TaskonomyEdges:
-  task: "TaskonomyEdges"
-  pre_encode: false
-  training_configs:
-    adam-0.0003:
-      optimizer: "adam"
-      lr: 0.0003
-#    sgd-0.01-l1:
-#      optimizer: "sgd"
-#      lr: 0.001
-  num_epochs: 10
-
-COCODetection:
-  task: "COCODetection"
-  pre_encode: false
-  training_configs:
-    adam-0.0003:
-      optimizer: "adam"
-      lr: 0.0003
-#    sgd-0.01-l1:
-#      optimizer: "sgd"
-#      lr: 0.001
-  num_epochs: 25
+#TaskonomyInpainting:
+#  task: "TaskonomyInpainting"
+#  pre_encode: false
+#  training_configs:
+#    adam-0.0003:
+#      optimizer: "adam"
+#      lr: 0.0003
+##    sgd-0.01-l1:
+##      optimizer: "sgd"
+##      lr: 0.001
+#  num_epochs: 25
+#
+#TaskonomyEdges:
+#  task: "TaskonomyEdges"
+#  pre_encode: false
+#  training_configs:
+#    adam-0.0003:
+#      optimizer: "adam"
+#      lr: 0.0003
+##    sgd-0.01-l1:
+##      optimizer: "sgd"
+##      lr: 0.001
+#  num_epochs: 10
+#
+#COCODetection:
+#  task: "COCODetection"
+#  pre_encode: false
+#  training_configs:
+#    adam-0.0003:
+#      optimizer: "adam"
+#      lr: 0.0003
+##    sgd-0.01-l1:
+##      optimizer: "sgd"
+##      lr: 0.001
+#  num_epochs: 25
 
 #Imagenetv2:
 #  task: "Imagenetv2"
