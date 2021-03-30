@@ -24,18 +24,18 @@ SUN397:
     adam-0.0001:
       optimizer: "adam"
       lr: 0.0001
-   adam-0.001:
-     optimizer: "adam"
-     lr: 0.001
-   sgd-0.01:
-     optimizer: "sgd"
-     lr: 0.01
-   sgd-0.001:
-     optimizer: "sgd"
-     lr: 0.001
-   sgd-0.0001:
-     optimizer: "sgd"
-     lr: 0.0001
+    adam-0.001:
+      optimizer: "adam"
+      lr: 0.001
+    sgd-0.01:
+      optimizer: "sgd"
+      lr: 0.01
+    sgd-0.001:
+      optimizer: "sgd"
+      lr: 0.001
+    sgd-0.0001:
+      optimizer: "sgd"
+      lr: 0.0001
   num_epochs: 250
   batch_size: 32
 
