@@ -17,28 +17,28 @@
 # #      lr: 0.001
 #   num_epochs: 500
 #   batch_size: 32
-
-SUN397:
-  task: "SUN397"
-  training_configs:
-    adam-0.0001:
-      optimizer: "adam"
-      lr: 0.0001
-    adam-0.001:
-      optimizer: "adam"
-      lr: 0.001
-    sgd-0.01:
-      optimizer: "sgd"
-      lr: 0.01
-    sgd-0.001:
-      optimizer: "sgd"
-      lr: 0.001
-    sgd-0.0001:
-      optimizer: "sgd"
-      lr: 0.0001
-  num_epochs: 250
-  batch_size: 32
-
+#
+# SUN397:
+#   task: "SUN397"
+#   training_configs:
+#     adam-0.0001:
+#       optimizer: "adam"
+#       lr: 0.0001
+#     adam-0.001:
+#       optimizer: "adam"
+#       lr: 0.001
+#     sgd-0.01:
+#       optimizer: "sgd"
+#       lr: 0.01
+#     sgd-0.001:
+#       optimizer: "sgd"
+#       lr: 0.001
+#     sgd-0.0001:
+#       optimizer: "sgd"
+#       lr: 0.0001
+#   num_epochs: 250
+#   batch_size: 32
+#
 # CIFAR-100:
 #   task: "CIFAR-100"
 #   training_configs:
@@ -275,20 +275,20 @@ SUN397:
 # #      lr: 0.0003
 # #  batch_size: 32
 
-# KineticsActionPrediction:
-#   task: "KineticsActionPrediction"
-#   pre_encode: true
-#   training_configs:
-# #    adam-0.0003:
-# #      optimizer: "adam"
-# #      lr: 0.0003
-#     adam-0.01:
-#       optimizer: "adam"
-#       lr: 0.0003
-#       scheduler:
-#         type: "Linear"
-#   num_epochs: 100
-#   batch_size: 32
+KineticsActionPrediction:
+  task: "KineticsActionPrediction"
+  pre_encode: true
+  training_configs:
+   adam-0.0003:
+     optimizer: "adam"
+     lr: 0.0003
+    adam-0.01:
+      optimizer: "adam"
+      lr: 0.0003
+      scheduler:
+        type: "Linear"
+  num_epochs: 100
+  batch_size: 32
 
 # EgoHands:
 #   task: "EgoHands"
