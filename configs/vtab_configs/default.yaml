@@ -1,11 +1,11 @@
 ### FINAL CONFIG
 
- Pets:
-   task: "Pets"
-   training_configs:
-     adam-0.0001:
-       optimizer: "adam"
-       lr: 0.0001
+Pets-Deeplabv3:
+  task: "Pets"
+  training_configs:
+    adam-0.0001:
+      optimizer: "adam"
+      lr: 0.0001
  #    adam-0.001:
  #      optimizer: "adam"
  #      lr: 0.001
@@ -15,9 +15,28 @@
  #    sgd-0.001:
  #      optimizer: "sgd"
  #      lr: 0.001
-   num_epochs: 500
-   batch_size: 32
-   pre_encode: true
+  num_epochs: 100
+  batch_size: 32
+  pre_encode: true
+
+dtd-Deeplabv3:
+  task: "dtd"
+  training_configs:
+    adam-0.0001:
+      optimizer: "adam"
+      lr: 0.0001
+ #    adam-0.001:
+ #      optimizer: "adam"
+ #      lr: 0.001
+ #    sgd-0.01:
+ #      optimizer: "sgd"
+ #      lr: 0.01
+ #    sgd-0.001:
+ #      optimizer: "sgd"
+ #      lr: 0.001
+  num_epochs: 100
+  batch_size: 32
+  pre_encode: true
 
 # SUN397:
 #   task: "SUN397"
@@ -92,24 +111,6 @@
 # #      optimizer: "sgd"
 # #      lr: 0.001
 #   num_epochs: 200
-#   batch_size: 32
-
-# dtd:
-#   task: "dtd"
-#   training_configs:
-#     adam-0.0001:
-#       optimizer: "adam"
-#       lr: 0.0001
-# #    adam-0.001:
-# #      optimizer: "adam"
-# #      lr: 0.001
-# #    sgd-0.01:
-# #      optimizer: "sgd"
-# #      lr: 0.01
-# #    sgd-0.001:
-# #      optimizer: "sgd"
-# #      lr: 0.001
-#   num_epochs: 100
 #   batch_size: 32
 
 # CLEVERNumObjects:
