@@ -31,13 +31,13 @@ class DeepLabClassificationHead(nn.Module):
 
 
     def forward(self, x):
-        l2_size = tuple(x["block1"].shape[-2:])
-        label_size = tuple(x["img"].shape[-2:])
+        # l2_size = tuple(x["block1"].shape[-2:])
+        # label_size = tuple(x["img"].shape[-2:])
 
         x_backbone = x["block4"]
 
         x_aspp = self.aspp(x_backbone)
-        x_aspp = nn.Upsample(l2_size, mode='bilinear', align_corners=True)(x_aspp)
+        # x_aspp = nn.Upsample(l2_size, mode='bilinear', align_corners=True)(x_aspp)
         x = self.classifier(x_aspp)
         # x = torch.cat((self.low_level_feature_reducer(x["block1"]), x_aspp), dim=1)
         # x = self.decoder(x)
