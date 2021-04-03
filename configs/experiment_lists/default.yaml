@@ -1,6 +1,6 @@
 ####### Baselines
 #Random: 'pretrained_weights/Random.pt'
-#Supervised: 'pretrained_weights/Supervised.pt'
+Supervised: 'pretrained_weights/Supervised.pt'
 ###### Pre Trained
 #SWAV_800: 'pretrained_weights/SWAV_800.pt'
 #MoCov2_800: 'pretrained_weights/MoCov2_800.pt'
@@ -14,7 +14,7 @@
 #MoCov2Kinetics: 'pretrained_weights/MoCov2Kinetics.pt'
 #MoCov2Places: 'pretrained_weights/MoCov2Places.pt'
 ##### SWAV
-SWAV_200: 'pretrained_weights/SWAV_200.pt'
+#SWAV_200: 'pretrained_weights/SWAV_200.pt'
 #SWAVCombination: 'pretrained_weights/SWAVCombination.pt'
 #SWAVTaskonomy: 'pretrained_weights/SWAVTaskonomy.pt'
 #SWAVKinetics: 'pretrained_weights/SWAVKinetics.pt'
@@ -36,7 +36,7 @@ SWAV_200: 'pretrained_weights/SWAV_200.pt'
 #MoCov2_50: 'pretrained_weights/MoCov2_50.pt'
 #SWAV_50: 'pretrained_weights/SWAV_50.pt'
 #SWAV_100: 'pretrained_weights/SWAV_100.pt'
-SWAV_200_2: 'pretrained_weights/SWAV_200_2.pt'
-SWAV_200_3: 'pretrained_weights/SWAV_200_3.pt'
+#SWAV_200_2: 'pretrained_weights/SWAV_200_2.pt'
+#SWAV_200_3: 'pretrained_weights/SWAV_200_3.pt'
 #SWAVLogImagenet_2: 'pretrained_weights/SWAVLogImagenet_2.pt'
 #SWAVLogImagenet_3: 'pretrained_weights/SWAVLogImagenet_3.pt'

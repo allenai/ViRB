@@ -163,8 +163,10 @@ def get_task_head(config, dataset):
     if config["task"] in CLASSIFICATION_TASKS:
         if "embedding" not in config["encoder"].outputs():
             raise Exception("A model needs to have an embedding output in order to be tested on classification tasks!")
-        from models.ClassificationHead import ClassificationHead
-        return ClassificationHead(config["encoder"].outputs()["embedding"][0], dataset.num_classes())
+        from models.DeepLabClassificationHead import DeepLabClassificationHead
+        return DeepLabClassificationHead(dataset.num_classes())
+        # from models.ClassificationHead import ClassificationHead
+        # return ClassificationHead(config["encoder"].outputs()["embedding"][0], dataset.num_classes())
     if config["task"] in SEMANTIC_SEGMENTATION:
         from models.DeepLabHead import DeepLabHead
         return DeepLabHead(dataset.num_classes(), config["encoder"])

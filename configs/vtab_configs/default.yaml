@@ -1,23 +1,24 @@
 ### FINAL CONFIG
-#
-# Pets:
-#   task: "Pets"
-#   training_configs:
-#     adam-0.0001:
-#       optimizer: "adam"
-#       lr: 0.0001
-# #    adam-0.001:
-# #      optimizer: "adam"
-# #      lr: 0.001
-# #    sgd-0.01:
-# #      optimizer: "sgd"
-# #      lr: 0.01
-# #    sgd-0.001:
-# #      optimizer: "sgd"
-# #      lr: 0.001
-#   num_epochs: 500
-#   batch_size: 32
-#
+
+ Pets:
+   task: "Pets"
+   training_configs:
+     adam-0.0001:
+       optimizer: "adam"
+       lr: 0.0001
+ #    adam-0.001:
+ #      optimizer: "adam"
+ #      lr: 0.001
+ #    sgd-0.01:
+ #      optimizer: "sgd"
+ #      lr: 0.01
+ #    sgd-0.001:
+ #      optimizer: "sgd"
+ #      lr: 0.001
+   num_epochs: 500
+   batch_size: 32
+   pre_encode: false
+
 # SUN397:
 #   task: "SUN397"
 #   training_configs:
@@ -274,22 +275,22 @@
 # #      optimizer: "adam"
 # #      lr: 0.0003
 # #  batch_size: 32
-
-KineticsActionPrediction:
-  task: "KineticsActionPrediction"
-  pre_encode: true
-  training_configs:
-    adam-0.0003:
-      optimizer: "adam"
-      lr: 0.0003
-    adam-0.0003-linear:
-      optimizer: "adam"
-      lr: 0.0003
-      scheduler:
-        type: "Linear"
-  num_epochs: 100
-  batch_size: 32
-
+#
+#KineticsActionPrediction:
+#  task: "KineticsActionPrediction"
+#  pre_encode: true
+#  training_configs:
+#    adam-0.0003:
+#      optimizer: "adam"
+#      lr: 0.0003
+#    adam-0.0003-linear:
+#      optimizer: "adam"
+#      lr: 0.0003
+#      scheduler:
+#        type: "Linear"
+#  num_epochs: 100
+#  batch_size: 32
+#
 # EgoHands:
 #   task: "EgoHands"
 #   pre_encode: false
