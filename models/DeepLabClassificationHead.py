@@ -34,7 +34,7 @@ class DeepLabClassificationHead(nn.Module):
         # l2_size = tuple(x["block1"].shape[-2:])
         # label_size = tuple(x["img"].shape[-2:])
 
-        x_backbone = x["block4"]
+        x_backbone = x["block4"].float()
 
         x_aspp = self.aspp(x_backbone)
         # x_aspp = nn.Upsample(l2_size, mode='bilinear', align_corners=True)(x_aspp)
