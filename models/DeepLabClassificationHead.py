@@ -26,7 +26,7 @@ class DeepLabClassificationHead(nn.Module):
         )
         self.classifier = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(802816, num_classes),
+            nn.Linear(7*7*256, num_classes),
         )
 
 
