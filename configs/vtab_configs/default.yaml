@@ -17,7 +17,7 @@
  #      lr: 0.001
    num_epochs: 500
    batch_size: 32
-   pre_encode: false
+   pre_encode: true
 
 # SUN397:
 #   task: "SUN397"
