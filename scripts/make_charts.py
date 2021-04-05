@@ -34,7 +34,9 @@ REAL_NAMES = {
     "NYUWalkable": "NYU Depth",
     "THORDepth": "THOR Depth",
     "TaskonomyDepth": "Taskonomy Depth",
-    "KITTI": "KITTI Opt. Flow"
+    "KITTI": "KITTI Opt. Flow",
+    "dtd-Deeplabv3": "dtd Cls. DeepLabv3",
+    "Pets-Deeplabv3": "Pets Cls. DeepLabv3",
 }
 
 
@@ -56,7 +58,7 @@ ALL_EXPERIMENTS = [
     'MoCov2UnbalancedImagenet',
     'MoCov2QuarterImagenet',
     'SWAV_200',
-    'SWAV_200_2',
+    # 'SWAV_200_2',
     'SWAVCombination',
     'SWAVTaskonomy',
     'SWAVKinetics',
@@ -184,12 +186,14 @@ EMBEDDING_SEMANTIC_TASKS = [
     "Imagenet",
     "Imagenetv2",
     "Pets",
+    "Pets-Deeplabv3",
     "CIFAR-100",
     "CalTech-101",
     "Eurosat",
     "dtd",
+    "dtd-Deeplabv3",
     "SUN397",
-    "KineticsActionPrediction"
+    "KineticsActionPrediction",
 ]
 EMBEDDING_STRUCTURAL_TASKS = [
     "CLEVERNumObjects",
@@ -2228,37 +2232,37 @@ def make_csv():
 # plt.savefig("graphs/datasets_with_similar_end_tasks/CalTech")
 # plt.clf()
 
-
-make_csv()
-data = pandas.read_csv("results.csv")
-data = data.set_index("Encoder")
-# CalTech
-datapoints = []
-POINTS = [
-    "Imagenet",
-    "Pets",
-    "CIFAR-100",
-    "CalTech-101",
-    "Eurosat",
-    "dtd",
-    "SUN397",
-    "KineticsActionPrediction",
-    "CLEVERNumObjects",
-    "THORNumSteps",
-    "THORActionPrediction",
-    "nuScenesActionPrediction"
-]
-for task in POINTS:
-    datapoints.append({
-        "Task": task,
-        "Score": abs(data.loc["SWAV_200"][task] - data.loc["SWAV_200_2"][task]),
-    })
-datapoints.sort(key=lambda x: x["Score"], reverse=True)
-sns.set()
-plt.title("nuScenes Action Prediction Score")
-sns.color_palette("bright")
-sns.barplot(x="Score", y="Task", data=pandas.DataFrame(datapoints), dodge=False)
-plt.show()
+#
+# make_csv()
+# data = pandas.read_csv("results.csv")
+# data = data.set_index("Encoder")
+# # CalTech
+# datapoints = []
+# POINTS = [
+#     "Imagenet",
+#     "Pets",
+#     "CIFAR-100",
+#     "CalTech-101",
+#     "Eurosat",
+#     "dtd",
+#     "SUN397",
+#     "KineticsActionPrediction",
+#     "CLEVERNumObjects",
+#     "THORNumSteps",
+#     "THORActionPrediction",
+#     "nuScenesActionPrediction"
+# ]
+# for task in POINTS:
+#     datapoints.append({
+#         "Task": task,
+#         "Score": abs(data.loc["SWAV_200"][task] - data.loc["SWAV_200_2"][task]),
+#     })
+# datapoints.sort(key=lambda x: x["Score"], reverse=True)
+# sns.set()
+# plt.title("nuScenes Action Prediction Score")
+# sns.color_palette("bright")
+# sns.barplot(x="Score", y="Task", data=pandas.DataFrame(datapoints), dodge=False)
+# plt.show()
 # plt.savefig("graphs/datasets_with_similar_end_tasks/CalTech")
 # plt.clf()
 
@@ -2592,70 +2596,70 @@ plt.show()
 
 
 ####### Figure 4. Omni
-# make_csv()
-# data = pandas.read_csv("results.csv")
-# data = data.set_index("Encoder")
-# # CalTech
-# datapoints = []
-# for encoder in data.index:
-#     for task in PIXELWISE_SEMANTIC_TASKS + PIXELWISE_STRUCTURAL_TASKS + EMBEDDING_SEMANTIC_TASKS + EMBEDDING_STRUCTURAL_TASKS:
-#         if data.loc[encoder]["Imagenet"] > 0.4:
-#             if task in EMBEDDING_SEMANTIC_TASKS:
-#                 ttype = "Semantic Image-level"
-#             elif task in EMBEDDING_STRUCTURAL_TASKS:
-#                 ttype = "Structural Image-level"
-#             elif task in PIXELWISE_SEMANTIC_TASKS:
-#                 ttype = "Semantic Pixelwise"
-#             elif task in PIXELWISE_STRUCTURAL_TASKS:
-#                 ttype = "Structural  Pixelwise"
-#             datapoints.append({
-#                 "Encoder": encoder,
-#                 "Task": REAL_NAMES[task],
-#                 "TaskType": ttype,
-#                 "Score": data.loc[encoder][task],
-#                 "ImageNet Accuracy": data.loc[encoder]["Imagenet"],
-#                 "Dataset": "Imagenet" if data.loc[encoder]["Dataset"] == "Imagenet" else "Other",
-#                 "NormalizedScore": data.loc[encoder, task + "-normalized"],
-#             })
-# # sns.set()
-# pal = sns.color_palette("deep", 21)
-# sns.set_theme(style="whitegrid", font_scale=2)
-# # datapoints.sort(key=lambda x: x["Score"])
-# lm = sns.lmplot(
-#     x="ImageNet Accuracy",
-#     y="Score",
-#     col="TaskType",
-#     hue="Task",
-#     sharex=True,
-#     sharey=False,
-#     legend_out=True,
-#     height=10,
-#     aspect=0.7,
-#     palette=pal,
-#     scatter_kws={"s": 100},
-#     markers=[ "^", "^", "^", "X", "X", "X", "X", "X", "o", "o", "o", "o", "o", "o", "o", "o", "o", "s", "s", "s", "s"],
-#     data=pandas.DataFrame(datapoints),
-# )
-# fig = lm.fig
-#
-# fig.axes[0].set_title("Pixelwise Semantic")
-# fig.axes[0].set_ylabel("mIOU")
-#
-# fig.axes[1].set_title("Pixelwise Structural")
-# fig.axes[1].set_ylabel("Negative L1 Error                                       mIOU")
-#
-# fig.axes[2].set_title("Image-Level Semantic")
-# fig.axes[2].set_ylabel("Top-1 Accuracy")
-#
-# fig.axes[3].set_title("Image-Level Structural")
-# fig.axes[3].set_ylabel("Top-1 Accuracy")
-#
-# # plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=21, mode="expand", borderaxespad=0.)
-# # ax.set_ylabel("Score")
-# # ax.get_xaxis().set_visible(False)
-# # ax.set_title("CalTech Classification Top-1 Accuracy")
-# plt.savefig("graphs/in_vs_tasks/omni.pdf", bbox_inches='tight')
-# # plt.show()
+make_csv()
+data = pandas.read_csv("results.csv")
+data = data.set_index("Encoder")
+# CalTech
+datapoints = []
+for encoder in data.index:
+    for task in PIXELWISE_SEMANTIC_TASKS + PIXELWISE_STRUCTURAL_TASKS + EMBEDDING_SEMANTIC_TASKS + EMBEDDING_STRUCTURAL_TASKS:
+        if data.loc[encoder]["Imagenet"] > 0.4:
+            if task in EMBEDDING_SEMANTIC_TASKS:
+                ttype = "Semantic Image-level"
+            elif task in EMBEDDING_STRUCTURAL_TASKS:
+                ttype = "Structural Image-level"
+            elif task in PIXELWISE_SEMANTIC_TASKS:
+                ttype = "Semantic Pixelwise"
+            elif task in PIXELWISE_STRUCTURAL_TASKS:
+                ttype = "Structural  Pixelwise"
+            datapoints.append({
+                "Encoder": encoder,
+                "Task": REAL_NAMES[task],
+                "TaskType": ttype,
+                "Score": data.loc[encoder][task],
+                "ImageNet Accuracy": data.loc[encoder]["Imagenet"],
+                "Dataset": "Imagenet" if data.loc[encoder]["Dataset"] == "Imagenet" else "Other",
+                "NormalizedScore": data.loc[encoder, task + "-normalized"],
+            })
+# sns.set()
+pal = sns.color_palette("deep", 21)
+sns.set_theme(style="whitegrid", font_scale=2)
+# datapoints.sort(key=lambda x: x["Score"])
+lm = sns.lmplot(
+    x="ImageNet Accuracy",
+    y="Score",
+    col="TaskType",
+    hue="Task",
+    sharex=True,
+    sharey=False,
+    legend_out=True,
+    height=10,
+    aspect=0.7,
+    palette=pal,
+    scatter_kws={"s": 100},
+    markers=[ "^", "^", "^", "X", "X", "X", "X", "X", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "o", "s", "s", "s", "s"],
+    data=pandas.DataFrame(datapoints),
+)
+fig = lm.fig
+
+fig.axes[0].set_title("Pixelwise Semantic")
+fig.axes[0].set_ylabel("mIOU")
+
+fig.axes[1].set_title("Pixelwise Structural")
+fig.axes[1].set_ylabel("Negative L1 Error                                       mIOU")
+
+fig.axes[2].set_title("Image-Level Semantic")
+fig.axes[2].set_ylabel("Top-1 Accuracy")
+
+fig.axes[3].set_title("Image-Level Structural")
+fig.axes[3].set_ylabel("Top-1 Accuracy")
+
+# plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=21, mode="expand", borderaxespad=0.)
+# ax.set_ylabel("Score")
+# ax.get_xaxis().set_visible(False)
+# ax.set_title("CalTech Classification Top-1 Accuracy")
+plt.savefig("graphs/in_vs_tasks/omni.pdf", bbox_inches='tight')
+# plt.show()
 
 
 ######### Figure 3. Percentage improvement of Best Encoder over Supervised ImageNet
