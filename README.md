@@ -32,7 +32,7 @@ CalTech classification task using the SWAV 800 encoder.
 First we need to download the encoder:
 ```shell script
 mkdir pretrained_weights
-wget LINK pretrained_weights/
+wget https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/SWAV_800.pt pretrained_weights/
 ```
 
 Then we need to download the CalTech dataset from 
@@ -81,38 +81,46 @@ root project directory.
 
 | Encoder Name | Method | Dataset | Dataset Size | Number of Epochs | Trained by us|Link| 
 |--------------|--------|---------|--------------|------------------|--------------|----|
-SwAV ImageNet 800 | SwAV | ImageNet | 1.3M | 800 | No| [Link](s3://prior-model-weights/contrastive_encoders/SWAV_800.pt)
-SwAV ImageNet 200 | SwAV | ImageNet | 1.3M | 200 | No| [Link](s3://prior-model-weights/contrastive_encoders/SWAV_200.pt)
-SwAV ImageNet 100 | SwAV | ImageNet | 1.3M | 100 | Yes| [Link](s3://prior-model-weights/contrastive_encoders/SWAV_100.pt)
-SwAV ImageNet 50 | SwAV | ImageNet | 1.3M | 50 | Yes| [Link](s3://prior-model-weights/contrastive_encoders/SWAV_50.pt)
-SwAV Half ImageNet 200 | SwAV | ImageNet-1/2 | 0.5M | 200 | Yes| [Link](s3://prior-model-weights/contrastive_encoders/SWAVHalfImagenet.pt)
-SwAV Half ImageNet 100 | SwAV | ImageNet-1/2 | 0.5M | 100 | Yes| [Link](s3://prior-model-weights/contrastive_encoders/SWAVHalfImagenet_100.pt)
-SwAV Quarter ImageNet 200 | SwAV | ImageNet-1/4 | 0.25M | 200 | Yes| [Link](s3://prior-model-weights/contrastive_encoders/SWAVQuarterImagenet.pt)
-SwAV Linear Unbalanced ImageNet 200 | SwAV | ImageNet-1/2-Lin | 0.5M | 200 | Yes| [Link](s3://prior-model-weights/contrastive_encoders/SWAVUnbalancedImagenet.pt)
-SwAV Linear Unbalanced ImageNet 100 | SwAV | ImageNet-1/2-Lin | 0.5M | 100 | Yes| [Link](s3://prior-model-weights/contrastive_encoders/SWAVUnbalancedImagenet_100.pt)
-SwAV Log Unbalanced ImageNet 200 | SwAV | ImageNet-1/4-Log | 0.25M | 200 | Yes| [Link](s3://prior-model-weights/contrastive_encoders/SWAVLogImagenet.pt)
-SwAV Places 200 | SwAV | Places | 1.3M | 200 | Yes| [Link](s3://prior-model-weights/contrastive_encoders/SWAVPlaces.pt)
-SwAV Kinetics 200 | SwAV | Kinetics | 1.3M | 200 | Yes| [Link](s3://prior-model-weights/contrastive_encoders/SWAVKinetics.pt)
-SwAV Taskonomy 200 | SwAV | Taskonomy | 1.3M | 200 | Yes| [Link](s3://prior-model-weights/contrastive_encoders/SWAVTaskonomy.pt)
-SwAV Combination 200 | SwAV | Combination | 1.3M | 200 | Yes| [Link](s3://prior-model-weights/contrastive_encoders/SWAVCombination.pt)
-MoCov2 ImageNet 800 | MoCov2 | ImageNet | 1.3M | 800 | No|[Link](s3://prior-model-weights/contrastive_encoders/MoCov2_800.pt)
-MoCov2 ImageNet 200 | MoCov2 | ImageNet | 1.3M | 200 | No|[Link](s3://prior-model-weights/contrastive_encoders/MoCov2_200.pt)
-MoCov2 ImageNet 100 | MoCov2 | ImageNet | 1.3M | 100 | Yes|[Link](s3://prior-model-weights/contrastive_encoders/MoCov2_100.pt)
-MoCov2 ImageNet 50 | MoCov2 | ImageNet | 1.3M | 50 | Yes|[Link](s3://prior-model-weights/contrastive_encoders/MoCov2_50.pt)
-MoCov2 Half ImageNet 200 | MoCov2 | ImageNet-1/2 | 0.5M | 200 | Yes|[Link](s3://prior-model-weights/contrastive_encoders/MoCov2HalfImagenet.pt)
-MoCov2 Half ImageNet 100 | MoCov2 | ImageNet-1/2 | 0.5M | 100 | Yes|[Link](s3://prior-model-weights/contrastive_encoders/MoCov2HalfImagenet_100.pt)
-MoCov2 Quarter ImageNet 200 | MoCov2 | ImageNet-1/4 | 0.25M | 200 | Yes|[Link](s3://prior-model-weights/contrastive_encoders/MoCov2QuarterImagenet.pt)
-MoCov2 Linear Unbalanced ImageNet 200 | MoCov2 | ImageNet-1/2-Lin | 0.5M | 200 | Yes|[Link](s3://prior-model-weights/contrastive_encoders/MoCov2UnbalancedImagenet.pt)
-MoCov2 Linear Unbalanced ImageNet 100 | MoCov2 | ImageNet-1/2-Lin | 0.5M | 100 | Yes|[Link](s3://prior-model-weights/contrastive_encoders/MoCov2UnbalancedImagenet_100.pt)
-MoCov2 Log Unbalanced ImageNet 200 | MoCov2 | ImageNet-1/4-Log | 0.25M | 200 | Yes|[Link](s3://prior-model-weights/contrastive_encoders/MoCov2LogImagenet.pt)
-MoCov2 Places 200 | MoCov2 | Places | 1.3M | 200 | Yes| [Link](s3://prior-model-weights/contrastive_encoders/MoCov2Places.pt)
-MoCov2 Kinetics 200 | MoCov2 | Kinetics | 1.3M | 200 | Yes|[Link](s3://prior-model-weights/contrastive_encoders/MoCov2Kinetics.pt)
-MoCov2 Taskonomy 200 | MoCov2 | Taskonomy | 1.3M | 200 | Yes|[Link](s3://prior-model-weights/contrastive_encoders/MoCov2Taskonomy.pt)
-MoCov2 Combination 200 | MoCov2 | Combination | 1.3M | 200 | Yes|[Link](s3://prior-model-weights/contrastive_encoders/MoCov2Combination.pt)
-MoCov1 ImageNet 200 | MoCov1 | ImageNet | 1.3M | 200 | No|[Link](s3://prior-model-weights/contrastive_encoders/MoCov1_200.pt)
-PIRL ImageNet 800 | PIRL | ImageNet | 1.3M | 800 | No|[Link](s3://prior-model-weights/contrastive_encoders/PIRL_800.pt)
+|SwAV ImageNet 800 | SwAV | ImageNet | 1.3M | 800 | No| [Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/SWAV_800.pt)|
+|SwAV ImageNet 200 | SwAV | ImageNet | 1.3M | 200 | No| [Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/SWAV_200.pt)|
+|SwAV ImageNet 100 | SwAV | ImageNet | 1.3M | 100 | Yes| [Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/SWAV_100.pt)|
+|SwAV ImageNet 50 | SwAV | ImageNet | 1.3M | 50 | Yes| [Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/SWAV_50.pt)|
+|SwAV Half ImageNet 200 | SwAV | ImageNet-1/2 | 0.5M | 200 | Yes| [Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/SWAVHalfImagenet.pt)|
+|SwAV Half ImageNet 100 | SwAV | ImageNet-1/2 | 0.5M | 100 | Yes| [Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/SWAVHalfImagenet_100.pt)|
+|SwAV Quarter ImageNet 200 | SwAV | ImageNet-1/4 | 0.25M | 200 | Yes| [Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/SWAVQuarterImagenet.pt)|
+|SwAV Linear Unbalanced ImageNet 200 | SwAV | ImageNet-1/2-Lin | 0.5M | 200 | Yes| [Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/SWAVUnbalancedImagenet.pt)|
+|SwAV Linear Unbalanced ImageNet 100 | SwAV | ImageNet-1/2-Lin | 0.5M | 100 | Yes| [Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/SWAVUnbalancedImagenet_100.pt)|
+|SwAV Log Unbalanced ImageNet 200 | SwAV | ImageNet-1/4-Log | 0.25M | 200 | Yes| [Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/SWAVLogImagenet.pt)|
+|SwAV Places 200 | SwAV | Places | 1.3M | 200 | Yes| [Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/SWAVPlaces.pt)|
+|SwAV Kinetics 200 | SwAV | Kinetics | 1.3M | 200 | Yes| [Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/SWAVKinetics.pt)|
+|SwAV Taskonomy 200 | SwAV | Taskonomy | 1.3M | 200 | Yes| [Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/SWAVTaskonomy.pt)|
+|SwAV Combination 200 | SwAV | Combination | 1.3M | 200 | Yes| [Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/SWAVCombination.pt)|
+|MoCov2 ImageNet 800 | MoCov2 | ImageNet | 1.3M | 800 | No|[Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/MoCov2_800.pt)|
+|MoCov2 ImageNet 200 | MoCov2 | ImageNet | 1.3M | 200 | No|[Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/MoCov2_200.pt)|
+|MoCov2 ImageNet 100 | MoCov2 | ImageNet | 1.3M | 100 | Yes|[Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/MoCov2_100.pt)|
+|MoCov2 ImageNet 50 | MoCov2 | ImageNet | 1.3M | 50 | Yes|[Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/MoCov2_50.pt)|
+|MoCov2 Half ImageNet 200 | MoCov2 | ImageNet-1/2 | 0.5M | 200 | Yes|[Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/MoCov2HalfImagenet.pt)|
+|MoCov2 Half ImageNet 100 | MoCov2 | ImageNet-1/2 | 0.5M | 100 | Yes|[Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/MoCov2HalfImagenet_100.pt)|
+|MoCov2 Quarter ImageNet 200 | MoCov2 | ImageNet-1/4 | 0.25M | 200 | Yes|[Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/MoCov2QuarterImagenet.pt)|
+|MoCov2 Linear Unbalanced ImageNet 200 | MoCov2 | ImageNet-1/2-Lin | 0.5M | 200 | Yes|[Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/MoCov2UnbalancedImagenet.pt)|
+|MoCov2 Linear Unbalanced ImageNet 100 | MoCov2 | ImageNet-1/2-Lin | 0.5M | 100 | Yes|[Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/MoCov2UnbalancedImagenet_100.pt)|
+|MoCov2 Log Unbalanced ImageNet 200 | MoCov2 | ImageNet-1/4-Log | 0.25M | 200 | Yes|[Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/MoCov2LogImagenet.pt)|
+|MoCov2 Places 200 | MoCov2 | Places | 1.3M | 200 | Yes| [Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/MoCov2Places.pt)|
+|MoCov2 Kinetics 200 | MoCov2 | Kinetics | 1.3M | 200 | Yes|[Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/MoCov2Kinetics.pt)|
+|MoCov2 Taskonomy 200 | MoCov2 | Taskonomy | 1.3M | 200 | Yes|[Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/MoCov2Taskonomy.pt)|
+|MoCov2 Combination 200 | MoCov2 | Combination | 1.3M | 200 | Yes|[Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/MoCov2Combination.pt)|
+|MoCov1 ImageNet 200 | MoCov1 | ImageNet | 1.3M | 200 | No|[Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/MoCov1_200.pt)|
+|PIRL ImageNet 800 | PIRL | ImageNet | 1.3M | 800 | No|[Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/PIRL_800.pt)|
 
 ## End Task Training
+
+pyVTAB supports 20 end task that are classified as `Image-level` or `Pixelwise`
+depending on the output modality of the task. Furthermore each task is also 
+classified as either semantic or structural. Bellow is an illustration of the space of
+our tasks. For further details please see [Contrasting Contrastive Self-Supervised 
+Representation Learning Models](https://arxiv.org/pdf/2103.14005.pdf).
+
+![Tasks](assets/images/tasks.png)
 
 After installing the codebase and downloading the datasets and pretrained models we are 
 ready to run our experiments. To reproduce every experiment in the paper run:
@@ -125,14 +133,12 @@ subset instead. We can see the results of all these training runs summarized in 
 graph bellow.
 
 ![Results](assets/images/all_results.png)
-
-pyVTAB supports 20 end task that are classified as `Image-level` or `Pixelwise`
-depending on the output modality of the task. Furthermore each task is also 
-classified as either semantic or structural. Bellow is an illustration of the space of
-our tasks. For further details please see [Contrasting Contrastive Self-Supervised 
-Representation Learning Models](https://arxiv.org/pdf/2103.14005.pdf).
-
-![Tasks](assets/images/tasks.png)
+*Correlation of end task performances with ImageNet classification accuracy.
+The plots show the end task performance against the ImageNet top-1 accuracy 
+for all end tasks and encoders. Each point represents a different encoder 
+trained with different algorithms and datasets. This reveals the lack of a 
+strong correlation between the performance on ImageNet classification and 
+tasks from other categories.*
 
 To specify which task we want to train we create a vtab_config yaml file which defines
 the task name and training configuration. The file `configs/vtab_configs/all.yaml` 
@@ -197,7 +203,7 @@ python main.py --experiment_list=configs/experiment_lists/swav.yaml
 --vtab_configs=configs/vtab_configs/imagenet_grid_search.yaml
 ```
 
-### ImageNet v2 testing
+### Testing Only Datasets
 
 One aditional feature this codebase supports is datasets that are "eval only" and use
 a task head trained on a different task. The only currently supported example is 
@@ -210,4 +216,26 @@ python main.py --experiment_list=configs/experiment_lists/swav.yaml
 
 ## Custom Models
 
-Tutorial coming soon.
+All the encoders in the tutorials thus far have used the ResNet50 architecture, but we also 
+support using custom encoders. 
+
+All of the Image-level tasks require the encoder outputs a 
+dictionary with the key "embedding" mapping to a pyTorch tensor of size `NxD` where `N` is the
+batch size and `D` is the arbitrary embedding size. 
+
+All of the Pixelwise tasks require that the encoders output a dictionary with a tensor
+for the representation after every block. In practice this means that the model needs to output
+5 tensors of sizes corresponding to the outputs of a ResNet50 `conv`, `block1`, `block2`, `block3`
+and `block4` layers.
+
+To use a custom model simply modify `main.py` by replacing `ResNet50Encoder` with any encoder with
+the outputs mentioned above.
+
+## Citation
+```
+@article{kotar2021contrasting,
+  title={Contrasting Contrastive Self-Supervised Representation Learning Models},
+  author={Klemen Kotar and Gabriel Ilharco and Ludwig Schmidt and Kiana Ehsani and Roozbeh Mottaghi},
+  year={2021},
+}
+```
