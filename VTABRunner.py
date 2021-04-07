@@ -210,7 +210,7 @@ def get_scheduler(config, full_config, optimizer, trainset):
             config["scheduler"]["step_size"],
             gamma=config["scheduler"]["gamma"]
         ), "epochs"
-    if config["scheduler"]["type"] == "Linear":
+    if config["scheduler"]["type"] == "OneCycle":
         return torch.optim.lr_scheduler.OneCycleLR(
             optimizer,
             config["lr"],

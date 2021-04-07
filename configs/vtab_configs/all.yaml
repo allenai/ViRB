@@ -1,0 +1,180 @@
+#### FULL EXPERIMENT CONFIG
+
+# Image-level Semantic
+Imagenet:
+ task: "Imagenet"
+ training_configs:
+   adam-0.0001:
+     optimizer: "adam"
+     lr: 0.0001
+ num_epochs: 100
+ batch_size: 32
+
+SUN397:
+ task: "SUN397"
+ training_configs:
+   adam-0.0001:
+     optimizer: "adam"
+     lr: 0.0001
+ num_epochs: 250
+ batch_size: 32
+
+CIFAR-100:
+ task: "CIFAR-100"
+ training_configs:
+   adam-0.0001:
+     optimizer: "adam"
+     lr: 0.0001
+ num_epochs: 100
+ batch_size: 32
+
+CalTech-101:
+ task: "CalTech-101"
+ training_configs:
+   adam-0.0001:
+     optimizer: "adam"
+     lr: 0.0001
+ num_epochs: 500
+ batch_size: 32
+
+Eurosat:
+ task: "Eurosat"
+ training_configs:
+   adam-0.0001:
+     optimizer: "adam"
+     lr: 0.0001
+ num_epochs: 200
+ batch_size: 32
+
+KineticsActionPrediction:
+  task: "KineticsActionPrediction"
+  pre_encode: true
+  training_configs:
+    adam-0.0003:
+      optimizer: "adam"
+      lr: 0.0003
+  num_epochs: 100
+  batch_size: 32
+
+nuScenesActionPrediction:
+ task: "nuScenesActionPrediction"
+ training_configs:
+   adam-0.0001:
+     optimizer: "adam"
+     lr: 0.0001
+ num_epochs: 100
+ batch_size: 32
+
+# Image-level Structural
+CLEVERNumObjects:
+ task: "CLEVERNumObjects"
+ training_configs:
+   adam-0.0001:
+     optimizer: "adam"
+     lr: 0.0001
+ num_epochs: 100
+ batch_size: 32
+
+THORNumSteps:
+ task: "THORNumSteps"
+ training_configs:
+   adam-0.0001:
+     optimizer: "adam"
+     lr: 0.0001
+ num_epochs: 100
+ batch_size: 32
+
+THORActionPrediction:
+ task: "THORActionPrediction"
+ training_configs:
+   adam-0.0001:
+     optimizer: "adam"
+     lr: 0.0001
+ num_epochs: 100
+ batch_size: 32
+
+
+# Pixelwise Structural
+THORDepth:
+ task: "THORDepth"
+ pre_encode: false
+ training_configs:
+   adam-0.0001-l1:
+     optimizer: "adam"
+     lr: 0.0003
+ num_epochs: 50
+ batch_size: 16
+
+NYUDepth:
+ task: "NYUDepth"
+ pre_encode: false
+ training_configs:
+   adam-0.0003:
+     optimizer: "adam"
+     lr: 0.0003
+ num_epochs: 250
+ batch_size: 16
+
+NYUWalkable:
+ task: "NYUWalkable"
+ pre_encode: false
+ training_configs:
+   adam-0.0001:
+     optimizer: "adam"
+     lr: 0.0001
+ num_epochs: 250
+ batch_size: 16
+
+TaskonomyDepth:
+ task: "TaskonomyDepth"
+ pre_encode: false
+ training_configs:
+   adam-0.0001:
+     optimizer: "adam"
+     lr: 0.0001
+ num_epochs: 50
+ batch_size: 16
+
+KITTI:
+ task: "KITTI"
+ pre_encode: false
+ training_configs:
+   adam-0.0003:
+     optimizer: "adam"
+     lr: 0.0003
+ num_epochs: 250
+ batch_size: 16
+
+# Pixelwise Semantic
+EgoHands:
+ task: "EgoHands"
+ pre_encode: false
+ training_configs:
+   adam-0.0003:
+     optimizer: "adam"
+     lr: 0.0003
+ num_epochs: 25
+ batch_size: 16
+
+CityscapesSemanticSegmentation:
+ task: "CityscapesSemanticSegmentation"
+ pre_encode: false
+ training_configs:
+   adam-0.0001:
+     optimizer: "adam"
+     lr: 0.0003
+     scheduler:
+       type: "Poly"
+       exponent: 0.9
+ num_epochs: 100
+ batch_size: 16
+
+Pets-Detection:
+ task: "Pets-Detection"
+ pre_encode: false
+ training_configs:
+   adam-0.0001:
+     optimizer: "adam"
+     lr: 0.0001
+ num_epochs: 100
+ batch_size: 16

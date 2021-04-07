@@ -1,0 +1,5 @@
+# ImageNet v2 eval config
+Imagenetv2:
+ task: "Imagenetv2"
+ task_head_weights_path: "out/%s/Imagenet*/model_head.pt"
+batch_size: 32

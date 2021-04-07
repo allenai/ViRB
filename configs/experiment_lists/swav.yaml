@@ -1,0 +1,2 @@
+####### SWAV 800 Trained on ImageNet
+SWAV_800: 'pretrained_weights/SWAV_800.pt'
