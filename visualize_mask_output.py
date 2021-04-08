@@ -16,7 +16,7 @@ from datasets.EncodableDataset import EncodableDataset
 from datasets.EncodableDataloader import EncodableDataloader
 from models.PixelWisePredictionHead import PixelWisePredictionHead
 from models.ResNet50Encoder import ResNet50Encoder
-from models.VTABModel import VTABModel
+from models.ViRBModel import ViRBModel
 
 
 if sys.argv[1] == "pets":
@@ -59,7 +59,7 @@ inv_normalize = transforms.Normalize(
     std=[1/0.229, 1/0.224, 1/0.255]
 )
 
-model = VTABModel(ResNet50Encoder(weights=sys.argv[2]), head)
+model = ViRBModel(ResNet50Encoder(weights=sys.argv[2]), head)
 
 test_dataloader = torch.utils.data.DataLoader(dataset, batch_size=32, shuffle=False, num_workers=0)
 

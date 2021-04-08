@@ -2,7 +2,7 @@ import torch.nn as nn
 import torch
 
 
-class VTABModel(nn.Module):
+class ViRBModel(nn.Module):
 
     def __init__(self, encoder, task_head, train_encoder=False):
         super().__init__()

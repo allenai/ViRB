@@ -10,7 +10,7 @@ from datasets.EncodableDataloader import EncodableDataloader
 from utils.progress_iterator import ProgressIterator
 
 
-class VTABTask:
+class ViRBTask:
 
     def __init__(
             self,

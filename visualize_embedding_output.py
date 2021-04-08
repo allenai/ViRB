@@ -11,7 +11,7 @@ from datasets.EncodableDataloader import EncodableDataloader
 from models.ClassificationHead import ClassificationHead
 from models.MultiEmbeddingClassificationHead import MultiEmbeddingClassificationHead
 from models.ResNet50Encoder import ResNet50Encoder
-from models.VTABModel import VTABModel
+from models.ViRBModel import ViRBModel
 from utils.error_functions import classification_error
 
 
@@ -42,7 +42,7 @@ else:
           "<TASK_HEAD_WEIGHTS_PATH> ")
     exit()
 
-model = VTABModel(ResNet50Encoder(weights=sys.argv[2]), head)
+model = ViRBModel(ResNet50Encoder(weights=sys.argv[2]), head)
 model.eval()
 model = model.cuda()
 

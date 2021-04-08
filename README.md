@@ -1,6 +1,6 @@
-# pyVTAB
+# ViRB
 
-pyVTAB is a framework for evaluating the quality of representations 
+ViRB is a framework for evaluating the quality of representations 
 learned by visual encoders on a variety of downstream tasks. It is the 
 codebase used by the paper [Contrasting Contrastive Self-Supervised 
 Representation Learning Models](https://arxiv.org/pdf/2103.14005.pdf).
@@ -11,7 +11,7 @@ task and evaluate it on the test set for that task. To speed this process
 up, the train and test set are pre encoded for most of the end tasks and 
 stored in GPU memory for efficient usage. Fine tuning the encoder is also 
 supported but takes significantly more time.
-pyVTAB is fully implemented in pyTorch and automatically scales to as many 
+ViRB is fully implemented in pyTorch and automatically scales to as many 
 GPUs as are available on your machine. It has support for evaluating 
 any pyTorch model architecture on a select subset of tasks.
 
@@ -19,8 +19,8 @@ any pyTorch model architecture on a select subset of tasks.
 
 To install the codebase simply clone this repository from github and run setup:
 ```shell script
-git clone https://github.com/klemenkotar/pyVTAB
-cd pyVTAB
+git clone https://github.com/klemenkotar/ViRB
+cd ViRB
 pip install -r requirements.txt
 ```
 
@@ -43,32 +43,38 @@ into a directory called `data/caltech/`.
 ## Dataset Download
 
 To run the full suit of end tasks we need to download all the associated 
-datasets. In general all the datasets should be stored in a folder called `data/`
+datasets. All the datasets should be stored in a folder called `data/`
 inside the root project directory. Bellow is a table of links where the data can 
-be downloaded and the names of directories they should be downloaded to.
+be downloaded and the names of directories they should be placed in. 
 
-| Dataset Name  | Dataset Size | Download Link|
-|---------------|--------------|--------------|
- ImageNet Cls. | 1,281,167 | [Link](http://www.image-net.org/download)
- Pets Cls. | 3,680  | [Link](http://www.image-net.org/download)
- CalTech Cls. |  3,060  | [Link](http://www.image-net.org/download) 
- CIFAR-100 Cls. |  50,000 | [Link](http://www.image-net.org/download) 
- SUN Scene Cls. |  87,003 | [Link](http://www.image-net.org/download) 
- Eurosat Cls. |  21,600 | [Link](http://www.image-net.org/download) 
- dtd Cls. |  3,760 | [Link](http://www.image-net.org/download)
- Kinetics Action Pred. |  50,000 | [Link](http://www.image-net.org/download) 
- CLEVR Count | 70,000 | [Link](http://www.image-net.org/download) 
- THOR Num. Steps | 60,000 | [Link](http://www.image-net.org/download) 
- THOR Egomotion | 60,000 | [Link](http://www.image-net.org/download) 
- nuScenes Egomotion | 28,000 | [Link](http://www.image-net.org/download) 
- Cityscapes Seg. | 3,475 | [Link](http://www.image-net.org/download)
- Pets Instance Seg. | 3,680 | [Link](http://www.image-net.org/download) 
- EgoHands Seg. | 4,800 |  [Link](http://www.image-net.org/download) 
- THOR Depth | 60,000 | [Link](http://www.image-net.org/download) 
- Taskonomy Depth | 39,995 | [Link](http://www.image-net.org/download) 
- NYU Depth | 1,159 | [Link](http://www.image-net.org/download) 
- NYU Walkable | 1,159  | [Link](http://www.image-net.org/download) 
- KITTI Opt. Flow | 200 | [Link](http://www.image-net.org/download) 
+Due to the complex nature and diversity of dataset licensing we provide
+3 types of links: `Data` which is a direct link to a compressed file that can be downloaded
+from the internet, `Website` which is a link to a website where some instructions can be
+followed to download the data in question and `JSON` which is a link to a supplementary JSON
+file which adds some metadata on top of another existing dataset. 
+
+| Dataset Name  | Dataset Size | Directory | Download Link|
+|---------------|--------------|-----------|--------------|
+ ImageNet Cls. | 1,281,167 | data/imagenet/ | [Website](http://www.image-net.org/download)
+ Pets Cls. | 3,680  |data/pets/| [Data](https://www.robots.ox.ac.uk/~vgg/data/pets/data/images.tar.gz)
+ CalTech Cls. |  3,060  |data/caltech-101/| [Data](http://www.vision.caltech.edu/Image_Datasets/Caltech101/101_ObjectCategories.tar.gz) 
+ CIFAR-100 Cls. |  50,000 |data/cifar-100/| [Data](https://www.cs.toronto.edu/~kriz/cifar-100-python.tar.gz) 
+ SUN Scene Cls. |  87,003 |data/SUN397/| [Data](http://vision.princeton.edu/projects/2010/SUN/SUN397.tar.gz) 
+ Eurosat Cls. |  21,600 |data/eurosat/| [Data](http://madm.dfki.de/files/sentinel/EuroSAT.zip) 
+ dtd Cls. |  3,760 |data/dtd/| [Data](https://www.robots.ox.ac.uk/~vgg/data/dtd/download/dtd-r1.0.1.tar.gz)
+ Kinetics Action Pred. |50,000 |data/kinetics400/ | [Website](https://github.com/Showmax/kinetics-downloader)
+ CLEVR Count | 70,000 |data/CLEVR/| [Data](https://dl.fbaipublicfiles.com/clevr/CLEVR_v1.0.zip) [JSON]()
+ THOR Num. Steps | 60,000 |data/thor_num_steps/| [Data]() 
+ THOR Egomotion | 60,000 |data/thor_action_prediction/| [Data]()
+ nuScenes Egomotion | 28,000 |data/nuScenes/| [Website](https://www.nuscenes.org/) [JSON]()
+ Cityscapes Seg. | 3,475 |data/cityscapes/| [Website](https://www.cityscapes-dataset.com/)
+ Pets Instance Seg. | 3,680 |data/pets/| [Data](https://www.robots.ox.ac.uk/~vgg/data/pets/data/images.tar.gz) [Masks](https://www.robots.ox.ac.uk/~vgg/data/pets/data/annotations.tar.gz)
+ EgoHands Seg. | 4,800 |data/egohands/|  [Data](http://vision.soic.indiana.edu/egohands_files/egohands_data.zip) 
+ THOR Depth | 60,000 |data/thor_depth_prediction/| [Data]() 
+ Taskonomy Depth | 39,995 |data/taskonomy/| [Link](http://taskonomy.stanford.edu/) [JSON]()
+ NYU Depth | 1,159 |data/nyu/| [Data]() 
+ NYU Walkable | 1,159  |data/nyu/| [Data]() 
+ KITTI Opt. Flow | 200 |data/KITTI/| [Data](http://www.cvlibs.net/download.php?file=data_scene_flow.zip) 
 
 ## Pre-trained Models
 
@@ -114,7 +120,7 @@ root project directory.
 
 ## End Task Training
 
-pyVTAB supports 20 end task that are classified as `Image-level` or `Pixelwise`
+ViRB supports 20 end task that are classified as `Image-level` or `Pixelwise`
 depending on the output modality of the task. Furthermore each task is also 
 classified as either semantic or structural. Bellow is an illustration of the space of
 our tasks. For further details please see [Contrasting Contrastive Self-Supervised 
@@ -126,7 +132,7 @@ After installing the codebase and downloading the datasets and pretrained models
 ready to run our experiments. To reproduce every experiment in the paper run:
 ```shell script
 python main.py --experiment_list=configs/experiment_lists/all.yaml 
---vtab_configs=configs/vtab_configs/all.yaml
+--virb_configs=configs/virb_configs/all.yaml
 ```
 `WARNING:` this will take well over 1000 GPU hours to train so we suggest training a 
 subset instead. We can see the results of all these training runs summarized in the 
@@ -140,8 +146,8 @@ trained with different algorithms and datasets. This reveals the lack of a
 strong correlation between the performance on ImageNet classification and 
 tasks from other categories.*
 
-To specify which task we want to train we create a vtab_config yaml file which defines
-the task name and training configuration. The file `configs/vtab_configs/all.yaml` 
+To specify which task we want to train we create a virb_config yaml file which defines
+the task name and training configuration. The file `configs/virb_configs/all.yaml` 
 contains configurations for every task supported by this package so it is a good 
 starting point. We can select only a few tasks to train and comment out the other 
 configurations.
@@ -161,7 +167,7 @@ several sets of optimizers, schedulers and hyperparameters. For the Image-level 
 each set of hyperparameters will get trained (to improve efficiency). 
 
 An example of a grid search configuration can be found in 
-`configs/vtab_configs/imagenet_grid_search.yaml`, and it looks like this:
+`configs/virb_configs/imagenet_grid_search.yaml`, and it looks like this:
 ```yaml
 Imagenet:
  task: "Imagenet"
@@ -200,7 +206,7 @@ pyTorch's `optim` package. All schedulers are compatible with all of the optimiz
 To execute this ImageNet grid search run:
 ```shell script
 python main.py --experiment_list=configs/experiment_lists/swav.yaml 
---vtab_configs=configs/vtab_configs/imagenet_grid_search.yaml
+--virb_configs=configs/virb_configs/imagenet_grid_search.yaml
 ```
 
 ### Testing Only Datasets
@@ -211,7 +217,7 @@ ImageNet v2. To test the SWAV 800 model on ImageNetv2 first train at least one
 ImageNet end task head on SWAV 800 then run the following command:
 ```shell script
 python main.py --experiment_list=configs/experiment_lists/swav.yaml 
---vtab_configs=configs/vtab_configs/imagenetv2.yaml
+--virb_configs=configs/virb_configs/imagenetv2.yaml
 ```
 
 ## Custom Models

@@ -15,9 +15,9 @@ import traceback
 from datetime import datetime
 
 from models.ResNet50Encoder import ResNet50Encoder
-from models.VTABModel import VTABModel
+from models.ViRBModel import ViRBModel
 from models.ClassificationHead import ClassificationHead
-from tasks.VTABTask import VTABTask
+from tasks.ViRBTask import ViRBTask
 from utils.progress_data_packets import ProgressDataPacket
 
 
@@ -276,7 +276,7 @@ def get_error_function(config):
         return classification_error
 
 
-def run_VTAB_task(config, logging_queue):
+def run_ViRB_task(config, logging_queue):
     dataset_class = get_dataset_class(config)
     trainset = dataset_class(train=True)
     testset = dataset_class(train=False)
@@ -287,7 +287,7 @@ def run_VTAB_task(config, logging_queue):
         for tc_name, tc in config["training_configs"].items():
             encoder = copy.deepcopy(config["encoder"])
             task_head = get_task_head(config, trainset)
-            model = VTABModel(encoder, task_head, train_encoder=config["train_encoder"])
+            model = ViRBModel(encoder, task_head, train_encoder=config["train_encoder"])
             optimizer = get_optimizer(tc, model)
             scheduler, scheduler_unit = get_scheduler(tc, config, optimizer, trainset)
             training_configs.append({
@@ -299,7 +299,7 @@ def run_VTAB_task(config, logging_queue):
             })
     pre_encode = config["pre_encode"] if "pre_encode" in config else None
     num_dataset_repeats = config["num_dataset_repeats"] if "num_dataset_repeats" in config else 1
-    task = VTABTask(
+    task = ViRBTask(
         config["experiment_name"],
         config["task_name"],
         training_configs=training_configs,
@@ -323,7 +323,7 @@ def run_VTAB_task(config, logging_queue):
             conf_name = "-".join(w.split("/")[2].split("-")[1:])
             task_head = get_task_head(config, trainset)
             task_head.load_state_dict(torch.load(w, map_location=torch.device('cpu')))
-            model = VTABModel(encoder, task_head, train_encoder=config["train_encoder"])
+            model = ViRBModel(encoder, task_head, train_encoder=config["train_encoder"])
             test_configs.append({"model": model, "name": conf_name})
         results = task.run_test(test_configs)
     else:
@@ -341,7 +341,7 @@ def thread_loop(gpu_id, config_queue, logging_queue):
                 device=gpu_id,
                 new_task=False
             ))
-            run_VTAB_task(conf, logging_queue)
+            run_ViRB_task(conf, logging_queue)
             logging_queue.put(ProgressDataPacket(
                 name="Done",
                 device=gpu_id,
@@ -356,13 +356,13 @@ def thread_loop(gpu_id, config_queue, logging_queue):
             break
 
 
-class VTABRunner:
+class ViRBRunner:
 
     def __init__(
             self,
             experiments,
             train_encoder=False,
-            experiment_config_path="configs/vtab_configs/default.yaml",
+            experiment_config_path="configs/virb_configs/default.yaml",
             num_gpus=torch.cuda.device_count(),
             total_num_workers=12
     ):
@@ -434,7 +434,7 @@ class VTABRunner:
             pending_tasks = self.total_num_tasks
             while pending_tasks > 0:
                 stdscr.refresh()
-                stdscr.addstr(1, 5, "pyVTAB")
+                stdscr.addstr(1, 5, "ViRB")
                 stdscr.addstr(1, 30, "%s" % datetime.now().strftime("%H:%M:%S"))
                 stdscr.addstr(1, 60, " Number of Tasks Completed %d/%d" % (
                     self.total_num_tasks - pending_tasks,

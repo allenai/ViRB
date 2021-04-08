@@ -1,5 +1,5 @@
 from models.ResNet50Encoder import ResNet50Encoder
-from VTABRunner import VTABRunner
+from ViRBRunner import ViRBRunner
 import argparse
 import yaml
 import warnings
@@ -7,7 +7,7 @@ import warnings
 
 def main():
     experiment_list = parse_args()
-    runner = VTABRunner(
+    runner = ViRBRunner(
         experiments={
             name: ResNet50Encoder(weights=weights)
             for name, weights in experiment_list.items()
@@ -18,7 +18,7 @@ def main():
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='pyTorch VTAB')
+    parser = argparse.ArgumentParser(description='pyTorch ViRB')
     parser.add_argument('--experiment_list', help='Path to file with config of runs')
     parser.add_argument('--name', help='Name of current run')
     parser.add_argument('--encoder_weights', help='Path to the weights of the encoder to use')
