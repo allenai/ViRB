@@ -73,7 +73,7 @@ file which adds some metadata on top of another existing dataset.
  THOR Depth | 60,000 |data/thor_depth_prediction/| [Data]() 
  Taskonomy Depth | 39,995 |data/taskonomy/| [Link](http://taskonomy.stanford.edu/) [JSON]()
  NYU Depth | 1,159 |data/nyu/| [Data]() 
- NYU Walkable | 1,159  |data/nyu/| [Data]() 
+ NYU Walkable | 1,159  |data/nyu/| [Data]() [Data]()
  KITTI Opt. Flow | 200 |data/KITTI/| [Data](http://www.cvlibs.net/download.php?file=data_scene_flow.zip) 
 
 ## Pre-trained Models
