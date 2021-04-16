@@ -48,33 +48,34 @@ inside the root project directory. Bellow is a table of links where the data can
 be downloaded and the names of directories they should be placed in. 
 
 Due to the complex nature and diversity of dataset licensing we provide
-3 types of links: `Data` which is a direct link to a compressed file that can be downloaded
+4 types of links: `Data` which is a direct link to a compressed file that can be downloaded
 from the internet, `Website` which is a link to a website where some instructions can be
-followed to download the data in question and `JSON` which is a link to a supplementary JSON
-file which adds some metadata on top of another existing dataset. 
+followed to download the data in question, `JSON` which is a link to a supplementary JSON
+file which adds some metadata on top of another existing dataset and `txt` which contain lists
+of resources that need to be downloaded.
 
-| Dataset Name  | Dataset Size | Directory | Download Link|
-|---------------|--------------|-----------|--------------|
- ImageNet Cls. | 1,281,167 | data/imagenet/ | [Website](http://www.image-net.org/download)
- Pets Cls. | 3,680  |data/pets/| [Data](https://www.robots.ox.ac.uk/~vgg/data/pets/data/images.tar.gz)
- CalTech Cls. |  3,060  |data/caltech-101/| [Data](http://www.vision.caltech.edu/Image_Datasets/Caltech101/101_ObjectCategories.tar.gz) 
- CIFAR-100 Cls. |  50,000 |data/cifar-100/| [Data](https://www.cs.toronto.edu/~kriz/cifar-100-python.tar.gz) 
- SUN Scene Cls. |  87,003 |data/SUN397/| [Data](http://vision.princeton.edu/projects/2010/SUN/SUN397.tar.gz) 
- Eurosat Cls. |  21,600 |data/eurosat/| [Data](http://madm.dfki.de/files/sentinel/EuroSAT.zip) 
- dtd Cls. |  3,760 |data/dtd/| [Data](https://www.robots.ox.ac.uk/~vgg/data/dtd/download/dtd-r1.0.1.tar.gz)
- Kinetics Action Pred. |50,000 |data/kinetics400/ | [Website](https://github.com/Showmax/kinetics-downloader)
- CLEVR Count | 70,000 |data/CLEVR/| [Data](https://dl.fbaipublicfiles.com/clevr/CLEVR_v1.0.zip) [JSON]()
- THOR Num. Steps | 60,000 |data/thor_num_steps/| [Data]() 
- THOR Egomotion | 60,000 |data/thor_action_prediction/| [Data]()
- nuScenes Egomotion | 28,000 |data/nuScenes/| [Website](https://www.nuscenes.org/) [JSON]()
- Cityscapes Seg. | 3,475 |data/cityscapes/| [Website](https://www.cityscapes-dataset.com/)
- Pets Instance Seg. | 3,680 |data/pets/| [Data](https://www.robots.ox.ac.uk/~vgg/data/pets/data/images.tar.gz) [Masks](https://www.robots.ox.ac.uk/~vgg/data/pets/data/annotations.tar.gz)
- EgoHands Seg. | 4,800 |data/egohands/|  [Data](http://vision.soic.indiana.edu/egohands_files/egohands_data.zip) 
- THOR Depth | 60,000 |data/thor_depth_prediction/| [Data]() 
- Taskonomy Depth | 39,995 |data/taskonomy/| [Link](http://taskonomy.stanford.edu/) [JSON]()
- NYU Depth | 1,159 |data/nyu/| [Data]() 
- NYU Walkable | 1,159  |data/nyu/| [Data]() [Data]()
- KITTI Opt. Flow | 200 |data/KITTI/| [Data](http://www.cvlibs.net/download.php?file=data_scene_flow.zip) 
+| Dataset Name  | Dataset Size | Directory | Download Link| Size | Note |
+|---------------|--------------|-----------|--------------|------|------|
+ ImageNet Cls. | 1,281,167 | data/imagenet/ | [Website](http://www.image-net.org/download) | 126.2 GB 
+ Pets Cls. | 3,680  |data/pets/| [Data](https://www.robots.ox.ac.uk/~vgg/data/pets/data/images.tar.gz) | 0.82 GB 
+ CalTech Cls. |  3,060  |data/caltech-101/| [Data](http://www.vision.caltech.edu/Image_Datasets/Caltech101/101_ObjectCategories.tar.gz) | 0.14 GB
+ CIFAR-100 Cls. |  50,000 |data/cifar-100/| [Data](https://www.cs.toronto.edu/~kriz/cifar-100-python.tar.gz) | 0.19 GB
+ SUN Scene Cls. |  87,003 |data/SUN397/| [Data](http://vision.princeton.edu/projects/2010/SUN/SUN397.tar.gz) | 38.0 GB 
+ Eurosat Cls. |  21,600 |data/eurosat/| [Data](http://madm.dfki.de/files/sentinel/EuroSAT.zip) | 0.1 GB 
+ dtd Cls. |  3,760 |data/dtd/| [Data](https://www.robots.ox.ac.uk/~vgg/data/dtd/download/dtd-r1.0.1.tar.gz) | 0.63 GB 
+ Kinetics Action Pred. |50,000 |data/kinetics400/ | [Website](https://github.com/Showmax/kinetics-downloader) | 0.63 GB 
+ CLEVR Count | 70,000 |data/CLEVR/| [Data](https://dl.fbaipublicfiles.com/clevr/CLEVR_v1.0.zip) | 20.0 GB 
+ THOR Num. Steps | 60,000 |data/thor_num_steps/| [Data](https://prior-datasets.s3.us-east-2.amazonaws.com/ViRB/thor_num_steps.zip)  | 0.66 GB 
+ THOR Egomotion | 60,000 |data/thor_action_prediction/| [Data](https://prior-datasets.s3.us-east-2.amazonaws.com/ViRB/thor_egomotion.zip)  | 1.3 GB 
+ nuScenes Egomotion | 28,000 |data/nuScenes/| [Website](https://www.nuscenes.org/) [JSON](https://prior-datasets.s3.us-east-2.amazonaws.com/ViRB/nuScenes_train.json) [JSON](https://prior-datasets.s3.us-east-2.amazonaws.com/ViRB/nuScenes_test.json) | 53.43 GB  | Download samples and sweeps 
+ Cityscapes Seg. | 3,475 |data/cityscapes/| [Website](https://www.cityscapes-dataset.com/) | 61.89 GB 
+ Pets Instance Seg. | 3,680 |data/pets/| [Data](https://www.robots.ox.ac.uk/~vgg/data/pets/data/images.tar.gz) [Masks](https://www.robots.ox.ac.uk/~vgg/data/pets/data/annotations.tar.gz) | 0.82 GB 
+ EgoHands Seg. | 4,800 |data/egohands/|  [Data](http://vision.soic.indiana.edu/egohands_files/egohands_data.zip) | 1.35 GB 
+ THOR Depth | 60,000 |data/thor_depth_prediction/| [Data](https://prior-datasets.s3.us-east-2.amazonaws.com/ViRB/thor_depth.zip) | 0.25 GB 
+ Taskonomy Depth | 39,995 |data/taskonomy/| [Link](http://taskonomy.stanford.edu/) [txt](https://prior-datasets.s3.us-east-2.amazonaws.com/ViRB/taskonomy_scenes.txt) | 48.09 GB | Download the rgb and depth_zbuffer data for the scenes listed in txt
+ NYU Depth | 1,159 |data/nyu/| [Data](https://prior-datasets.s3.us-east-2.amazonaws.com/ViRB/nyu.zip) | 5.62 GB | Same data as NYU Walkable
+ NYU Walkable | 1,159  |data/nyu/| [Data](https://prior-datasets.s3.us-east-2.amazonaws.com/ViRB/nyu.zip) | 5.62 GB | Same data as NYU Walkable
+ KITTI Opt. Flow | 200 |data/KITTI/| [Data](http://www.cvlibs.net/download.php?file=data_scene_flow.zip) | 1.68 GB | 
 
 ## Pre-trained Models
 
@@ -242,6 +243,7 @@ the outputs mentioned above.
 @article{kotar2021contrasting,
   title={Contrasting Contrastive Self-Supervised Representation Learning Models},
   author={Klemen Kotar and Gabriel Ilharco and Ludwig Schmidt and Kiana Ehsani and Roozbeh Mottaghi},
+  journal={arXiv},  
   year={2021},
 }
 ```
