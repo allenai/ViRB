@@ -160,6 +160,35 @@ configurations. Alternatively we can add in new weights and add them to the list
 All we have to do is make sure the weights are for a ResNet50 model stored in the 
 standard pyTorch weight file.
 
+### Training a SWAV Encoder on the ImageNet End Task
+
+To train a model using the SWAV encoder on the ImageNet classification end task download the ImageNet dataset
+from the link in the Dataset Download table above, and the SWAV Imagenet 800 model from the Pretrained-Models
+table above. 
+
+Then create a new file inside `configs/virb_configs/` that contains just the ImageNet configuration:
+```yaml
+Imagenet:
+ task: "Imagenet"
+ training_configs:
+   adam-0.0001:
+     optimizer: "adam"
+     lr: 0.0001
+ num_epochs: 100
+ batch_size: 32
+```
+
+Then create a new file inside `configs/experiment_lists/` that contains just the SWAV model:
+```yaml
+SWAV_800: 'pretrained_weights/SWAV_800.pt'
+```
+
+ Now run this configuration with the following command:
+```shell script
+python main.py --experiment_list=configs/experiment_lists/EXPERIMENT_LIST_FILE_NAME.yaml 
+--virb_configs=configs/virb_configs/VIRB_CONFIG_FILE_NAME.yaml
+```
+
 
 ### Hyperparameter Search
 One feature offered by this codebase is the ability to train the end task networks using
