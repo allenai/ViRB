@@ -39,6 +39,21 @@ Then we need to download the CalTech dataset from
 [here](http://www.vision.caltech.edu/Image_Datasets/Caltech101/) and extract it
 into a directory called `data/caltech/`.
 
+Now we are ready to start the training run with the following command:
+```shell script
+python main.py --experiment_list=configs/experiment_lists/swav.yaml 
+--virb_configs=configs/virb_configs/caltech.yaml
+```
+
+The codebase will automatically use a GPU if one is available on the machine.
+The progress will be printed on the screen along with an ETA for completion.
+
+Live tensorboard logs can be acessed by running the following command:
+```shell script
+tensorboard --logdir=out
+```
+
+Once the training is complete the task head model and results json file will be stored in the `out/` directory.
 
 ## Dataset Download
 
