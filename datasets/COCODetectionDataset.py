@@ -1,15 +1,8 @@
 import torch
-import tqdm
-import pickle
-import numpy as np
-import matplotlib.pyplot as plt
 import torchvision.transforms as transforms
 import glob
 from PIL import Image
-import json
 from pycocotools.coco import COCO
-import os
-import contextlib
 
 
 from datasets.EncodableDataset import EncodableDataset

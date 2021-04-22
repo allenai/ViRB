@@ -2,7 +2,6 @@ import torch
 import tqdm
 import pickle
 import numpy as np
-import matplotlib.pyplot as plt
 import torchvision.transforms as transforms
 import glob
 from PIL import Image

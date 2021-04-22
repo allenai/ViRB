@@ -1,9 +1,7 @@
 import torch
 from torchvision import transforms
 import sys
-import pickle
-import numpy as np
-import matplotlib.pyplot as plt
+
 
 from datasets.PetsDetectionEncodbleDataset import PetsDetectionEncodableDataset
 from datasets.ThorDepthEncodbleDataset import ThorDepthEncodableDataset

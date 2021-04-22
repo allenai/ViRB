@@ -1,10 +1,8 @@
-torch
-torchvision
-numpy
-os
-sys
-yaml
-json
-copy
-curses
+torch==1.7.0
+torchvision==0.8.1
+tensorboard==2.4.0
+numpy==1.19.2
+pyyaml==5.1.2
+tqdm==4.60.0
+cityscapesScripts==2.2.0
 
