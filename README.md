@@ -38,7 +38,8 @@ mv SWAV_800.pt pretrained_weights/
 
 Then we need to download the CalTech dataset from 
 [here](http://www.vision.caltech.edu/Image_Datasets/Caltech101/) and extract it
-into a directory called `data/caltech/`.
+into a directory called `data/caltech/`. Then download the train.json and test.json files and
+place them into the same directory.
 
 Now we are ready to start the training run with the following command:
 ```shell script
@@ -103,8 +104,6 @@ root project directory.
 
 | Encoder Name | Method | Dataset | Dataset Size | Number of Epochs | Link | 
 |--------------|--------|---------|--------------|------------------|------|
-|SwAV ImageNet 800 | SwAV | ImageNet | 1.3M | 800 | [Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/SWAV_800.pt)|
-|SwAV ImageNet 200 | SwAV | ImageNet | 1.3M | 200 | [Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/SWAV_200.pt)|
 |SwAV ImageNet 100 | SwAV | ImageNet | 1.3M | 100 | [Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/SWAV_100.pt)|
 |SwAV ImageNet 50 | SwAV | ImageNet | 1.3M | 50 | [Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/SWAV_50.pt)|
 |SwAV Half ImageNet 200 | SwAV | ImageNet-1/2 | 0.5M | 200 | [Link](https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders/SWAVHalfImagenet.pt)|
@@ -141,6 +140,7 @@ have the exact same usage: `<SCRIPT_NAME> <DOWNLOADED_WEIGHT_FILE> <DESIRED_VIRB
 |MoCov1 ImageNet 200 | MoCov1 | ImageNet | 1.3M | 200 | [Link](https://dl.fbaipublicfiles.com/moco/moco_checkpoints/moco_v1_200ep/moco_v1_200ep_pretrain.pth.tar)| scripts/moco_to_virb.py |
 |MoCov2 ImageNet 800 | MoCov2 | ImageNet | 1.3M | 800 | [Link](https://dl.fbaipublicfiles.com/moco/moco_checkpoints/moco_v2_800ep/moco_v2_800ep_pretrain.pth.tar)| scripts/moco_to_virb.py |
 |MoCov2 ImageNet 200 | MoCov2 | ImageNet | 1.3M | 200 | [Link](https://dl.fbaipublicfiles.com/moco/moco_checkpoints/moco_v2_200ep/moco_v2_200ep_pretrain.pth.tar)| scripts/moco_to_virb.py |
+|PIRL ImageNet 800 | PIRL | ImageNet | 1.3M | 800 | [Link](https://dl.fbaipublicfiles.com/vissl/model_zoo/pirl_jigsaw_4node_pirl_jigsaw_4node_resnet_22_07_20.34377f59/model_final_checkpoint_phase799.torch)| scripts/pirl_to_virb.py |
 
 ## End Task Training
 

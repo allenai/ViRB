@@ -4,9 +4,7 @@ import torchvision.transforms as transforms
 import glob
 from PIL import Image
 import random
-
-
-from datasets.EncodableDataset import EncodableDataset
+import json
 
 
 class CalTech101EncodableDataset(Dataset):
@@ -14,8 +12,10 @@ class CalTech101EncodableDataset(Dataset):
 
     def __init__(self, train=True):
         super().__init__()
-        path = 'data/caltech-101/train/*/*.jpg' if train else 'data/caltech-101/test/*/*.jpg'
-        self.data = list(glob.glob(path))
+        json_file = 'data/caltech-101/%s.json' % ('train' if train else 'test')
+        with open(json_file) as jf:
+            image_list = json.load(jf)
+        self.data = [img for img in list(glob.glob('data/caltech-101/*/*.jpg')) if img[17:] in image_list]
         random.shuffle(self.data)
         cats = list(set([path.split("/")[3] for path in self.data]))
         cats.sort()

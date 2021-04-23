@@ -2,13 +2,13 @@ import torch
 import sys
 
 
-SWAV_WEIGHTS_PATH = sys.argv[1]
+MOCO_WEIGHTS_PATH = sys.argv[1]
 CONVERTED_WEIGHTS_OUT_PATH = sys.argv[2]
 
-swav_weights = torch.load(SWAV_WEIGHTS_PATH, map_location='cpu')
-swav_weights = {
+moco_weights = torch.load(MOCO_WEIGHTS_PATH, map_location='cpu')
+moco_weights = {
     k.replace("module.encoder_q.", "model."): v
-    for k, v in swav_weights['state_dict'].items()
+    for k, v in moco_weights['state_dict'].items()
     if "module.encoder_q." in k
 }
-torch.save(swav_weights, CONVERTED_WEIGHTS_OUT_PATH)
+torch.save(moco_weights, CONVERTED_WEIGHTS_OUT_PATH)
