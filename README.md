@@ -36,12 +36,9 @@ wget https://prior-model-weights.s3.us-east-2.amazonaws.com/contrastive_encoders
 mv SWAV_800.pt pretrained_weights/
 ```
 
-Then we need to download the CalTech dataset from 
-[here](http://www.vision.caltech.edu/Image_Datasets/Caltech101/). After extracting it you
-should have a directory named `101_ObjectCategories`. Rename it to `data/caltech/`.
-Then download the train and test split lists [caltech101_train.json](https://prior-datasets.s3.us-east-2.amazonaws.com/ViRB/caltech101_test.json)
-and [caltech101_test.json](https://prior-datasets.s3.us-east-2.amazonaws.com/ViRB/caltech101_test.json) respectively.
-Place both files inside `data/caltech/`.
+Then we need to download the CalTech dataset from [here](http://www.vision.caltech.edu/Image_Datasets/Caltech101/).
+After extracting it you should have a directory named `101_ObjectCategories`. Rename it to `data/caltech/`.
+
 
 Now we are ready to start the training run with the following command:
 ```shell script

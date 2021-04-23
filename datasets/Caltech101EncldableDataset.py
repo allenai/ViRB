@@ -5,6 +5,8 @@ import glob
 from PIL import Image
 import random
 import json
+import os
+import urllib.request
 
 
 class CalTech101EncodableDataset(Dataset):
@@ -13,6 +15,10 @@ class CalTech101EncodableDataset(Dataset):
     def __init__(self, train=True):
         super().__init__()
         json_file = 'data/caltech-101/caltech101_%s.json' % ('train' if train else 'test')
+        if not os.path.exists(json_file):
+            url = 'https://prior-datasets.s3.us-east-2.amazonaws.com/ViRB/caltech101_%s.json' % \
+                  ('train' if train else 'test')
+            urllib.request.urlretrieve(url, json_file)
         with open(json_file) as jf:
             image_list = json.load(jf)
         self.data = [img for img in list(glob.glob('data/caltech-101/*/*.jpg')) if img[17:] in image_list]
