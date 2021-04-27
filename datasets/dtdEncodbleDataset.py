@@ -1,16 +1,14 @@
 import torch
 import tqdm
 import torchvision.transforms as transforms
+from torch.utils.data import Dataset
 import glob
 from PIL import Image
 import random
 
 
-from datasets.EncodableDataset import EncodableDataset
-
-
-class dtdEncodableDataset(EncodableDataset):
-    """Eurosat encodable dataset class"""
+class dtdEncodableDataset(Dataset):
+    """dtd encodable dataset class"""
 
     def __init__(self, train=True):
         super().__init__()

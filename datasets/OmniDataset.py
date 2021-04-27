@@ -5,24 +5,6 @@ from PIL import Image
 import random
 
 
-# PATHS = {
-#     'Caltech': 'data/caltech-101/train/*/*.jpg',
-#     'Cityscapes': 'data/cityscapes/leftImg8bit/train/*/*.png',
-#     'CLEVR': 'data/CLEVR/images/train/*.png',
-#     'dtd': 'data/dtd/train/*/*.jpg',
-#     'Egohands': 'data/egohands/images/*/*.jpg',
-#     'Eurosat': 'data/eurosat/train/*/*.jpg',
-#     'ImageNet': 'data/imagenet/train/*/*.JPEG',
-#     'Kinetics': 'data/kinetics400/train/*/*.jpg',
-#     'KITTI': 'data/KITTI/training/image_2/*.png',
-#     'nuScenes': 'data/nuScenes/samples/CAM_FRONT/*.jpg',
-#     'NYU': 'data/nyu/train/images/*.png',
-#     'Pets': 'data/pets/train/*/*.jpg',
-#     'SUN397': 'data/SUN397/train/*/*.jpg',
-#     'Taskonomy': 'data/taskonomy/train/rgb/*/*.png',
-#     'Thor': 'data/thor_action_prediction/train/*/*.jpg'
-# }
-
 PATHS = {
     'Caltech': 'data/omni_10k/Caltech/*.png',
     'Cityscapes': 'data/omni_10k/Cityscapes/*.png',

@@ -1,17 +1,12 @@
 import torch
-import tqdm
-import pickle
-import numpy as np
 import torchvision.transforms as transforms
 import glob
 from PIL import Image
 import json
 
-from datasets.EncodableDataset import EncodableDataset
 
-
-class CLEVERDistEncodableDataset(EncodableDataset):
-    """CIFAR-100 encodable dataset class"""
+class CLEVRNumObjectsEncodableDataset(Dataset):
+    """CLEVR Num Objects encodable dataset class"""
 
     def __init__(self, train=True):
         super().__init__()
@@ -22,9 +17,7 @@ class CLEVERDistEncodableDataset(EncodableDataset):
             'data/CLEVR/scenes/CLEVR_val_scenes.json'
         with open(labels_path) as f:
             scene_data = json.load(f)
-        self.labels = torch.LongTensor([
-            2*min([np.sqrt(np.sum(np.square(o['3d_coords']))) for o in ob['objects']]) for ob in scene_data['scenes']
-        ])
+        self.labels = torch.LongTensor([len(s['objects']) for s in scene_data['scenes']])
         self.preprocessor = transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
@@ -40,5 +33,8 @@ class CLEVERDistEncodableDataset(EncodableDataset):
             return self.preprocessor(Image.open(self.data[idx]).convert('RGB')), self.labels[idx]
         return self.encoded_data[idx], self.labels[idx]
 
-    def encode(self, model):
-        raise NotImplementedError
+    def __len__(self):
+        return len(self.labels)
+
+    def num_classes(self):
+        return int(max(self.labels) + 1)

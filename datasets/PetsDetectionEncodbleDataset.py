@@ -1,16 +1,13 @@
 import torch
-import tqdm
 import numpy as np
 import torchvision.transforms as transforms
+from torch.utils.data import Dataset
 import glob
 from PIL import Image
 
 
-from datasets.EncodableDataset import EncodableDataset
-
-
-class PetsDetectionEncodableDataset(EncodableDataset):
-    """Pets encodable dataset class"""
+class PetsDetectionEncodableDataset(Dataset):
+    """Pets Detection encodable dataset class"""
 
     def __init__(self, train=True):
         super().__init__()
@@ -44,15 +41,6 @@ class PetsDetectionEncodableDataset(EncodableDataset):
 
         img = self.preprocessor(Image.open(path).convert('RGB'))
 
-        # i = img.detach().numpy().transpose(1, 2, 0)
-        # plt.figure(0)
-        # plt.imshow(i)
-        # m = mask.detach()
-        # plt.figure(1)
-        # plt.imshow(m[0])
-        # plt.show()
-        # exit()
-
         return img, mask
 
     def __len__(self):
@@ -60,23 +48,3 @@ class PetsDetectionEncodableDataset(EncodableDataset):
 
     def num_classes(self):
         return 1
-
-    def encode(self, model):
-        model.to(self.device)
-        model.eval()
-        batch = []
-        for img in tqdm.tqdm(self.data):
-            if len(batch) == 500:
-                batch = torch.stack(batch, dim=0).to(self.device)
-                with torch.no_grad():
-                    out = model(batch).detach()
-                self.encoded_data.append(out)
-                batch = []
-            x = Image.open(img).convert('RGB')
-            x = self.preprocessor(x)
-            batch.append(x)
-        batch = torch.stack(batch, dim=0).to(self.device)
-        with torch.no_grad():
-            out = model(batch).detach()
-        self.encoded_data.append(out)
-        self.encoded_data = torch.cat(self.encoded_data, dim=0).squeeze().to("cpu")

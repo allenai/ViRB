@@ -1,14 +1,14 @@
 import torch
+from torch.utils.data import Dataset
 import torchvision.transforms as transforms
-import glob
 from PIL import Image
 
 
 ACTIONS = {'MoveAhead': 0, 'RotateLeft': 1, 'RotateRight': 2, 'LookUp': 3, 'LookDown': 4}
 
 
-class ThorActionPredictionDataset:
-    """Pets encodable dataset class"""
+class ThorActionPredictionDataset(Dataset):
+    """Thor Aciton Prediction encodable dataset class"""
 
     def __init__(self, train=True):
         super().__init__()

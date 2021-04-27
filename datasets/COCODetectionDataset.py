@@ -2,10 +2,6 @@ import torch
 import torchvision.transforms as transforms
 import glob
 from PIL import Image
-from pycocotools.coco import COCO
-
-
-from datasets.EncodableDataset import EncodableDataset
 
 
 class COCODetectionDataset:

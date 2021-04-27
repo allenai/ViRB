@@ -2,14 +2,12 @@ import torch
 import tqdm
 import numpy as np
 import torchvision.transforms as transforms
+from torch.utils.data import Dataset
 import glob
 from PIL import Image
 
 
-from datasets.EncodableDataset import EncodableDataset
-
-
-class NyuDepthEncodableDataset(EncodableDataset):
+class NyuDepthEncodableDataset(Dataset):
     """NYU Depth encodable dataset class"""
 
     def __init__(self, train=True):
@@ -52,42 +50,14 @@ class NyuDepthEncodableDataset(EncodableDataset):
         label_path = self.labels[idx]
 
         img = self.img_preprocessor(Image.open(img_path))
-        # mask = self.label_preprocessor(Image.open(label_path))
-        # mask = self.label_preprocessor(Image.open(label_path).convert('RGB'))
         mask = np.array(Image.open(label_path).resize((224, 224)))
         mask = torch.tensor(mask)
         mask = mask.unsqueeze(0)
-
-        # print(np.min(mask), np.max(mask), label_path)
-        # i = img.detach().numpy().transpose(1, 2, 0)
-        # plt.figure(0)
-        # plt.imshow(i)
-        # plt.figure(1)
-        # plt.imshow(mask[0])
-        # plt.show()
-        # exit()
 
         return img, mask
 
     def __len__(self):
         return len(self.data)
 
-    def encode(self, model):
-        model.to(self.device)
-        model.eval()
-        batch = []
-        for img in tqdm.tqdm(self.data):
-            if len(batch) == 500:
-                batch = torch.stack(batch, dim=0).to(self.device)
-                with torch.no_grad():
-                    out = model(batch).detach()
-                self.encoded_data.append(out)
-                batch = []
-            x = Image.open(img).convert('RGB')
-            x = self.preprocessor(x)
-            batch.append(x)
-        batch = torch.stack(batch, dim=0).to(self.device)
-        with torch.no_grad():
-            out = model(batch).detach()
-        self.encoded_data.append(out)
-        self.encoded_data = torch.cat(self.encoded_data, dim=0).squeeze().to("cpu")
+    def num_classes(self):
+        return int(max(self.labels) + 1)

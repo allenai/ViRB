@@ -1,6 +1,6 @@
 import torch
-from torch.utils.data import Dataset
 import torchvision.transforms as transforms
+from torch.utils.data import Dataset
 import glob
 from PIL import Image
 import random

@@ -1,16 +1,13 @@
 import torch
-import tqdm
+from torch.utils.data import Dataset
 import numpy as np
 import torchvision.transforms as transforms
 import glob
 from PIL import Image
 
 
-from datasets.EncodableDataset import EncodableDataset
-
-
-class TaskonomyEdgesEncodableDataset(EncodableDataset):
-    """NYU Depth encodable dataset class"""
+class TaskonomyEdgesEncodableDataset(Dataset):
+    """Taskonomy Edge Detection encodable dataset class"""
 
     def __init__(self, train=True):
         super().__init__()
@@ -52,51 +49,20 @@ class TaskonomyEdgesEncodableDataset(EncodableDataset):
         label_path = self.labels[idx]
 
         img = self.img_preprocessor(Image.open(img_path))
-        # mask = self.label_preprocessor(Image.open(label_path))
-        # mask = self.label_preprocessor(Image.open(label_path).convert('RGB'))
         mask = np.array(Image.open(label_path).resize((224, 224)))
         mask = torch.tensor(mask, dtype=torch.float)
         mask -= mask.min()
         mask /= mask.max()
-        # mask = torch.round(mask)
         mask = mask.unsqueeze(0)
-
-        # plt.hist(mask.view(-1).numpy(), bins=100)
-        # plt.show()
-        # exit()
-
-        # i = img.detach().numpy().transpose(1, 2, 0)
-        # m = mask.detach().numpy()[0]
-        # print(m.min(), m.max())
-        # plt.figure(0)
-        # plt.imshow(i)
-        # plt.figure(1)
-        # plt.imshow(m)
-        # plt.show()
-        # exit()
 
         return img, mask
 
     def __len__(self):
         return len(self.data)
 
-    def encode(self, model):
-        model.to(self.device)
-        model.eval()
-        batch = []
-        for img in tqdm.tqdm(self.data):
-            if len(batch) == 500:
-                batch = torch.stack(batch, dim=0).to(self.device)
-                with torch.no_grad():
-                    out = model(batch).detach()
-                self.encoded_data.append(out)
-                batch = []
-            x = Image.open(img).convert('RGB')
-            x = self.preprocessor(x)
-            batch.append(x)
-        batch = torch.stack(batch, dim=0).to(self.device)
-        with torch.no_grad():
-            out = model(batch).detach()
-        self.encoded_data.append(out)
-        self.encoded_data = torch.cat(self.encoded_data, dim=0).squeeze().to("cpu")
+    def num_classes(self):
+        return int(max(self.labels) + 1)
+
+
+
 

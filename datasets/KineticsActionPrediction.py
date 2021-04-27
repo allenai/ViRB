@@ -1,11 +1,12 @@
 import torch
 import torchvision.transforms as transforms
+from torch.utils.data import Dataset
 import glob
 import json
 from PIL import Image
 
 
-class KineticsActionPredictionDataset:
+class KineticsActionPredictionDataset(Dataset):
     """KineticsActionPrediction encodable dataset class"""
 
     def __init__(self, train=True):

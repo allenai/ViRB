@@ -1,12 +1,12 @@
 import torch
 import torchvision.transforms as transforms
-import glob
+from torch.utils.data import Dataset
 from PIL import Image
 import json
 
 
-class nuScenesActionPredictionDataset:
-    """Pets encodable dataset class"""
+class nuScenesActionPredictionDataset(Dataset):
+    """nuScenes encodable dataset class"""
 
     def __init__(self, train=True):
         super().__init__()

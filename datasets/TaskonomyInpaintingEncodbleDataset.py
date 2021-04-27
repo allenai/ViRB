@@ -1,14 +1,11 @@
 import torch
-import tqdm
+from torch.utils.data import Dataset
 import torchvision.transforms as transforms
 import glob
 from PIL import Image
 
 
-from datasets.EncodableDataset import EncodableDataset
-
-
-class TaskonomyInpaintingEncodableDataset(EncodableDataset):
+class TaskonomyInpaintingEncodableDataset(Dataset):
     """Taskonomy inpainting encodable dataset class"""
 
     def __init__(self, train=True):
@@ -46,22 +43,5 @@ class TaskonomyInpaintingEncodableDataset(EncodableDataset):
     def __len__(self):
         return len(self.data)
 
-    def encode(self, model):
-        model.to(self.device)
-        model.eval()
-        batch = []
-        for img in tqdm.tqdm(self.data):
-            if len(batch) == 500:
-                batch = torch.stack(batch, dim=0).to(self.device)
-                with torch.no_grad():
-                    out = model(batch).detach()
-                self.encoded_data.append(out)
-                batch = []
-            x = Image.open(img).convert('RGB')
-            x = self.preprocessor(x)
-            batch.append(x)
-        batch = torch.stack(batch, dim=0).to(self.device)
-        with torch.no_grad():
-            out = model(batch).detach()
-        self.encoded_data.append(out)
-        self.encoded_data = torch.cat(self.encoded_data, dim=0).squeeze().to("cpu")
+    def num_classes(self):
+        return int(max(self.labels) + 1)

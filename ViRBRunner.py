@@ -1,22 +1,14 @@
 import torch
-import os
-import sys
 import yaml
-import json
 import copy
 import multiprocessing as mp
-from multiprocessing.pool import ThreadPool
-import threading
 import queue
 import glob
-import time
 import curses
 import traceback
 from datetime import datetime
 
-from models.ResNet50Encoder import ResNet50Encoder
 from models.ViRBModel import ViRBModel
-from models.ClassificationHead import ClassificationHead
 from tasks.ViRBTask import ViRBTask
 from utils.progress_data_packets import ProgressDataPacket
 
@@ -85,10 +77,10 @@ def get_dataset_class(config):
         from datasets.dtdEncodbleDataset import dtdEncodableDataset
         return dtdEncodableDataset
     if config["task"] == "CLEVERNumObjects":
-        from datasets.CLEVERNumObjectsEncodbleDataset import CLEVERNumObjectsEncodableDataset
+        from datasets.CLEVRNumObjectsEncodbleDataset import CLEVERNumObjectsEncodableDataset
         return CLEVERNumObjectsEncodableDataset
     if config["task"] == "CLEVERDist":
-        from datasets.CLEVERDistEncodbleDataset import CLEVERDistEncodableDataset
+        from datasets.CLEVRDistEncodbleDataset import CLEVERDistEncodableDataset
         return CLEVERDistEncodableDataset
     if config["task"] == "SUN397":
         from datasets.SUN397EncodbleDataset import SUN397EncodableDataset
@@ -349,6 +341,7 @@ def thread_loop(gpu_id, config_queue, logging_queue):
 
 
 class ViRBRunner:
+    """Class that runs ViRB jobs and displays a terminal user interface"""
 
     def __init__(
             self,

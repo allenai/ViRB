@@ -1,10 +1,10 @@
 import torch
 import torchvision.transforms as transforms
+from torch.utils.data import Dataset
 import glob
 from PIL import Image
 from PIL import ImageOps
 import random
-from cityscapesscripts.helpers.labels import labels as cslabels
 
 
 mapping_20 = {
@@ -46,17 +46,15 @@ mapping_20 = {
     }
 
 
-class CityscapesSemanticSegmentationDataset:
+class CityscapesSemanticSegmentationDataset(Dataset):
     """COCO detection dataset class"""
 
     def __init__(self, train=True):
         super().__init__()
         self.train = train
         if train:
-            self.imgs = glob.glob('data/cityscapes/leftImg8bit/train/*/*.png')  # + \
-                        # glob.glob('data/cityscapes/leftImg8bit/train_extra/*/*.png')
-            self.labels = glob.glob('data/cityscapes/gtFine/train/*/*gtFine_labelIds.png')  # + \
-                          # glob.glob('data/cityscapes/gtCoarse/train_extra/*/*gtCoarse_labelIds.png')
+            self.imgs = glob.glob('data/cityscapes/leftImg8bit/train/*/*.png')
+            self.labels = glob.glob('data/cityscapes/gtFine/train/*/*gtFine_labelIds.png')
         else:
             self.imgs = glob.glob('data/cityscapes/leftImg8bit/val/*/*.png')
             self.labels = glob.glob('data/cityscapes/gtFine/val/*/*gtFine_labelIds.png')
@@ -64,20 +62,15 @@ class CityscapesSemanticSegmentationDataset:
         self.labels.sort(key=lambda x: x.replace("gtCoarse/", "").replace("gtFine", ""))
         if train:
             self.img_preprocessor = transforms.Compose([
-                # transforms.Resize((224, 224)),
-                # transforms.ColorJitter(.4, .4, .4, .2),
-                # transforms.RandomGrayscale(p=0.2),
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
         else:
             self.img_preprocessor = transforms.Compose([
-                # transforms.Resize((224, 224)),
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
         self.label_preprocessor = transforms.Compose([
-            # transforms.Resize((224, 224)),
             transforms.ToTensor()
         ])
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -102,8 +95,8 @@ class CityscapesSemanticSegmentationDataset:
                 label = ImageOps.mirror(label)
 
             # Add random crop to image
-            cw = 450  # random.randint(200, ogw)
-            ch = 450  # min(int(random.uniform(0.5, 1.0) * cw), ogh)  # random.randint(200, ogh)
+            cw = 450
+            ch = 450
             x = random.randint(0, ogw - cw)
             y = random.randint(0, ogh - ch)
             img = img.crop((x, y, x+cw, y+ch))
@@ -120,9 +113,6 @@ class CityscapesSemanticSegmentationDataset:
 
     def __len__(self):
         return len(self.imgs)
-
-    def class_names(self):
-        return [l[0] for l in cslabels]
 
     def num_classes(self):
         return 20

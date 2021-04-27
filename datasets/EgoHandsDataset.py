@@ -1,13 +1,13 @@
 import torch
 import torchvision.transforms as transforms
+from torch.utils.data import Dataset
 import glob
-from PIL import Image, ImageOps, ImageDraw
-from pycocotools.coco import COCO
+from PIL import Image
 import random
-from scipy.io import loadmat
 
 
-## Splits from 2015 EgoHands Paper
+
+### Splits from 2015 EgoHands Paper
 SPLITS = {
     "TEST":  [1,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0],
     "VALID": [0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],
@@ -15,8 +15,8 @@ SPLITS = {
 }
 
 
-class EgoHandsDataset:
-    """COCO detection dataset class"""
+class EgoHandsDataset(Dataset):
+    """Egohands dataset class"""
 
     def __init__(self, train=True):
         super().__init__()
@@ -56,18 +56,6 @@ class EgoHandsDataset:
             i = Image.open(self.imgs[idx]).convert('RGB')
             l = Image.open(self.labels[idx]).convert('I')
             ogw, ogh = i.size
-
-            # # Scale the image
-            # scale = random.uniform(0.5, 2.0)
-            # img = img.resize((int(ogw * scale), int(ogh * scale)))
-            # label = label.resize((int(ogw * scale), int(ogh * scale)), resample=Image.NEAREST)
-            #
-            # # Mirror the image half of the time
-            # if random.uniform(0, 1) > 0.5:
-            #     img = ImageOps.mirror(img)
-            #     label = ImageOps.mirror(label)
-
-            # Add random crop to image
 
             repeat_counter = 0
             while True:

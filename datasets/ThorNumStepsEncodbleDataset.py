@@ -1,15 +1,13 @@
 import torch
+from torch.utils.data import Dataset
 import tqdm
 import torchvision.transforms as transforms
 import glob
 from PIL import Image
 
 
-from datasets.EncodableDataset import EncodableDataset
-
-
-class ThorNumStepsEncodableDataset(EncodableDataset):
-    """Pets encodable dataset class"""
+class ThorNumStepsEncodableDataset(Dataset):
+    """Thor NumSteps encodable dataset class"""
 
     def __init__(self, train=True):
         super().__init__()
@@ -38,22 +36,8 @@ class ThorNumStepsEncodableDataset(EncodableDataset):
     def class_names(self):
         return self.cats
 
-    def encode(self, model):
-        model.to(self.device)
-        model.eval()
-        batch = []
-        for img in tqdm.tqdm(self.data):
-            if len(batch) == 500:
-                batch = torch.stack(batch, dim=0).to(self.device)
-                with torch.no_grad():
-                    out = model(batch).detach()
-                self.encoded_data.append(out)
-                batch = []
-            x = Image.open(img).convert('RGB')
-            x = self.preprocessor(x)
-            batch.append(x)
-        batch = torch.stack(batch, dim=0).to(self.device)
-        with torch.no_grad():
-            out = model(batch).detach()
-        self.encoded_data.append(out)
-        self.encoded_data = torch.cat(self.encoded_data, dim=0).squeeze().to("cpu")
+    def __len__(self):
+        return len(self.labels)
+
+    def num_classes(self):
+        return int(max(self.labels) + 1)

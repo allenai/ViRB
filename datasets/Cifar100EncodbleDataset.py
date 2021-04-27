@@ -1,13 +1,11 @@
 import torch
-import tqdm
 import pickle
 import numpy as np
 import torchvision.transforms as transforms
+from torch.utils.data import Dataset
 
-from datasets.EncodableDataset import EncodableDataset
 
-
-class CIFAR100EncodableDataset(EncodableDataset):
+class CIFAR100EncodableDataset(Dataset):
     """CIFAR-100 encodable dataset class"""
 
     def __init__(self, train=True):
@@ -29,19 +27,13 @@ class CIFAR100EncodableDataset(EncodableDataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        if len(self.encoded_data) == 0:
-            x = self.data[idx].reshape((3, 32, 32))
-            x = np.moveaxis(x, 0, 2)
-            x = self.preprocessor(x)
-            return x, self.labels[idx]
-        return self.encoded_data[idx], self.labels[idx]
+        x = self.data[idx].reshape((3, 32, 32))
+        x = np.moveaxis(x, 0, 2)
+        x = self.preprocessor(x)
+        return x, self.labels[idx]
 
-    def encode(self, model):
-        model.to(self.device)
-        for i in tqdm.tqdm(range(len(self.data))):
-            x = self.data[i].reshape((3, 32, 32))
-            x = np.moveaxis(x, 0, 2)
-            x = self.preprocessor(x)
-            x = model(x.unsqueeze(0))
-            self.encoded_data.append(x)
-        self.encoded_data = torch.stack(self.encoded_data, 0)
+    def __len__(self):
+        return len(self.labels)
+
+    def num_classes(self):
+        return int(max(self.labels) + 1)
