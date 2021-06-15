@@ -68,7 +68,7 @@ CityscapesSemanticSegmentation:
      optimizer: "sgd"
      lr: 0.01
  num_epochs: 100
- batch_size: 16
+ batch_size: 8
 THORDepth:
  task: "THORDepth"
  pre_encode: false
