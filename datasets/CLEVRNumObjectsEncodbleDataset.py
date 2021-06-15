@@ -30,9 +30,7 @@ class CLEVRNumObjectsEncodableDataset(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        if len(self.encoded_data) == 0:
-            return self.preprocessor(Image.open(self.data[idx]).convert('RGB')), self.labels[idx]
-        return self.encoded_data[idx], self.labels[idx]
+        return self.preprocessor(self.data[idx]), self.labels[idx]
 
     def __len__(self):
         return len(self.labels)
