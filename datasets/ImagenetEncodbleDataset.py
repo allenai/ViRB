@@ -28,7 +28,7 @@ class ImagenetEncodableDataset(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
 
-        return self.preprocessor(self.data[idx]), self.labels[idx]
+        return self.preprocessor(Image.open(self.data[idx])), self.labels[idx]
 
     def __len__(self):
         return len(self.labels)

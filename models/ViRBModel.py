@@ -61,7 +61,7 @@ class ViRBModel(nn.Module):
         if hasattr(self.task_head, "pca_embedding_sizes") and self.task_head.pca_embedding_sizes() is not None:
             pd_names = self.task_head.pca_embedding_sizes()
             self.principal_directions = {}
-            for name in pr_names:
+            for name in pd_names:
                 self.principal_directions[name] = d["principal_directions."+name]
         super().load_state_dict(state_dict, strict)
 
