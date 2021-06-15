@@ -66,8 +66,8 @@ nuScenesActionPrediction:
  batch_size: 32
 
 # Image-level Structural
-CLEVERNumObjects:
- task: "CLEVERNumObjects"
+CLEVRNumObjects:
+ task: "CLEVRNumObjects"
  training_configs:
    adam-0.0001:
      optimizer: "adam"

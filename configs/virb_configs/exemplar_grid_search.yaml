@@ -23,7 +23,7 @@ Imagenet:
  num_epochs: 100
  batch_size: 32
 CLEVERNumObjects:
- task: "CLEVERNumObjects"
+ task: "CLEVRNumObjects"
  training_configs:
    adam-0.0001:
      optimizer: "adam"
