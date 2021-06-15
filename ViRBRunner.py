@@ -77,11 +77,11 @@ def get_dataset_class(config):
         from datasets.dtdEncodbleDataset import dtdEncodableDataset
         return dtdEncodableDataset
     if config["task"] == "CLEVRNumObjects":
-        from datasets.CLEVRNumObjectsEncodbleDataset import CLEVERNumObjectsEncodableDataset
-        return CLEVERNumObjectsEncodableDataset
+        from datasets.CLEVRNumObjectsEncodbleDataset import CLEVRNumObjectsEncodableDataset
+        return CLEVRNumObjectsEncodableDataset
     if config["task"] == "CLEVRDist":
-        from datasets.CLEVRDistEncodbleDataset import CLEVERDistEncodableDataset
-        return CLEVERDistEncodableDataset
+        from datasets.CLEVRDistEncodbleDataset import CLEVRDistEncodableDataset
+        return CLEVRDistEncodableDataset
     if config["task"] == "SUN397":
         from datasets.SUN397EncodbleDataset import SUN397EncodableDataset
         return SUN397EncodableDataset
