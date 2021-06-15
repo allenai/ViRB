@@ -76,10 +76,10 @@ def get_dataset_class(config):
     if config["task"] == "dtd":
         from datasets.dtdEncodbleDataset import dtdEncodableDataset
         return dtdEncodableDataset
-    if config["task"] == "CLEVERNumObjects":
+    if config["task"] == "CLEVRNumObjects":
         from datasets.CLEVRNumObjectsEncodbleDataset import CLEVERNumObjectsEncodableDataset
         return CLEVERNumObjectsEncodableDataset
-    if config["task"] == "CLEVERDist":
+    if config["task"] == "CLEVRDist":
         from datasets.CLEVRDistEncodbleDataset import CLEVERDistEncodableDataset
         return CLEVERDistEncodableDataset
     if config["task"] == "SUN397":
