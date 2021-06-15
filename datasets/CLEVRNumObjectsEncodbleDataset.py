@@ -3,6 +3,7 @@ import torchvision.transforms as transforms
 import glob
 from PIL import Image
 import json
+from torch.utils.data import Dataset
 
 
 class CLEVRNumObjectsEncodableDataset(Dataset):
