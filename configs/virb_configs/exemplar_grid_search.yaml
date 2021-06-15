@@ -1,0 +1,95 @@
+# Exemplar Task grid search config
+Imagenet:
+ task: "Imagenet"
+ training_configs:
+   adam-0.0001:
+     optimizer: "adam"
+     lr: 0.0001
+   adam-0.001:
+     optimizer: "adam"
+     lr: 0.001
+   adam-0.01:
+     optimizer: "adam"
+     lr: 0.01
+   sgd-0.0001:
+     optimizer: "sgd"
+     lr: 0.0001
+   sgd-0.001:
+     optimizer: "sgd"
+     lr: 0.001
+   sgd-0.01:
+     optimizer: "sgd"
+     lr: 0.01
+ num_epochs: 100
+ batch_size: 32
+CLEVERNumObjects:
+ task: "CLEVERNumObjects"
+ training_configs:
+   adam-0.0001:
+     optimizer: "adam"
+     lr: 0.0001
+   adam-0.001:
+     optimizer: "adam"
+     lr: 0.001
+   adam-0.01:
+     optimizer: "adam"
+     lr: 0.01
+   sgd-0.0001:
+     optimizer: "sgd"
+     lr: 0.0001
+   sgd-0.001:
+     optimizer: "sgd"
+     lr: 0.001
+   sgd-0.01:
+     optimizer: "sgd"
+     lr: 0.01
+ num_epochs: 100
+ batch_size: 32
+CityscapesSemanticSegmentation:
+ task: "CityscapesSemanticSegmentation"
+ pre_encode: false
+ training_configs:
+   adam-0.0001:
+     optimizer: "adam"
+     lr: 0.0001
+   adam-0.001:
+     optimizer: "adam"
+     lr: 0.001
+   adam-0.01:
+     optimizer: "adam"
+     lr: 0.01
+   sgd-0.0001:
+     optimizer: "sgd"
+     lr: 0.0001
+   sgd-0.001:
+     optimizer: "sgd"
+     lr: 0.001
+   sgd-0.01:
+     optimizer: "sgd"
+     lr: 0.01
+ num_epochs: 100
+ batch_size: 16
+THORDepth:
+ task: "THORDepth"
+ pre_encode: false
+ training_configs:
+   adam-0.0001:
+     optimizer: "adam"
+     lr: 0.0001
+   adam-0.001:
+     optimizer: "adam"
+     lr: 0.001
+   adam-0.01:
+     optimizer: "adam"
+     lr: 0.01
+   sgd-0.0001:
+     optimizer: "sgd"
+     lr: 0.0001
+   sgd-0.001:
+     optimizer: "sgd"
+     lr: 0.001
+   sgd-0.01:
+     optimizer: "sgd"
+     lr: 0.01
+ num_epochs: 100
+ batch_size: 16
