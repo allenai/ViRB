@@ -85,7 +85,7 @@ class ViRBModel(nn.Module):
             res = res.permute(0, 3, 1, 2)
         return res
 
-    def train(self):
+    def train(self, mode=True):
         if not self.train_encoder:
             self.encoder.eval()
-        self.task_head.train()
+        self.task_head.train(mode=mode)
