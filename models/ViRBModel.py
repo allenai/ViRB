@@ -9,6 +9,7 @@ class ViRBModel(nn.Module):
         self.encoder = encoder
         if not train_encoder:
             self.encoder.eval()
+        self.train_encoder = train_encoder
         self.task_head = task_head
         self.train_encoder = train_encoder
         self.principal_directions = None
@@ -83,3 +84,8 @@ class ViRBModel(nn.Module):
             res = res.reshape(original_shape[0], original_shape[1], original_shape[2], -1)
             res = res.permute(0, 3, 1, 2)
         return res
+
+    def train(self):
+        if not self.train_encoder:
+            self.encoder.eval()
+        self.task_head.train()
