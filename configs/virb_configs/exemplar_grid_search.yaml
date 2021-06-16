@@ -22,6 +22,7 @@ Imagenet:
      lr: 0.01
  num_epochs: 100
  batch_size: 32
+ test_batch_size: 32
 CLEVERNumObjects:
  task: "CLEVRNumObjects"
  training_configs:
@@ -45,6 +46,7 @@ CLEVERNumObjects:
      lr: 0.01
  num_epochs: 100
  batch_size: 32
+ test_batch_size: 32
 CityscapesSemanticSegmentation:
  task: "CityscapesSemanticSegmentation"
  pre_encode: false
@@ -94,3 +96,4 @@ THORDepth:
      lr: 0.01
  num_epochs: 100
  batch_size: 16
+ test_batch_size: 2
