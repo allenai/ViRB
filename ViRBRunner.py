@@ -297,7 +297,8 @@ def run_ViRB_task(config, logging_queue):
         device=config["device_id"],
         pre_encode=pre_encode,
         num_dataset_repeats=num_dataset_repeats,
-        batch_size=config["batch_size"] if "batch_size" in config else None
+        batch_size=config["batch_size"] if "batch_size" in config else None,
+        test_batch_size=config["test_batch_size"] if "test_batch_size" in config else None
     )
     if "task_head_weights_path" in config:
         path = config["task_head_weights_path"] % config["experiment_name"]

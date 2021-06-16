@@ -24,6 +24,7 @@ class ViRBTask:
             out_dir,
             logging_queue,
             batch_size=32,
+            test_batch_size=32,
             num_workers=12,
             device="cpu",
             pre_encode=None,
@@ -36,7 +37,8 @@ class ViRBTask:
         self.task = task
         self.loss = loss
         self.error = error
-        self.batch_size = batch_size
+        self.batch_size = batch_size if batch_size is not None else 32
+        self.test_batch_size = test_batch_size if test_batch_size is not None else 32
         self.out_dir_root = out_dir
         self.logging_queue = logging_queue
 
@@ -49,7 +51,7 @@ class ViRBTask:
                                                             shuffle=True,
                                                             num_workers=num_workers)
         self.test_dataloader = torch.utils.data.DataLoader(test_set,
-                                                           batch_size=batch_size,
+                                                           batch_size=test_batch_size,
                                                            shuffle=False,
                                                            num_workers=num_workers)
         if self.pre_encode:
@@ -66,7 +68,7 @@ class ViRBTask:
                 self.training_configs[0]["model"],
                 "Encoding Test Set for %s on %s" % (self.name, self.task),
                 self.logging_queue,
-                batch_size=batch_size,
+                batch_size=test_batch_size,
                 shuffle=False,
                 device=device,
                 num_dataset_repeats=1
