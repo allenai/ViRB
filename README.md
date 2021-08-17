@@ -287,10 +287,10 @@ the outputs mentioned above.
 
 ## Citation
 ```
-@article{kotar2021contrasting,
+@inproceedings{kotar2021contrasting,
   title={Contrasting Contrastive Self-Supervised Representation Learning Models},
   author={Klemen Kotar and Gabriel Ilharco and Ludwig Schmidt and Kiana Ehsani and Roozbeh Mottaghi},
-  journal={arXiv},  
+  booktitle={ICCV},  
   year={2021},
 }
 ```
