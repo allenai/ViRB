@@ -3,7 +3,7 @@
 ViRB is a framework for evaluating the quality of representations 
 learned by visual encoders on a variety of downstream tasks. It is the 
 codebase used by the paper [Contrasting Contrastive Self-Supervised 
-Representation Learning Models](https://arxiv.org/pdf/2103.14005.pdf).
+Representation Learning Pipelines](https://arxiv.org/pdf/2103.14005.pdf).
 As this is a tool for evaluating the learned representations, it is 
 designed to freeze the encoder weights and only train a small end task
 network using latent representations on the train set for each
@@ -288,7 +288,7 @@ the outputs mentioned above.
 ## Citation
 ```
 @inproceedings{kotar2021contrasting,
-  title={Contrasting Contrastive Self-Supervised Representation Learning Models},
+  title={Contrasting Contrastive Self-Supervised Representation Learning Pipelines},
   author={Klemen Kotar and Gabriel Ilharco and Ludwig Schmidt and Kiana Ehsani and Roozbeh Mottaghi},
   booktitle={ICCV},  
   year={2021},
